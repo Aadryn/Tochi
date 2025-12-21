@@ -1,11 +1,14 @@
 using LLMProxy.Gateway.Middleware;
+using LLMProxy.Gateway.Configuration;
 using LLMProxy.Infrastructure.Redis;
 using LLMProxy.Infrastructure.Security;
 using LLMProxy.Infrastructure.LLMProviders;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +60,133 @@ builder.Services.AddAuthorization();
 // Add Health Checks
 builder.Services.AddHealthChecks();
 
+// Configure Rate Limiting (ADR-041)
+var rateLimitOptions = builder.Configuration.GetSection("RateLimiting").Get<RateLimitingOptions>() 
+    ?? throw new InvalidOperationException("RateLimiting configuration is missing");
+builder.Services.AddSingleton(rateLimitOptions);
+
+builder.Services.AddRateLimiter(options =>
+{
+    // ═══════════════════════════════════════════════════════════════
+    // GLOBAL RATE LIMITER - Protection infrastructure
+    // Token Bucket : permet bursts contrôlés tout en limitant débit moyen
+    // ═══════════════════════════════════════════════════════════════
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        return RateLimitPartition.GetTokenBucketLimiter("global", key =>
+            new TokenBucketRateLimiterOptions
+            {
+                TokenLimit = rateLimitOptions.Global.PermitLimit,
+                ReplenishmentPeriod = rateLimitOptions.Global.Window,
+                TokensPerPeriod = rateLimitOptions.Global.PermitLimit,
+                AutoReplenishment = true,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // PER-TENANT RATE LIMITER - Équité multi-tenant
+    // Fixed Window : quotas stricts par tenant
+    // ═══════════════════════════════════════════════════════════════
+    options.AddPolicy("per-tenant", context =>
+    {
+        var tenantId = context.Items["TenantId"] as Guid?;
+        if (tenantId == null)
+        {
+            return RateLimitPartition.GetNoLimiter<string>("anonymous");
+        }
+
+        return RateLimitPartition.GetFixedWindowLimiter(tenantId.ToString()!, key =>
+            new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = rateLimitOptions.PerTenant.PermitLimit,
+                Window = rateLimitOptions.PerTenant.Window,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // PER-USER RATE LIMITER - Protection abus utilisateur
+    // Sliding Window : lisse le trafic, évite bursts aux limites de fenêtres
+    // ═══════════════════════════════════════════════════════════════
+    options.AddPolicy("per-user", context =>
+    {
+        var userId = context.Items["UserId"] as Guid?;
+        if (userId == null)
+        {
+            return RateLimitPartition.GetNoLimiter<string>("anonymous");
+        }
+
+        return RateLimitPartition.GetSlidingWindowLimiter(userId.ToString()!, key =>
+            new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = rateLimitOptions.PerUser.PermitLimit,
+                Window = rateLimitOptions.PerUser.Window,
+                SegmentsPerWindow = rateLimitOptions.PerUser.SegmentsPerWindow,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // PER-IP RATE LIMITER - Protection DDoS
+    // Fixed Window : limite par adresse IP client
+    // ═══════════════════════════════════════════════════════════════
+    options.AddPolicy("per-ip", context =>
+    {
+        var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        
+        return RateLimitPartition.GetFixedWindowLimiter(ip, key =>
+            new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = rateLimitOptions.PerIp.PermitLimit,
+                Window = rateLimitOptions.PerIp.Window,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // CONCURRENCY LIMITER - Protection ressources serveur
+    // Limite connexions simultanées
+    // ═══════════════════════════════════════════════════════════════
+    options.AddPolicy("concurrency", context =>
+    {
+        return RateLimitPartition.GetConcurrencyLimiter("concurrent-requests", key =>
+            new ConcurrencyLimiterOptions
+            {
+                PermitLimit = rateLimitOptions.Concurrency.PermitLimit,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = rateLimitOptions.Concurrency.QueueLimit
+            });
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // REJECTION HANDLER - Réponse 429 Too Many Requests
+    // Conforme à RFC 6585
+    // ═══════════════════════════════════════════════════════════════
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+
+        // Ajouter header Retry-After si disponible
+        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+        {
+            context.HttpContext.Response.Headers.RetryAfter = retryAfter.TotalSeconds.ToString("F0");
+        }
+
+        // Réponse JSON structurée
+        await context.HttpContext.Response.WriteAsJsonAsync(new
+        {
+            error = "Too Many Requests",
+            message = "Rate limit exceeded. Please retry after the specified delay.",
+            retryAfterSeconds = retryAfter.TotalSeconds
+        }, cancellationToken);
+    };
+});
+
 // Add Infrastructure services
 builder.Services.AddRedisInfrastructure(builder.Configuration);
 builder.Services.AddSecurityInfrastructure(builder.Configuration);
@@ -96,6 +226,13 @@ app.UseMiddleware<ApiKeyAuthenticationMiddleware>();
 // Enrich logging context with business metadata (TenantId, UserId, ApiKeyId)
 // MUST be after ApiKeyAuthenticationMiddleware to access authenticated context
 app.UseMiddleware<LogContextEnrichmentMiddleware>();
+
+// Rate Limiting (ADR-041) MUST be before QuotaEnforcement
+// Order: Auth → RateLimit → Quota → Routing
+app.UseRateLimiter();
+
+// Add rate limit headers to responses
+app.UseMiddleware<RateLimitHeadersMiddleware>();
 
 app.UseMiddleware<QuotaEnforcementMiddleware>();
 
