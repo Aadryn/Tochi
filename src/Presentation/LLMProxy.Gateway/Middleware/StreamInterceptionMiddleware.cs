@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using LLMProxy.Domain.Interfaces;
 using LLMProxy.Domain.Entities;
+using LLMProxy.Gateway.Extensions;
 using LLMProxy.Infrastructure.Security;
 using Microsoft.Extensions.Configuration;
 
@@ -64,7 +65,7 @@ public class StreamInterceptionMiddleware
             return;
         }
 
-        _logger.LogInformation("Intercepting streaming request: {Path}", context.Request.Path);
+        _logger.LogStreamingRequestIntercepted(context.Request.Path);
 
         // Store original response body stream
         var originalBodyStream = context.Response.Body;
@@ -168,11 +169,11 @@ public class StreamInterceptionMiddleware
                 }
                 catch (JsonException ex)
                 {
-                    _logger.LogWarning(ex, "Failed to parse streaming chunk: {Data}", data);
+                    _logger.LogStreamingChunkParseError(ex, data);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error processing streaming chunk");
+                    _logger.LogStreamingChunkProcessingError(ex);
                 }
             }
 
@@ -200,7 +201,7 @@ public class StreamInterceptionMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to count tokens for streaming response");
+            _logger.LogStreamingTokenCountError(ex);
         }
         
         _logger.LogInformation(
@@ -254,17 +255,25 @@ public class StreamInterceptionMiddleware
                     await unitOfWork.AuditLogs.AddAsync(auditLogResult.Value);
                     await unitOfWork.SaveChangesAsync();
                     
-                    _logger.LogInformation("Audit log saved for request {RequestId}", auditLogResult.Value.RequestId);
+                    // RequestId from HttpContext.Items
+                    var requestIdObj = context.Items["RequestId"];
+                    var requestId = requestIdObj switch
+                    {
+                        Guid g => g,
+                        string s => Guid.Parse(s),
+                        _ => throw new InvalidOperationException("RequestId not found or invalid type")
+                    };
+                    _logger.LogAuditLogSaved(requestId);
                 }
                 else
                 {
-                    _logger.LogError("Failed to create audit log: {Error}", auditLogResult.Error);
+                    _logger.LogAuditLogCreationError(auditLogResult.Error ?? "Unknown error");
                 }
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to save metrics for streaming response");
+            _logger.LogMetricsSaveError(ex);
         }
     }
 }

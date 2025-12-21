@@ -39,21 +39,21 @@ public class ApiKeyValidator : IApiKeyValidator
         // Check if key is revoked
         if (apiKey.IsRevoked())
         {
-            _logger.LogWarning("Revoked API key used: {KeyId}", apiKey.Id);
+            _logger.LogRevokedKeyUsage(apiKey.Id);
             return ApiKeyValidationResult.Failure("API key has been revoked");
         }
 
         // Check if key is expired
         if (apiKey.ExpiresAt.HasValue && apiKey.ExpiresAt.Value < DateTime.UtcNow)
         {
-            _logger.LogWarning("Expired API key used: {KeyId}", apiKey.Id);
+            _logger.LogExpiredKeyUsage(apiKey.Id);
             return ApiKeyValidationResult.Failure("API key has expired");
         }
 
         // Check if user is active
         if (!user.IsActive)
         {
-            _logger.LogWarning("Inactive user for API key: {UserId}", user.Id);
+            _logger.LogInactiveUser(user.Id);
             return ApiKeyValidationResult.Failure("User account is inactive");
         }
 

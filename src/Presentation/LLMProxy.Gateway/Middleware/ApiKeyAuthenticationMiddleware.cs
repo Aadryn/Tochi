@@ -1,6 +1,7 @@
 using LLMProxy.Domain.Interfaces;
 using LLMProxy.Infrastructure.Security;
 using LLMProxy.Gateway.Constants;
+using LLMProxy.Gateway.Extensions;
 
 namespace LLMProxy.Gateway.Middleware;
 
@@ -52,7 +53,7 @@ public class ApiKeyAuthenticationMiddleware
         }
         catch (ArgumentException)
         {
-            _logger.LogWarning("Request without API key: {Path}", context.Request.Path);
+            _logger.LogRequestWithoutApiKey(context.Request.Path);
             Guard.AgainstResponseStarted(context.Response);
             context.Response.StatusCode = 401;
             await context.Response.WriteAsJsonAsync(new { error = "API key is required" });

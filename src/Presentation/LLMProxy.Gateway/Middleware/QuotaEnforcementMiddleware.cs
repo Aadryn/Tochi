@@ -1,5 +1,6 @@
 using LLMProxy.Domain.Interfaces;
 using LLMProxy.Domain.Entities;
+using LLMProxy.Gateway.Extensions;
 
 namespace LLMProxy.Gateway.Middleware;
 
@@ -51,7 +52,7 @@ public class QuotaEnforcementMiddleware
             var quotaCheck = await _quotaService.CheckQuotaAsync(userId, QuotaType.RequestsPerHour);
             if (!quotaCheck.IsAllowed)
             {
-                _logger.LogWarning("Quota exceeded for user {UserId}: {Reason}", userId, quotaCheck.DenialReason);
+                _logger.LogQuotaExceeded(userId, quotaCheck.DenialReason ?? "Quota exceeded");
                 context.Response.StatusCode = 429; // Too Many Requests
                 context.Response.Headers["X-RateLimit-Limit"] = quotaCheck.Usage?.Limit.ToString() ?? "0";
                 context.Response.Headers["X-RateLimit-Remaining"] = quotaCheck.Usage?.Remaining.ToString() ?? "0";
@@ -85,7 +86,7 @@ public class QuotaEnforcementMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error checking quota for user {UserId}", userId);
+            _logger.LogQuotaCheckError(ex, userId);
             // Don't block request on quota check errors, just log
         }
 
