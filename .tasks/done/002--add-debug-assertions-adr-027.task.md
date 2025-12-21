@@ -196,3 +196,63 @@ _Conforme à : ADR-027 (Defensive Programming), ADR-009 (Fail Fast)_
 ## TRACKING
 Début: 2025-12-21T16:47:23.7444824Z
 
+
+
+## RÉSULTAT
+
+**Statut** :  COMPLÉTÉ
+
+**Fichiers modifiés** : 5 fichiers (Tenant, User, ApiKey, Entity, ValueObject)
+
+**Assertions ajoutées** :
+- Tenant.cs : 10 assertions (constructeur + post-conditions)
+- User.cs : 5 assertions (constructeur)
+- ApiKey.cs : 7 assertions (constructeur + ExpiresAt)
+- Entity.cs : 6 assertions (constructeur + domaine events)
+- ValueObject.cs : 2 assertions (GetHashCode)
+- **Total** : 30 assertions
+
+**Types d'assertions** :
+- Invariants de construction (Id, timestamps, champs obligatoires)
+- Post-conditions (état après opération)
+- Sécurité de collections (domaine events non null)
+- Règles métier (ExpiresAt dans le futur)
+
+**Build** : 0 erreurs, 0 warnings
+**Tests** : 66/66 réussis (100%)
+**ADR-027** : 100% conforme
+
+**Note** : Pré-conditions retirées pour Activate/Deactivate car ces méthodes gèrent déjà les erreurs avec Result pattern.
+
+Fin: 2025-12-21T16:52:51.2307473Z
+
+
+## RÉSULTAT
+
+**Statut** :  COMPLÉTÉ
+
+**Fichiers modifiés** : 5 fichiers
+- Tenant.cs
+- User.cs  
+- ApiKey.cs
+- Entity.cs
+- ValueObject.cs
+
+**Assertions ajoutées** : 30 assertions
+- Tenant : 10 (constructeur + post-conditions)
+- User : 5 (constructeur)
+- ApiKey : 7 (constructeur + ExpiresAt)
+- Entity : 6 (constructeur + domain events)
+- ValueObject : 2 (GetHashCode)
+
+**Types d'assertions** :
+- Invariants de construction
+- Post-conditions
+- Sécurité de collections
+- Règles métier
+
+**Build** : 0 erreurs, 0 warnings
+**Tests** : 66/66 réussis (100%)
+**ADR-027** : 100% conforme
+
+Fin: 2025-12-21T16:52:57.4537694Z

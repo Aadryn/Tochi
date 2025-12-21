@@ -92,6 +92,11 @@ app.UseMiddleware<RequestLoggingMiddleware>();
 // Authentication MUST come before authorization and quota checks
 // This prevents unauthenticated requests from consuming resources
 app.UseMiddleware<ApiKeyAuthenticationMiddleware>();
+
+// Enrich logging context with business metadata (TenantId, UserId, ApiKeyId)
+// MUST be after ApiKeyAuthenticationMiddleware to access authenticated context
+app.UseMiddleware<LogContextEnrichmentMiddleware>();
+
 app.UseMiddleware<QuotaEnforcementMiddleware>();
 
 // Standard middleware
