@@ -1,6 +1,6 @@
 using LLMProxy.Domain.Interfaces;
+using LLMProxy.Infrastructure.Security;
 using StackExchange.Redis;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
@@ -10,11 +10,13 @@ public class CacheService : ICacheService
 {
     private readonly IConnectionMultiplexer _redis;
     private readonly IDatabase _db;
+    private readonly IHashService _hashService;
     private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-    public CacheService(IConnectionMultiplexer redis)
+    public CacheService(IConnectionMultiplexer redis, IHashService hashService)
     {
-        _redis = redis;
+        _redis = redis ?? throw new ArgumentNullException(nameof(redis));
+        _hashService = hashService ?? throw new ArgumentNullException(nameof(hashService));
         _db = redis.GetDatabase();
     }
 
@@ -64,13 +66,13 @@ public class CacheService : ICacheService
         if (semantic)
         {
             // Create a semantic hash of the request body
-            var bodyHash = ComputeSha256Hash(requestBody);
+            var bodyHash = _hashService.ComputeSha256Hash(requestBody);
             return $"llm_cache:{endpoint}:{bodyHash}";
         }
         else
         {
             // Create exact hash for deterministic caching
-            var exactHash = ComputeSha256Hash($"{endpoint}:{requestBody}");
+            var exactHash = _hashService.ComputeSha256Hash($"{endpoint}:{requestBody}");
             return $"llm_cache_exact:{exactHash}";
         }
     }
@@ -149,11 +151,5 @@ public class CacheService : ICacheService
 
         var result = await _db.ScriptEvaluateAsync(script, new RedisKey[] { lockKey }, new RedisValue[] { lockValue });
         return (int)result == 1;
-    }
-
-    private static string ComputeSha256Hash(string input)
-    {
-        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
-        return Convert.ToHexString(bytes).ToLowerInvariant();
     }
 }
