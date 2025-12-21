@@ -1,3 +1,6 @@
+using LLMProxy.Domain.Entities;
+using Microsoft.AspNetCore.Http;
+
 namespace LLMProxy.Infrastructure.Security;
 
 /// <summary>
@@ -39,7 +42,7 @@ public class ApiKeyValidationResult
     /// </code>
     /// </example>
     public static ApiKeyValidationResult Success() =>
-        new() { IsValid = true, StatusCode = 200 };
+        new() { IsValid = true, StatusCode = StatusCodes.Status200OK };
 
     /// <summary>
     /// Crée un résultat de validation échoué.
@@ -54,6 +57,6 @@ public class ApiKeyValidationResult
     /// return ApiKeyValidationResult.Failure("API key expired", 403);
     /// </code>
     /// </example>
-    public static ApiKeyValidationResult Failure(string errorMessage, int statusCode = 401) =>
+    public static ApiKeyValidationResult Failure(string errorMessage, int statusCode = StatusCodes.Status401Unauthorized) =>
         new() { IsValid = false, ErrorMessage = errorMessage, StatusCode = statusCode };
 }
