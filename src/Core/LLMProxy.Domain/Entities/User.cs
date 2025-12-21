@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace LLMProxy.Domain.Entities;
 
 /// <summary>
-/// Represents a user within a tenant with authentication capabilities
+/// Représente un utilisateur au sein d'un tenant avec capacités d'authentification
 /// </summary>
 public class User : Entity
 {
@@ -154,11 +154,4 @@ public class User : Entity
             return false;
         }
     }
-}
-
-public enum UserRole
-{
-    User = 0,
-    Admin = 1,
-    TenantAdmin = 2
 }

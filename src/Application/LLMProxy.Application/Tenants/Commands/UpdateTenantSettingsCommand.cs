@@ -1,84 +1,44 @@
-using FluentValidation;
 using LLMProxy.Application.Common;
 using LLMProxy.Domain.Common;
-using LLMProxy.Domain.Interfaces;
-using MediatR;
 
 namespace LLMProxy.Application.Tenants.Commands;
 
+/// <summary>
+/// Commande de mise à jour des paramètres d'un tenant.
+/// </summary>
+/// <remarks>
+/// Permet de modifier la configuration d'un tenant existant incluant les limites d'utilisateurs,
+/// de fournisseurs, et les paramètres d'audit et de cache.
+/// </remarks>
 public record UpdateTenantSettingsCommand : ICommand<TenantDto>
 {
+    /// <summary>
+    /// Obtient ou définit l'identifiant unique du tenant à mettre à jour.
+    /// </summary>
     public Guid TenantId { get; set; }
+
+    /// <summary>
+    /// Obtient ou initialise le nombre maximum d'utilisateurs autorisés pour le tenant.
+    /// </summary>
     public int MaxUsers { get; init; }
+
+    /// <summary>
+    /// Obtient ou initialise le nombre maximum de fournisseurs LLM autorisés pour le tenant.
+    /// </summary>
     public int MaxProviders { get; init; }
+
+    /// <summary>
+    /// Obtient ou initialise si la journalisation d'audit est activée pour le tenant.
+    /// </summary>
     public bool EnableAuditLogging { get; init; }
+
+    /// <summary>
+    /// Obtient ou initialise la durée de rétention des journaux d'audit en jours.
+    /// </summary>
     public int AuditRetentionDays { get; init; }
+
+    /// <summary>
+    /// Obtient ou initialise si le cache de réponses est activé pour le tenant.
+    /// </summary>
     public bool EnableResponseCache { get; init; }
-}
-
-public class UpdateTenantSettingsCommandValidator : AbstractValidator<UpdateTenantSettingsCommand>
-{
-    public UpdateTenantSettingsCommandValidator()
-    {
-        RuleFor(x => x.TenantId).NotEmpty();
-        RuleFor(x => x.MaxUsers).GreaterThan(0);
-        RuleFor(x => x.MaxProviders).GreaterThan(0);
-        RuleFor(x => x.AuditRetentionDays).GreaterThanOrEqualTo(0);
-    }
-}
-
-public class UpdateTenantSettingsCommandHandler : IRequestHandler<UpdateTenantSettingsCommand, Result<TenantDto>>
-{
-    private readonly IUnitOfWork _unitOfWork;
-
-    public UpdateTenantSettingsCommandHandler(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
-
-    public async Task<Result<TenantDto>> Handle(UpdateTenantSettingsCommand request, CancellationToken cancellationToken)
-    {
-        var tenant = await _unitOfWork.Tenants.GetByIdAsync(request.TenantId, cancellationToken);
-        if (tenant == null)
-        {
-            return Result.Failure<TenantDto>($"Tenant with ID {request.TenantId} not found");
-        }
-
-        var newSettings = new Domain.Entities.TenantSettings(
-            request.MaxUsers,
-            request.MaxProviders,
-            request.EnableAuditLogging,
-            request.AuditRetentionDays,
-            request.EnableResponseCache
-        );
-
-        var result = tenant.UpdateSettings(newSettings);
-        if (result.IsFailure)
-        {
-            return Result.Failure<TenantDto>(result.Error!);
-        }
-
-        await _unitOfWork.Tenants.UpdateAsync(tenant, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        var dto = new TenantDto
-        {
-            Id = tenant.Id,
-            Name = tenant.Name,
-            Slug = tenant.Slug,
-            IsActive = tenant.IsActive,
-            Settings = new TenantSettingsDto
-            {
-                MaxUsers = tenant.Settings.MaxUsers,
-                MaxProviders = tenant.Settings.MaxProviders,
-                EnableAuditLogging = tenant.Settings.EnableAuditLogging,
-                AuditRetentionDays = tenant.Settings.AuditRetentionDays,
-                EnableResponseCache = tenant.Settings.EnableResponseCache
-            },
-            CreatedAt = tenant.CreatedAt,
-            UpdatedAt = tenant.UpdatedAt ?? DateTime.MinValue
-        };
-
-        return Result.Success(dto);
-    }
 }

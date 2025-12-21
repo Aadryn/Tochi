@@ -6,8 +6,8 @@ using LLMProxy.Gateway.Extensions;
 namespace LLMProxy.Gateway.Middleware;
 
 /// <summary>
-/// Middleware global pour la gestion centralisée des exceptions.
-/// Capture toutes les exceptions non gérées et retourne des réponses structurées au client.
+/// Middleware global pour la gestion centralisée des exceptions
+/// Capture toutes les exceptions non gérées et retourne des réponses structurées au client
 /// </summary>
 public class GlobalExceptionHandlerMiddleware
 {
@@ -16,11 +16,11 @@ public class GlobalExceptionHandlerMiddleware
     private readonly IHostEnvironment _environment;
 
     /// <summary>
-    /// Initialise une nouvelle instance du middleware de gestion globale des exceptions.
+    /// Initialise une nouvelle instance du middleware de gestion globale des exceptions
     /// </summary>
-    /// <param name="next">Délégué vers le prochain middleware dans le pipeline.</param>
-    /// <param name="logger">Logger pour enregistrer les exceptions.</param>
-    /// <param name="environment">Environnement d'exécution de l'application.</param>
+    /// <param name="next">Délégué vers le prochain middleware dans le pipeline</param>
+    /// <param name="logger">Logger pour enregistrer les exceptions</param>
+    /// <param name="environment">Environnement d'exécution de l'application</param>
     public GlobalExceptionHandlerMiddleware(
         RequestDelegate next,
         ILogger<GlobalExceptionHandlerMiddleware> logger,
@@ -32,10 +32,10 @@ public class GlobalExceptionHandlerMiddleware
     }
 
     /// <summary>
-    /// Invoque le middleware de gestion des exceptions.
+    /// Invoque le middleware de gestion des exceptions
     /// </summary>
-    /// <param name="context">Contexte HTTP de la requête en cours.</param>
-    /// <param name="cancellationToken">Token d'annulation pour interrompre l'opération.</param>
+    /// <param name="context">Contexte HTTP de la requête en cours</param>
+    /// <param name="cancellationToken">Token d'annulation pour interrompre l'opération</param>
     public async Task InvokeAsync(HttpContext context, CancellationToken cancellationToken = default)
     {
         Guard.AgainstNull(context, nameof(context));
@@ -81,12 +81,12 @@ public class GlobalExceptionHandlerMiddleware
     }
 
     /// <summary>
-    /// Gère une exception en retournant une réponse structurée au client.
+    /// Gère une exception en retournant une réponse structurée au client
     /// </summary>
-    /// <param name="context">Contexte HTTP de la requête.</param>
-    /// <param name="exception">Exception à gérer.</param>
-    /// <param name="statusCode">Code de statut HTTP à retourner.</param>
-    /// <param name="message">Message d'erreur pour le client.</param>
+    /// <param name="context">Contexte HTTP de la requête</param>
+    /// <param name="exception">Exception à gérer</param>
+    /// <param name="statusCode">Code de statut HTTP à retourner</param>
+    /// <param name="message">Message d'erreur pour le client</param>
     private async Task HandleExceptionAsync(
         HttpContext context,
         Exception exception,
@@ -124,27 +124,5 @@ public class GlobalExceptionHandlerMiddleware
         });
 
         await context.Response.WriteAsync(json);
-    }
-
-    /// <summary>
-    /// Réponse d'erreur structurée retournée au client.
-    /// </summary>
-    private class ErrorResponse
-    {
-        public ErrorDetail Error { get; set; } = null!;
-    }
-
-    /// <summary>
-    /// Détails d'une erreur dans la réponse structurée.
-    /// </summary>
-    private class ErrorDetail
-    {
-        public string Message { get; set; } = null!;
-        public string Type { get; set; } = null!;
-        public int StatusCode { get; set; }
-        public string? RequestId { get; set; }
-        public DateTime Timestamp { get; set; }
-        public string? Details { get; set; }
-        public string? StackTrace { get; set; }
     }
 }
