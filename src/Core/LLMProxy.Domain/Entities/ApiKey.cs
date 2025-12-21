@@ -1,5 +1,6 @@
 using LLMProxy.Domain.Common;
 using System.Security.Cryptography;
+using System.Diagnostics;
 
 namespace LLMProxy.Domain.Entities;
 
@@ -38,6 +39,15 @@ public class ApiKey : Entity
         KeyPrefix = keyPrefix ?? throw new ArgumentNullException(nameof(keyPrefix));
         ExpiresAt = expiresAt;
         IsActive = true;
+        
+        // Invariants : L'API key doit avoir tous les champs requis après construction
+        Debug.Assert(UserId != Guid.Empty, "ApiKey must have a valid UserId after construction");
+        Debug.Assert(TenantId != Guid.Empty, "ApiKey must have a valid TenantId after construction");
+        Debug.Assert(!string.IsNullOrWhiteSpace(Name), "ApiKey name must not be null or whitespace after construction");
+        Debug.Assert(!string.IsNullOrWhiteSpace(KeyHash), "ApiKey hash must not be null or whitespace after construction");
+        Debug.Assert(!string.IsNullOrWhiteSpace(KeyPrefix), "ApiKey prefix must not be null or whitespace after construction");
+        Debug.Assert(IsActive, "ApiKey must be active after construction");
+        Debug.Assert(!ExpiresAt.HasValue || ExpiresAt.Value > DateTime.UtcNow, "ApiKey expiration must be in the future if set");
     }
 
     public static Result<ApiKey> Create(Guid userId, Guid tenantId, string name, DateTime? expiresAt = null)

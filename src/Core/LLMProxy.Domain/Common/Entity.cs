@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace LLMProxy.Domain.Common;
 
 /// <summary>
@@ -16,11 +18,21 @@ public abstract class Entity
     {
         Id = Guid.NewGuid();
         CreatedAt = DateTime.UtcNow;
+        
+        // Invariants : Chaque entité doit avoir un Id unique et une date de création
+        Debug.Assert(Id != Guid.Empty, "Entity Id must not be empty after construction");
+        Debug.Assert(CreatedAt != default, "Entity CreatedAt must be set after construction");
+        Debug.Assert(CreatedAt <= DateTime.UtcNow, "Entity CreatedAt must not be in the future");
     }
 
     protected void AddDomainEvent(IDomainEvent domainEvent)
     {
+        Debug.Assert(domainEvent != null, "Domain event must not be null");
+        Debug.Assert(_domainEvents != null, "Domain events collection must not be null");
+        
         _domainEvents.Add(domainEvent);
+        
+        Debug.Assert(_domainEvents.Contains(domainEvent), "Domain event must be added to collection");
     }
 
     public void ClearDomainEvents()
@@ -44,6 +56,7 @@ public abstract class Entity
 
     public override int GetHashCode()
     {
+        Debug.Assert(Id != Guid.Empty, "Entity Id must not be empty when computing hash code");
         return Id.GetHashCode();
     }
 

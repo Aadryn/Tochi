@@ -1,4 +1,5 @@
 using LLMProxy.Domain.Common;
+using System.Diagnostics;
 
 namespace LLMProxy.Domain.Entities;
 
@@ -35,6 +36,12 @@ public class Tenant : Entity
         Slug = slug ?? throw new ArgumentNullException(nameof(slug));
         Settings = settings ?? throw new ArgumentNullException(nameof(settings));
         IsActive = true;
+        
+        // Invariants : Le tenant doit avoir un nom et un slug valides après construction
+        Debug.Assert(!string.IsNullOrWhiteSpace(Name), "Tenant name must not be null or whitespace after construction");
+        Debug.Assert(!string.IsNullOrWhiteSpace(Slug), "Tenant slug must not be null or whitespace after construction");
+        Debug.Assert(IsActive, "Tenant must be active after construction");
+        Debug.Assert(CreatedAt != default, "CreatedAt must be set after construction");
     }
 
     public static Result<Tenant> Create(string name, string slug, TenantSettings? settings = null)
@@ -64,6 +71,10 @@ public class Tenant : Entity
         
         AddDomainEvent(this, new TenantDeactivatedEvent(Id));
         
+        // Post-condition : Le tenant doit être inactif après désactivation
+        Debug.Assert(!IsActive, "Tenant must be inactive after deactivation");
+        Debug.Assert(DeactivatedAt.HasValue, "DeactivatedAt must be set after deactivation");
+        
         return Result.Success();
     }
 
@@ -75,6 +86,10 @@ public class Tenant : Entity
         IsActive = true;
         DeactivatedAt = null;
         UpdatedAt = DateTime.UtcNow;
+        
+        // Post-condition : Le tenant doit être actif après activation
+        Debug.Assert(IsActive, "Tenant must be active after activation");
+        Debug.Assert(!DeactivatedAt.HasValue, "DeactivatedAt must be null after activation");
         
         return Result.Success();
     }

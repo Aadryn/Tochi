@@ -1,4 +1,5 @@
 using LLMProxy.Domain.Common;
+using System.Diagnostics;
 
 namespace LLMProxy.Domain.Entities;
 
@@ -35,6 +36,13 @@ public class User : Entity
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Role = role;
         IsActive = true;
+        
+        // Invariants : L'utilisateur doit avoir un email, nom et tenant valides après construction
+        Debug.Assert(TenantId != Guid.Empty, "User must have a valid TenantId after construction");
+        Debug.Assert(!string.IsNullOrWhiteSpace(Email), "User email must not be null or whitespace after construction");
+        Debug.Assert(!string.IsNullOrWhiteSpace(Name), "User name must not be null or whitespace after construction");
+        Debug.Assert(IsActive, "User must be active after construction");
+        Debug.Assert(CreatedAt != default, "CreatedAt must be set after construction");
     }
 
     public static Result<User> Create(Guid tenantId, string email, string name, UserRole role)
