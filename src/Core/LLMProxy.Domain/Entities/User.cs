@@ -50,11 +50,18 @@ public class User : Entity
         if (tenantId == Guid.Empty)
             return Result.Failure<User>("Invalid tenant ID.");
 
-        if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
-            return Result.Failure<User>("Invalid email address.");
+        try
+        {
+            Guard.AgainstNullOrWhiteSpace(email, nameof(email), "Email cannot be empty.");
+            if (!IsValidEmail(email))
+                return Result.Failure<User>("Invalid email address.");
 
-        if (string.IsNullOrWhiteSpace(name))
-            return Result.Failure<User>("User name cannot be empty.");
+            Guard.AgainstNullOrWhiteSpace(name, nameof(name), "User name cannot be empty.");
+        }
+        catch (ArgumentException ex)
+        {
+            return Result.Failure<User>(ex.Message);
+        }
 
         var user = new User(tenantId, email.ToLowerInvariant(), name, role);
         
@@ -129,8 +136,7 @@ public class User : Entity
 
     public void UpdateName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("User name cannot be empty.", nameof(name));
+        Guard.AgainstNullOrWhiteSpace(name, nameof(name), "User name cannot be empty.");
 
         Name = name;
         UpdatedAt = DateTime.UtcNow;

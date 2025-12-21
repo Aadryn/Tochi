@@ -67,14 +67,18 @@ public class LLMProvider : Entity
         if (tenantId == Guid.Empty)
             return Result.Failure<LLMProvider>("Invalid tenant ID.");
 
-        if (string.IsNullOrWhiteSpace(name))
-            return Result.Failure<LLMProvider>("Provider name cannot be empty.");
+        try
+        {
+            Guard.AgainstNullOrWhiteSpace(name, nameof(name), "Provider name cannot be empty.");
+            Guard.AgainstNullOrWhiteSpace(model, nameof(model), "Model name cannot be empty.");
+        }
+        catch (ArgumentException ex)
+        {
+            return Result.Failure<LLMProvider>(ex.Message);
+        }
 
         if (!IsValidUrl(baseUrl))
             return Result.Failure<LLMProvider>("Invalid base URL.");
-
-        if (string.IsNullOrWhiteSpace(model))
-            return Result.Failure<LLMProvider>("Model name cannot be empty.");
 
         if (priority < 0)
             return Result.Failure<LLMProvider>("Priority cannot be negative.");
