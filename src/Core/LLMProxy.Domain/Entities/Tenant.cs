@@ -46,11 +46,17 @@ public class Tenant : Entity
 
     public static Result<Tenant> Create(string name, string slug, TenantSettings? settings = null)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            return Result.Failure<Tenant>("Tenant name cannot be empty.");
-
-        if (string.IsNullOrWhiteSpace(slug) || !IsValidSlug(slug))
-            return Result.Failure<Tenant>("Invalid tenant slug. Use only lowercase letters, numbers, and hyphens.");
+        try
+        {
+            Guard.AgainstNullOrWhiteSpace(name, nameof(name), "Tenant name cannot be empty.");
+            Guard.AgainstNullOrWhiteSpace(slug, nameof(slug), "Slug cannot be empty.");
+            if (!IsValidSlug(slug))
+                return Result.Failure<Tenant>("Invalid tenant slug. Use only lowercase letters, numbers, and hyphens.");
+        }
+        catch (ArgumentException ex)
+        {
+            return Result.Failure<Tenant>(ex.Message);
+        }
 
         var tenantSettings = settings ?? TenantSettings.Default();
         var tenant = new Tenant(name, slug, tenantSettings);

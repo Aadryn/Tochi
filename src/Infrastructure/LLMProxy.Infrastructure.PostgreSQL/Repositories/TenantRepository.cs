@@ -7,16 +7,11 @@ namespace LLMProxy.Infrastructure.PostgreSQL.Repositories;
 /// <summary>
 /// Implementation of ITenantRepository (Adapter)
 /// </summary>
-public class TenantRepository : ITenantRepository
+public class TenantRepository : RepositoryBase<Tenant>, ITenantRepository
 {
-    private readonly LLMProxyDbContext _context;
+    public TenantRepository(LLMProxyDbContext context) : base(context) { }
 
-    public TenantRepository(LLMProxyDbContext context)
-    {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-    }
-
-    public async Task<Tenant?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public override async Task<Tenant?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Tenants
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
@@ -40,7 +35,7 @@ public class TenantRepository : ITenantRepository
         return await query.ToListAsync(cancellationToken);
     }
 
-    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+    public override async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Tenants
             .AnyAsync(t => t.Id == id, cancellationToken);
@@ -50,25 +45,5 @@ public class TenantRepository : ITenantRepository
     {
         return await _context.Tenants
             .AnyAsync(t => t.Slug == slug.ToLowerInvariant(), cancellationToken);
-    }
-
-    public async Task AddAsync(Tenant tenant, CancellationToken cancellationToken = default)
-    {
-        await _context.Tenants.AddAsync(tenant, cancellationToken);
-    }
-
-    public Task UpdateAsync(Tenant tenant, CancellationToken cancellationToken = default)
-    {
-        _context.Tenants.Update(tenant);
-        return Task.CompletedTask;
-    }
-
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var tenant = await GetByIdAsync(id, cancellationToken);
-        if (tenant != null)
-        {
-            _context.Tenants.Remove(tenant);
-        }
     }
 }

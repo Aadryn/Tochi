@@ -33,13 +33,13 @@ public class TenantTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithInvalidName_ShouldFail(string invalidName)
+    public void Create_WithInvalidName_ShouldFail(string? invalidName)
     {
         // Arrange
         var slug = "test-tenant";
 
         // Act
-        var result = Tenant.Create(invalidName, slug);
+        var result = Tenant.Create(invalidName!, slug);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -53,13 +53,13 @@ public class TenantTests
     [InlineData("Invalid Slug")]
     [InlineData("invalid_slug")]
     [InlineData("INVALID")]
-    public void Create_WithInvalidSlug_ShouldFail(string invalidSlug)
+    public void Create_WithInvalidSlug_ShouldFail(string? invalidSlug)
     {
         // Arrange
         var name = "Test Tenant";
 
         // Act
-        var result = Tenant.Create(name, invalidSlug);
+        var result = Tenant.Create(name, invalidSlug!);
 
         // Assert
         result.IsFailure.Should().BeTrue();

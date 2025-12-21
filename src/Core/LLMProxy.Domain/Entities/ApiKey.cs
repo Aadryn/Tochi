@@ -58,8 +58,14 @@ public class ApiKey : Entity
         if (tenantId == Guid.Empty)
             return Result.Failure<ApiKey>("Invalid tenant ID.");
 
-        if (string.IsNullOrWhiteSpace(name))
-            return Result.Failure<ApiKey>("API key name cannot be empty.");
+        try
+        {
+            Guard.AgainstNullOrWhiteSpace(name, nameof(name), "API key name cannot be empty.");
+        }
+        catch (ArgumentException ex)
+        {
+            return Result.Failure<ApiKey>(ex.Message);
+        }
 
         if (expiresAt.HasValue && expiresAt.Value <= DateTime.UtcNow)
             return Result.Failure<ApiKey>("Expiration date must be in the future.");

@@ -111,14 +111,16 @@ public class AuditLog : Entity
         if (tenantId == Guid.Empty)
             return Result.Failure<AuditLog>("Invalid tenant ID.");
 
-        if (string.IsNullOrWhiteSpace(requestId))
-            return Result.Failure<AuditLog>("Request ID cannot be empty.");
-
-        if (string.IsNullOrWhiteSpace(endpoint))
-            return Result.Failure<AuditLog>("Endpoint cannot be empty.");
-
-        if (string.IsNullOrWhiteSpace(httpMethod))
-            return Result.Failure<AuditLog>("HTTP method cannot be empty.");
+        try
+        {
+            Guard.AgainstNullOrWhiteSpace(requestId, nameof(requestId), "Request ID cannot be empty.");
+            Guard.AgainstNullOrWhiteSpace(endpoint, nameof(endpoint), "Endpoint cannot be empty.");
+            Guard.AgainstNullOrWhiteSpace(httpMethod, nameof(httpMethod), "HTTP method cannot be empty.");
+        }
+        catch (ArgumentException ex)
+        {
+            return Result.Failure<AuditLog>(ex.Message);
+        }
 
         var auditLog = new AuditLog(
             tenantId, userId, apiKeyId, providerId, requestId, endpoint, httpMethod,

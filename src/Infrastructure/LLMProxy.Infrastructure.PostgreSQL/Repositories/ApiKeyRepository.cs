@@ -6,13 +6,11 @@ namespace LLMProxy.Infrastructure.PostgreSQL.Repositories;
 /// <summary>
 /// Implémentation du repository pour l'entité ApiKey.
 /// </summary>
-internal class ApiKeyRepository : IApiKeyRepository
+internal class ApiKeyRepository : RepositoryBase<Domain.Entities.ApiKey>, IApiKeyRepository
 {
-    private readonly LLMProxyDbContext _context;
+    public ApiKeyRepository(LLMProxyDbContext context) : base(context) { }
 
-    public ApiKeyRepository(LLMProxyDbContext context) => _context = context;
-
-    public async Task<Domain.Entities.ApiKey?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public override async Task<Domain.Entities.ApiKey?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.ApiKeys
             .Include(k => k.User)
@@ -47,25 +45,5 @@ internal class ApiKeyRepository : IApiKeyRepository
             .Where(k => k.TenantId == tenantId)
             .OrderByDescending(k => k.CreatedAt)
             .ToListAsync(cancellationToken);
-    }
-
-    public async Task AddAsync(Domain.Entities.ApiKey apiKey, CancellationToken cancellationToken = default)
-    {
-        await _context.ApiKeys.AddAsync(apiKey, cancellationToken);
-    }
-
-    public Task UpdateAsync(Domain.Entities.ApiKey apiKey, CancellationToken cancellationToken = default)
-    {
-        _context.ApiKeys.Update(apiKey);
-        return Task.CompletedTask;
-    }
-
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var apiKey = await GetByIdAsync(id, cancellationToken);
-        if (apiKey != null)
-        {
-            _context.ApiKeys.Remove(apiKey);
-        }
     }
 }

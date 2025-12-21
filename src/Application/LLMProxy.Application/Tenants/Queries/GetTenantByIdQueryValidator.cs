@@ -1,4 +1,5 @@
 using FluentValidation;
+using LLMProxy.Application.Common;
 
 namespace LLMProxy.Application.Tenants.Queries;
 
@@ -16,6 +17,6 @@ public class GetTenantByIdQueryValidator : AbstractValidator<GetTenantByIdQuery>
     public GetTenantByIdQueryValidator()
     {
         RuleFor(x => x.TenantId)
-            .NotEmpty().WithMessage("Tenant ID is required");
+            .NotEmpty().WithMessage(ValidationMessages.Required("Tenant ID"));
     }
 }

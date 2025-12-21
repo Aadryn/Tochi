@@ -1,4 +1,5 @@
 using FluentValidation;
+using LLMProxy.Application.Common;
 
 namespace LLMProxy.Application.Users.Commands;
 
@@ -16,15 +17,15 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
     public CreateUserCommandValidator()
     {
         RuleFor(x => x.TenantId)
-            .NotEmpty().WithMessage("Tenant ID is required");
+            .NotEmpty().WithMessage(ValidationMessages.Required("Tenant ID"));
 
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required")
-            .EmailAddress().WithMessage("Invalid email format")
-            .MaximumLength(255).WithMessage("Email must not exceed 255 characters");
+            .NotEmpty().WithMessage(ValidationMessages.Required("Email"))
+            .EmailAddress().WithMessage(ValidationMessages.InvalidFormat("email"))
+            .MaximumLength(255).WithMessage(ValidationMessages.MaxLength("Email", 255));
 
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Name is required")
-            .MaximumLength(100).WithMessage("Name must not exceed 100 characters");
+            .NotEmpty().WithMessage(ValidationMessages.Required("Name"))
+            .MaximumLength(100).WithMessage(ValidationMessages.MaxLength("Name", 100));
     }
 }
