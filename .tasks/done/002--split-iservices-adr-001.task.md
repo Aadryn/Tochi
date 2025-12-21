@@ -74,3 +74,41 @@ git push origin refactor/002--split-iservices
 ---
 
 _Conforme à : ADR-001_
+
+
+## TRACKING
+Début: 2025-12-21T16:38:50.6104175Z
+
+
+
+## RÉSULTATS
+
+**Fin:** 2025-12-21T16:40:18.2445681Z
+**Durée:** 00:01:27
+
+**Fichiers créés (5):**
+- IQuotaService.cs (40 lignes)
+- QuotaCheckResult.cs (44 lignes - Result Pattern)
+- ICacheService.cs (38 lignes)
+- ISecretService.cs (23 lignes)
+- ITokenCounterService.cs (22 lignes)
+
+**Fichiers supprimés (1):**
+- IServices.cs (103 lignes - 5 types)
+
+**Build:**
+- Résultat: SUCCÈS
+- Erreurs: 0
+- Warnings: 0 (2 pré-existants dans TenantTests.cs - xUnit1012)
+
+**Tests:**
+- Total: 66/66 (100%)
+- Domaine: 17/17
+- Sécurité: 35/35
+- Gateway: 14/14
+- Échecs: 0
+- Ignorés: 0
+
+**Conformité ADR-001:**
+ VIOLATION CORRIGÉE - 5 types séparés en 5 fichiers distincts
+

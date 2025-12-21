@@ -300,3 +300,39 @@ Durée: 00:01:27
 
 Commit: 28725e1 'refactor(domain): split IRepositories.cs into 8 files (ADR-001)'
 
+
+
+## RÉSULTATS
+
+**Fin:** 2025-12-21T16:38:29.9810729Z
+**Durée:** 00:05:00
+
+**Fichiers créés (8):**
+- ITenantRepository.cs (18 lignes)
+- IUserRepository.cs (18 lignes)
+- IApiKeyRepository.cs (17 lignes)
+- ILLMProviderRepository.cs (16 lignes)
+- IQuotaLimitRepository.cs (15 lignes)
+- IAuditLogRepository.cs (14 lignes)
+- ITokenUsageMetricRepository.cs (15 lignes)
+- IUnitOfWork.cs (19 lignes)
+
+**Fichiers supprimés (1):**
+- IRepositories.cs (120 lignes - 8 types)
+
+**Build:**
+- Résultat: SUCCÈS
+- Erreurs: 0
+- Warnings: 0 (2 pré-existants dans TenantTests.cs - xUnit1012)
+
+**Tests:**
+- Total: 66/66 (100%)
+- Domaine: 17/17
+- Sécurité: 35/35
+- Gateway: 14/14
+- Échecs: 0
+- Ignorés: 0
+
+**Conformité ADR-001:**
+ VIOLATION CORRIGÉE - 8 types séparés en 8 fichiers distincts
+

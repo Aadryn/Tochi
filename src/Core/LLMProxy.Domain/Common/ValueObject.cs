@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace LLMProxy.Domain.Common;
 
 /// <summary>
@@ -19,7 +21,11 @@ public abstract class ValueObject
 
     public override int GetHashCode()
     {
-        return GetEqualityComponents()
+        var components = GetEqualityComponents().ToList();
+        Debug.Assert(components != null, "Equality components must not be null");
+        Debug.Assert(components.Any(), "ValueObject must have at least one equality component");
+        
+        return components
             .Select(x => x?.GetHashCode() ?? 0)
             .Aggregate((x, y) => x ^ y);
     }
