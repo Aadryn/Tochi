@@ -70,7 +70,7 @@ public class LLMProvider : Entity
         if (string.IsNullOrWhiteSpace(name))
             return Result.Failure<LLMProvider>("Provider name cannot be empty.");
 
-        if (string.IsNullOrWhiteSpace(baseUrl) || !Uri.TryCreate(baseUrl, UriKind.Absolute, out _))
+        if (!IsValidUrl(baseUrl))
             return Result.Failure<LLMProvider>("Invalid base URL.");
 
         if (string.IsNullOrWhiteSpace(model))
@@ -152,7 +152,7 @@ public class LLMProvider : Entity
 
     public void UpdateBaseUrl(string baseUrl)
     {
-        if (string.IsNullOrWhiteSpace(baseUrl) || !Uri.TryCreate(baseUrl, UriKind.Absolute, out _))
+        if (!IsValidUrl(baseUrl))
             throw new ArgumentException("Invalid base URL.", nameof(baseUrl));
 
         BaseUrl = baseUrl;
@@ -194,5 +194,15 @@ public class LLMProvider : Entity
             Configuration.CertificateSecretName
         );
         UpdatedAt = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Valide qu'une URL est bien formée et absolue.
+    /// </summary>
+    /// <param name="url">URL à valider.</param>
+    /// <returns>True si l'URL est valide, sinon false.</returns>
+    private static bool IsValidUrl(string url)
+    {
+        return !string.IsNullOrWhiteSpace(url) && Uri.TryCreate(url, UriKind.Absolute, out _);
     }
 }
