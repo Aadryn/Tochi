@@ -1,4 +1,5 @@
 using LLMProxy.Domain.Interfaces;
+using LLMProxy.Infrastructure.Redis.Common;
 using LLMProxy.Infrastructure.Security;
 using StackExchange.Redis;
 using System.Text;
@@ -11,7 +12,7 @@ public class CacheService : ICacheService
     private readonly IConnectionMultiplexer _redis;
     private readonly IDatabase _db;
     private readonly IHashService _hashService;
-    private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    private static readonly JsonSerializerOptions _jsonOptions = JsonSerializerOptionsFactory.CreateDefault();
 
     public CacheService(IConnectionMultiplexer redis, IHashService hashService)
     {

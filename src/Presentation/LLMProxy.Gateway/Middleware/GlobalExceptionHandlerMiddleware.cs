@@ -117,11 +117,10 @@ public class GlobalExceptionHandlerMiddleware
             response.Error.StackTrace = exception.StackTrace;
         }
 
-        var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = _environment.IsDevelopment()
-        });
+        var jsonOptions = LLMProxy.Infrastructure.Redis.Common.JsonSerializerOptionsFactory.CreateDefault();
+        jsonOptions.WriteIndented = _environment.IsDevelopment();
+
+        var json = JsonSerializer.Serialize(response, jsonOptions);
 
         await context.Response.WriteAsync(json);
     }
