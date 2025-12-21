@@ -37,8 +37,14 @@ public class TokenUsageMetric : Entity
         DateTime periodStart,
         MetricPeriod period)
     {
-        if (tenantId == Guid.Empty)
-            return Result.Failure<TokenUsageMetric>("Invalid tenant ID.");
+        try
+        {
+            Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
+        }
+        catch (ArgumentException ex)
+        {
+            return Result.Failure<TokenUsageMetric>(ex.Message);
+        }
 
         var metric = new TokenUsageMetric
         {

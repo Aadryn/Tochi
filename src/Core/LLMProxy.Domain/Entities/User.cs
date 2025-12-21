@@ -47,11 +47,9 @@ public class User : Entity
 
     public static Result<User> Create(Guid tenantId, string email, string name, UserRole role)
     {
-        if (tenantId == Guid.Empty)
-            return Result.Failure<User>("Invalid tenant ID.");
-
         try
         {
+            Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
             Guard.AgainstNullOrWhiteSpace(email, nameof(email), "Email cannot be empty.");
             if (!IsValidEmail(email))
                 return Result.Failure<User>("Invalid email address.");

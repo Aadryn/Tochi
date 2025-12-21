@@ -64,11 +64,9 @@ public class LLMProvider : Entity
         RoutingStrategy routingStrategy,
         int priority = 0)
     {
-        if (tenantId == Guid.Empty)
-            return Result.Failure<LLMProvider>("Invalid tenant ID.");
-
         try
         {
+            Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
             Guard.AgainstNullOrWhiteSpace(name, nameof(name), "Provider name cannot be empty.");
             Guard.AgainstNullOrWhiteSpace(model, nameof(model), "Model name cannot be empty.");
         }

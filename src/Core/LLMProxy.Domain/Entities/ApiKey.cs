@@ -52,14 +52,10 @@ public class ApiKey : Entity
 
     public static Result<ApiKey> Create(Guid userId, Guid tenantId, string name, DateTime? expiresAt = null)
     {
-        if (userId == Guid.Empty)
-            return Result.Failure<ApiKey>("Invalid user ID.");
-
-        if (tenantId == Guid.Empty)
-            return Result.Failure<ApiKey>("Invalid tenant ID.");
-
         try
         {
+            Guard.AgainstEmptyGuid(userId, nameof(userId), "Invalid user ID.");
+            Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
             Guard.AgainstNullOrWhiteSpace(name, nameof(name), "API key name cannot be empty.");
         }
         catch (ArgumentException ex)
