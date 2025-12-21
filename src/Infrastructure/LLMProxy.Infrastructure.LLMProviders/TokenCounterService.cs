@@ -36,42 +36,74 @@ public partial class TokenCounterService : ITokenCounterService
     {
         try
         {
-            // Try to parse as JSON (OpenAI/Azure format)
-            var jsonDoc = JsonDocument.Parse(responseBody);
+            using var jsonDoc = JsonDocument.Parse(responseBody);
             
-            if (jsonDoc.RootElement.TryGetProperty("usage", out var usage))
+            if (TryGetTokensFromUsage(jsonDoc, out var tokens))
             {
-                var promptTokens = usage.TryGetProperty("prompt_tokens", out var pt) ? pt.GetInt64() : 0;
-                var completionTokens = usage.TryGetProperty("completion_tokens", out var ct) ? ct.GetInt64() : 0;
-
-                return (promptTokens, completionTokens);
+                return tokens;
             }
 
-            // For streaming responses, estimate from content
-            if (jsonDoc.RootElement.TryGetProperty("choices", out var choices) && choices.GetArrayLength() > 0)
+            if (TryEstimateFromContent(jsonDoc, out var estimatedTokens))
             {
-                var firstChoice = choices[0];
-                if (firstChoice.TryGetProperty("message", out var message) || 
-                    firstChoice.TryGetProperty("delta", out message))
-                {
-                    if (message.TryGetProperty("content", out var content))
-                    {
-                        var text = content.GetString() ?? string.Empty;
-                        // For now, use a simple estimation model - OpenAI uses ~4 chars per token
-                        var tokens = text.Length / 4;
-                        return (0, tokens);
-                    }
-                }
+                return estimatedTokens;
             }
         }
         catch (JsonException)
         {
-            // Not valid JSON, estimate from raw text
-            var tokens = responseBody.Length / 4;
-            return (0, tokens);
+            return EstimateFromRawText(responseBody);
         }
 
         return (0, 0);
+    }
+
+    private bool TryGetTokensFromUsage(JsonDocument jsonDoc, out (long input, long output) tokens)
+    {
+        tokens = (0, 0);
+        
+        if (!jsonDoc.RootElement.TryGetProperty("usage", out var usage))
+        {
+            return false;
+        }
+
+        var promptTokens = usage.TryGetProperty("prompt_tokens", out var pt) ? pt.GetInt64() : 0;
+        var completionTokens = usage.TryGetProperty("completion_tokens", out var ct) ? ct.GetInt64() : 0;
+        tokens = (promptTokens, completionTokens);
+        
+        return true;
+    }
+
+    private bool TryEstimateFromContent(JsonDocument jsonDoc, out (long input, long output) tokens)
+    {
+        tokens = (0, 0);
+        
+        if (!jsonDoc.RootElement.TryGetProperty("choices", out var choices) || choices.GetArrayLength() == 0)
+        {
+            return false;
+        }
+
+        var firstChoice = choices[0];
+        if (!firstChoice.TryGetProperty("message", out var message) && 
+            !firstChoice.TryGetProperty("delta", out message))
+        {
+            return false;
+        }
+
+        if (!message.TryGetProperty("content", out var content))
+        {
+            return false;
+        }
+
+        var text = content.GetString() ?? string.Empty;
+        var estimatedTokens = text.Length / 4;
+        tokens = (0, estimatedTokens);
+        
+        return true;
+    }
+
+    private (long input, long output) EstimateFromRawText(string text)
+    {
+        var tokens = text.Length / 4;
+        return (0, tokens);
     }
 
     public async Task<(int promptTokens, int completionTokens)> ParseTokensFromStreamChunkAsync(

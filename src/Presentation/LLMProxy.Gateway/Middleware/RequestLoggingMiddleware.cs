@@ -46,66 +46,82 @@ public class RequestLoggingMiddleware
             throw new ArgumentNullException(nameof(context));
         }
 
-        // Générer RequestId unique pour correlation (format compact)
-        var requestId = Guid.NewGuid().ToString("N");
-        context.Items["RequestId"] = requestId;
-
-        using var activity = _activitySource.StartActivity("ProcessRequest");
-        activity?.SetTag("request.id", requestId);
-        activity?.SetTag("request.method", context.Request.Method);
-        activity?.SetTag("request.path", context.Request.Path);
-
+        var requestId = InitializeRequestTracking(context);
         var sw = Stopwatch.StartNew();
-
-        // Masquer données sensibles dans querystring et headers
         var sanitizedQueryString = SanitizeQueryString(context.Request.QueryString);
-        var sanitizedHeaders = SanitizeHeaders(context.Request.Headers);
+
+        using var activity = CreateActivity(context, requestId);
 
         try
         {
-            // Log début de requête avec données sanitisées
-            _logger.LogRequestStarted(
-                context.Request.Method,
-                $"{context.Request.Path}{sanitizedQueryString}",
-                Guid.Parse(requestId));
-
+            LogRequestStart(context, requestId, sanitizedQueryString);
             await _next(context);
-
             sw.Stop();
-
-            // Déterminer niveau de log selon status code
-            var level = context.Response.StatusCode >= 500 ? LogLevel.Error
-                      : context.Response.StatusCode >= 400 ? LogLevel.Warning
-                      : LogLevel.Information;
-
-            if (level <= LogLevel.Information)
-            {
-                _logger.LogRequestCompleted(
-                    context.Request.Method,
-                    context.Request.Path,
-                    context.Response.StatusCode,
-                    sw.ElapsedMilliseconds,
-                    Guid.Parse(requestId));
-            }
-
-            activity?.SetTag("response.status_code", context.Response.StatusCode);
-            activity?.SetTag("response.duration_ms", sw.ElapsedMilliseconds);
+            
+            LogRequestCompletion(context, requestId, sw.ElapsedMilliseconds, activity);
         }
         catch (Exception ex)
         {
             sw.Stop();
-
-            _logger.LogRequestError(ex,
-                context.Request.Method,
-                context.Request.Path,
-                Guid.Parse(requestId));
-
-            activity?.SetTag("error", true);
-            activity?.SetTag("exception.type", ex.GetType().Name);
-            activity?.SetTag("exception.message", ex.Message);
-
+            LogRequestError(context, requestId, ex, activity);
             throw;
         }
+    }
+
+    private string InitializeRequestTracking(HttpContext context)
+    {
+        var requestId = Guid.NewGuid().ToString("N");
+        context.Items["RequestId"] = requestId;
+        return requestId;
+    }
+
+    private Activity? CreateActivity(HttpContext context, string requestId)
+    {
+        var activity = _activitySource.StartActivity("ProcessRequest");
+        activity?.SetTag("request.id", requestId);
+        activity?.SetTag("request.method", context.Request.Method);
+        activity?.SetTag("request.path", context.Request.Path);
+        return activity;
+    }
+
+    private void LogRequestStart(HttpContext context, string requestId, string sanitizedQueryString)
+    {
+        _logger.LogRequestStarted(
+            context.Request.Method,
+            $"{context.Request.Path}{sanitizedQueryString}",
+            Guid.Parse(requestId));
+    }
+
+    private void LogRequestCompletion(HttpContext context, string requestId, long elapsedMs, Activity? activity)
+    {
+        var level = context.Response.StatusCode >= 500 ? LogLevel.Error
+                  : context.Response.StatusCode >= 400 ? LogLevel.Warning
+                  : LogLevel.Information;
+
+        if (level <= LogLevel.Information)
+        {
+            _logger.LogRequestCompleted(
+                context.Request.Method,
+                context.Request.Path,
+                context.Response.StatusCode,
+                elapsedMs,
+                Guid.Parse(requestId));
+        }
+
+        activity?.SetTag("response.status_code", context.Response.StatusCode);
+        activity?.SetTag("response.duration_ms", elapsedMs);
+    }
+
+    private void LogRequestError(HttpContext context, string requestId, Exception ex, Activity? activity)
+    {
+        _logger.LogRequestError(ex,
+            context.Request.Method,
+            context.Request.Path,
+            Guid.Parse(requestId));
+
+        activity?.SetTag("error", true);
+        activity?.SetTag("exception.type", ex.GetType().Name);
+        activity?.SetTag("exception.message", ex.Message);
     }
 
     /// <summary>

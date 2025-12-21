@@ -129,74 +129,91 @@ public class StreamInterceptionMiddleware
         using var reader = new StreamReader(responseStream);
         using var writer = new StreamWriter(originalStream, leaveOpen: true) { AutoFlush = true };
 
-        // var tokenCount = 0;  // Unused - token counting happens server-side
-        var chunks = new List<string>();
+        var chunks = await ProcessAndForwardStreamLines(reader, writer);
+        var (inputTokens, outputTokens) = await EstimateTokenCounts(context, chunks);
+        
+        LogStreamingCompletion(context, chunks, inputTokens, outputTokens);
+        await SaveMetricsAsync(context, inputTokens, outputTokens, string.Join("", chunks));
+    }
 
+    private async Task<List<string>> ProcessAndForwardStreamLines(StreamReader reader, StreamWriter writer)
+    {
+        var chunks = new List<string>();
         string? line;
+        
         while ((line = await reader.ReadLineAsync()) != null)
         {
-            // Parse SSE format: "data: {json}"
             if (line.StartsWith("data: "))
             {
-                var data = line.Substring(6);
-                
-                if (data == "[DONE]")
+                var content = ExtractContentFromStreamLine(line);
+                if (content == "[DONE]")
                 {
                     await writer.WriteLineAsync(line);
                     break;
                 }
-
-                try
+                
+                if (!string.IsNullOrEmpty(content))
                 {
-                    // Parse JSON and extract content
-                    using var jsonDoc = JsonDocument.Parse(data);
-                    var root = jsonDoc.RootElement;
-                    
-                    // Extract content from choices[0].delta.content or similar structure
-                    if (root.TryGetProperty("choices", out var choices) && choices.GetArrayLength() > 0)
-                    {
-                        var choice = choices[0];
-                        if (choice.TryGetProperty("delta", out var delta) && 
-                            delta.TryGetProperty("content", out var content))
-                        {
-                            var contentText = content.GetString();
-                            if (!string.IsNullOrEmpty(contentText))
-                            {
-                                chunks.Add(contentText);
-                            }
-                        }
-                    }
-                }
-                catch (JsonException ex)
-                {
-                    _logger.LogStreamingChunkParseError(ex, data);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogStreamingChunkProcessingError(ex);
+                    chunks.Add(content);
                 }
             }
 
-            // Forward the line to the client
             await writer.WriteLineAsync(line);
         }
+        
+        return chunks;
+    }
 
-        // After streaming is complete, log metrics
-        var fullResponse = string.Join("", chunks);
-        long outputTokens = 0;
+    private string? ExtractContentFromStreamLine(string line)
+    {
+        var data = line.Substring(6);
+        
+        if (data == "[DONE]")
+        {
+            return "[DONE]";
+        }
+
+        try
+        {
+            using var jsonDoc = JsonDocument.Parse(data);
+            var root = jsonDoc.RootElement;
+            
+            if (root.TryGetProperty("choices", out var choices) && choices.GetArrayLength() > 0)
+            {
+                var choice = choices[0];
+                if (choice.TryGetProperty("delta", out var delta) && 
+                    delta.TryGetProperty("content", out var content))
+                {
+                    return content.GetString();
+                }
+            }
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogStreamingChunkParseError(ex, data);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogStreamingChunkProcessingError(ex);
+        }
+        
+        return null;
+    }
+
+    private async Task<(long inputTokens, long outputTokens)> EstimateTokenCounts(HttpContext context, List<string> chunks)
+    {
         long inputTokens = 0;
+        long outputTokens = 0;
+        const string defaultModel = "gpt-3.5-turbo";
         
         try
         {
-            // Estimate tokens from collected content
-            // Default to "gpt-3.5-turbo" model for token estimation
-            var model = "gpt-3.5-turbo";
-            outputTokens = _tokenCounter.EstimateTokens(fullResponse, model);
+            var fullResponse = string.Join("", chunks);
+            outputTokens = _tokenCounter.EstimateTokens(fullResponse, defaultModel);
             
-            // Try to get input tokens from request if available
             if (context.Items.TryGetValue("RequestBody", out var requestBodyObj) && requestBodyObj is string requestBody)
             {
-                inputTokens = _tokenCounter.EstimateTokens(requestBody, model);
+                inputTokens = _tokenCounter.EstimateTokens(requestBody, defaultModel);
             }
         }
         catch (Exception ex)
@@ -204,6 +221,11 @@ public class StreamInterceptionMiddleware
             _logger.LogStreamingTokenCountError(ex);
         }
         
+        return (inputTokens, outputTokens);
+    }
+
+    private void LogStreamingCompletion(HttpContext context, List<string> chunks, long inputTokens, long outputTokens)
+    {
         _logger.LogInformation(
             "Streaming completed: {Path} | Chunks: {ChunkCount} | InputTokens: {InputTokens} | OutputTokens: {OutputTokens} | RequestId: {RequestId}",
             context.Request.Path,
@@ -211,69 +233,96 @@ public class StreamInterceptionMiddleware
             inputTokens,
             outputTokens,
             context.Items.TryGetValue("RequestId", out var reqId) ? reqId : "unknown");
-
-        // Save audit log and update token usage metrics
-        await SaveMetricsAsync(context, inputTokens, outputTokens, fullResponse);
     }
     
     private async Task SaveMetricsAsync(HttpContext context, long inputTokens, long outputTokens, string responseContent)
     {
         try
         {
+            var (userId, tenantId, apiKeyId) = ExtractContextIds(context);
+            
+            if (!tenantId.HasValue || !userId.HasValue)
+            {
+                return;
+            }
+
             using var scope = _serviceScopeFactory.CreateScope();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             
-            var userId = context.Items.TryGetValue("UserId", out var userIdObj) && userIdObj is Guid uid ? uid : (Guid?)null;
-            var tenantId = context.Items.TryGetValue("TenantId", out var tenantIdObj) && tenantIdObj is Guid tid ? tid : (Guid?)null;
-            var apiKeyId = context.Items.TryGetValue("ApiKeyId", out var apiKeyIdObj) && apiKeyIdObj is Guid akid ? akid : (Guid?)null;
+            var auditLogResult = CreateAuditLog(context, tenantId.Value, userId, apiKeyId, inputTokens, outputTokens, responseContent);
             
-            if (tenantId.HasValue && userId.HasValue)
+            if (auditLogResult.IsSuccess)
             {
-                // Create audit log
-                var auditLogResult = AuditLog.Create(
-                    tenantId.Value,
-                    userId,
-                    apiKeyId,
-                    null, // providerId - would need to be extracted from routing
-                    context.Items.TryGetValue("RequestId", out var reqId) ? reqId?.ToString() ?? Guid.NewGuid().ToString() : Guid.NewGuid().ToString(),
-                    context.Request.Path.Value ?? "/",
-                    context.Request.Method,
-                    context.Request.Path.Value,
-                    context.Response.StatusCode,
-                    null, // request body
-                    responseContent.Length > 10000 ? responseContent.Substring(0, 10000) : responseContent, // truncate large responses
-                    false, // isAnonymized
-                    inputTokens,
-                    outputTokens,
-                    (int)(context.Items.TryGetValue("RequestDuration", out var duration) && duration is int d ? d : 0),
-                    context.Connection.RemoteIpAddress?.ToString(),
-                    context.Request.Headers["User-Agent"].ToString()
-                );
+                await unitOfWork.AuditLogs.AddAsync(auditLogResult.Value);
+                await unitOfWork.SaveChangesAsync();
                 
-                if (auditLogResult.IsSuccess)
-                {
-                    await unitOfWork.AuditLogs.AddAsync(auditLogResult.Value);
-                    await unitOfWork.SaveChangesAsync();
-                    
-                    // RequestId from HttpContext.Items
-                    var requestIdObj = context.Items["RequestId"];
-                    var requestId = requestIdObj switch
-                    {
-                        Guid g => g,
-                        string s => Guid.Parse(s),
-                        _ => throw new InvalidOperationException("RequestId not found or invalid type")
-                    };
-                    _logger.LogAuditLogSaved(requestId);
-                }
-                else
-                {
-                    _logger.LogAuditLogCreationError(auditLogResult.Error ?? "Unknown error");
-                }
+                var requestId = GetRequestId(context);
+                _logger.LogAuditLogSaved(requestId);
+            }
+            else
+            {
+                _logger.LogAuditLogCreationError(auditLogResult.Error ?? "Unknown error");
             }
         }
         catch (Exception ex)
         {
             _logger.LogMetricsSaveError(ex);
         }
+    }
+
+    private (Guid? userId, Guid? tenantId, Guid? apiKeyId) ExtractContextIds(HttpContext context)
+    {
+        var userId = context.Items.TryGetValue("UserId", out var userIdObj) && userIdObj is Guid uid ? uid : (Guid?)null;
+        var tenantId = context.Items.TryGetValue("TenantId", out var tenantIdObj) && tenantIdObj is Guid tid ? tid : (Guid?)null;
+        var apiKeyId = context.Items.TryGetValue("ApiKeyId", out var apiKeyIdObj) && apiKeyIdObj is Guid akid ? akid : (Guid?)null;
+        
+        return (userId, tenantId, apiKeyId);
+    }
+
+    private Domain.Common.Result<AuditLog> CreateAuditLog(HttpContext context, Guid tenantId, Guid? userId, Guid? apiKeyId, 
+        long inputTokens, long outputTokens, string responseContent)
+    {
+        var requestId = context.Items.TryGetValue("RequestId", out var reqId) 
+            ? reqId?.ToString() ?? Guid.NewGuid().ToString() 
+            : Guid.NewGuid().ToString();
+        
+        var truncatedResponse = responseContent.Length > 10000 
+            ? responseContent.Substring(0, 10000) 
+            : responseContent;
+        
+        var duration = context.Items.TryGetValue("RequestDuration", out var durationObj) && durationObj is int d 
+            ? d 
+            : 0;
+
+        return AuditLog.Create(
+            tenantId,
+            userId,
+            apiKeyId,
+            null,
+            requestId,
+            context.Request.Path.Value ?? "/",
+            context.Request.Method,
+            context.Request.Path.Value,
+            context.Response.StatusCode,
+            null,
+            truncatedResponse,
+            false,
+            inputTokens,
+            outputTokens,
+            duration,
+            context.Connection.RemoteIpAddress?.ToString(),
+            context.Request.Headers["User-Agent"].ToString()
+        );
+    }
+
+    private Guid GetRequestId(HttpContext context)
+    {
+        var requestIdObj = context.Items["RequestId"];
+        return requestIdObj switch
+        {
+            Guid g => g,
+            string s => Guid.Parse(s),
+            _ => throw new InvalidOperationException("RequestId not found or invalid type")
+        };
     }
 }

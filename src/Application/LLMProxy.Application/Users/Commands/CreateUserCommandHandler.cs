@@ -39,28 +39,18 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserD
     {
         try
         {
-            // Verify tenant exists
-            var tenant = await _unitOfWork.Tenants.GetByIdAsync(request.TenantId, cancellationToken);
-            if (tenant == null)
+            var tenantValidation = await ValidateTenant(request.TenantId, cancellationToken);
+            if (tenantValidation.IsFailure)
             {
-                _logger.LogWarning("Tenant {TenantId} not found", request.TenantId);
-                return Result.Failure<UserDto>("Tenant not found.");
+                return Result.Failure<UserDto>(tenantValidation.Error!);
             }
 
-            if (!tenant.IsActive)
-            {
-                _logger.LogWarning("Tenant {TenantId} is not active", request.TenantId);
-                return Result.Failure<UserDto>("Cannot create user for inactive tenant.");
-            }
-
-            // Check if email already exists for this tenant
             if (await _unitOfWork.Users.EmailExistsAsync(request.TenantId, request.Email, cancellationToken))
             {
                 _logger.LogWarning("User with email {Email} already exists in tenant {TenantId}", request.Email, request.TenantId);
                 return Result.Failure<UserDto>($"User with email '{request.Email}' already exists.");
             }
 
-            // Create user
             var userResult = User.Create(request.TenantId, request.Email, request.Name, request.Role);
             if (userResult.IsFailure)
             {
@@ -69,31 +59,51 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserD
             }
 
             var user = userResult.Value;
-
-            // Save to database
             await _unitOfWork.Users.AddAsync(user, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("User {UserId} created successfully for tenant {TenantId}", user.Id, request.TenantId);
 
-            var dto = new UserDto
-            {
-                Id = user.Id,
-                TenantId = user.TenantId,
-                Email = user.Email,
-                Name = user.Name,
-                Role = user.Role.ToString(),
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt ?? DateTime.MinValue
-            };
-
-            return Result.Success(dto);
+            return Result.Success(MapToDto(user));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating user with email {Email}", request.Email);
             return Result.Failure<UserDto>("An error occurred while creating the user.");
         }
+    }
+
+    private async Task<Domain.Common.Result> ValidateTenant(Guid tenantId, CancellationToken cancellationToken)
+    {
+        var tenant = await _unitOfWork.Tenants.GetByIdAsync(tenantId, cancellationToken);
+        
+        if (tenant == null)
+        {
+            _logger.LogWarning("Tenant {TenantId} not found", tenantId);
+            return Domain.Common.Result.Failure("Tenant not found.");
+        }
+
+        if (!tenant.IsActive)
+        {
+            _logger.LogWarning("Tenant {TenantId} is not active", tenantId);
+            return Domain.Common.Result.Failure("Cannot create user for inactive tenant.");
+        }
+
+        return Domain.Common.Result.Success();
+    }
+
+    private UserDto MapToDto(User user)
+    {
+        return new UserDto
+        {
+            Id = user.Id,
+            TenantId = user.TenantId,
+            Email = user.Email,
+            Name = user.Name,
+            Role = user.Role.ToString(),
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt ?? DateTime.MinValue
+        };
     }
 }
