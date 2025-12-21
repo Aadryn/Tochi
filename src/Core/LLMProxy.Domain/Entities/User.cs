@@ -1,4 +1,5 @@
 using LLMProxy.Domain.Common;
+using LLMProxy.Domain.Extensions;
 using System.Diagnostics;
 
 namespace LLMProxy.Domain.Entities;
@@ -61,7 +62,7 @@ public class User : Entity
             return Result.Failure<User>(ex.Message);
         }
 
-        var user = new User(tenantId, email.ToLowerInvariant(), name, role);
+        var user = new User(tenantId, email.NormalizeEmail(), name, role);
         
         return Result.Success(user);
     }
@@ -76,7 +77,7 @@ public class User : Entity
             return Result.Failure<ApiKey>(apiKeyResult.Error!);
 
         _apiKeys.Add(apiKeyResult.Value);
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success(apiKeyResult.Value);
     }
@@ -100,7 +101,7 @@ public class User : Entity
             _quotaLimits.Add(quotaResult.Value);
         }
 
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         return Result.Success();
     }
 
@@ -110,7 +111,7 @@ public class User : Entity
             return Result.Failure("User is already inactive.");
 
         IsActive = false;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         // Revoke all active API keys
         foreach (var apiKey in _apiKeys.Where(k => k.IsActive))
@@ -127,7 +128,7 @@ public class User : Entity
             return Result.Failure("User is already active.");
 
         IsActive = true;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }
@@ -137,13 +138,13 @@ public class User : Entity
         Guard.AgainstNullOrWhiteSpace(name, nameof(name), "User name cannot be empty.");
 
         Name = name;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
     }
 
     public void UpdateRole(UserRole role)
     {
         Role = role;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
     }
 
     private static bool IsValidEmail(string email)

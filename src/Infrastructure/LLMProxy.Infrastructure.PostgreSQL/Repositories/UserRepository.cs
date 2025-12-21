@@ -1,3 +1,5 @@
+using LLMProxy.Domain.Entities;
+using LLMProxy.Domain.Extensions;
 using LLMProxy.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +23,7 @@ internal class UserRepository : RepositoryBase<Domain.Entities.User>, IUserRepos
     public async Task<Domain.Entities.User?> GetByEmailAsync(Guid tenantId, string email, CancellationToken cancellationToken = default)
     {
         return await _context.Users
-            .FirstOrDefaultAsync(u => u.TenantId == tenantId && u.Email == email.ToLowerInvariant(), cancellationToken);
+            .FirstOrDefaultAsync(u => u.TenantId == tenantId && u.Email == email.NormalizeEmail(), cancellationToken);
     }
 
     public async Task<IEnumerable<Domain.Entities.User>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default)
@@ -39,6 +41,6 @@ internal class UserRepository : RepositoryBase<Domain.Entities.User>, IUserRepos
 
     public async Task<bool> EmailExistsAsync(Guid tenantId, string email, CancellationToken cancellationToken = default)
     {
-        return await _context.Users.AnyAsync(u => u.TenantId == tenantId && u.Email == email.ToLowerInvariant(), cancellationToken);
+        return await _context.Users.AnyAsync(u => u.TenantId == tenantId && u.Email == email.NormalizeEmail(), cancellationToken);
     }
 }

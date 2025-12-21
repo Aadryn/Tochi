@@ -1,4 +1,5 @@
 using LLMProxy.Domain.Entities;
+using LLMProxy.Domain.Extensions;
 using LLMProxy.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,7 @@ public class TenantRepository : RepositoryBase<Tenant>, ITenantRepository
     public async Task<Tenant?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
     {
         return await _context.Tenants
-            .FirstOrDefaultAsync(t => t.Slug == slug.ToLowerInvariant(), cancellationToken);
+            .FirstOrDefaultAsync(t => t.Slug == slug.NormalizeSlug(), cancellationToken);
     }
 
     public async Task<IEnumerable<Tenant>> GetAllAsync(bool includeInactive = false, CancellationToken cancellationToken = default)
@@ -44,6 +45,6 @@ public class TenantRepository : RepositoryBase<Tenant>, ITenantRepository
     public async Task<bool> SlugExistsAsync(string slug, CancellationToken cancellationToken = default)
     {
         return await _context.Tenants
-            .AnyAsync(t => t.Slug == slug.ToLowerInvariant(), cancellationToken);
+            .AnyAsync(t => t.Slug == slug.NormalizeSlug(), cancellationToken);
     }
 }
