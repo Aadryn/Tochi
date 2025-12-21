@@ -1,4 +1,3 @@
-using FluentValidation;
 using LLMProxy.Application.Common;
 using LLMProxy.Domain.Common;
 using LLMProxy.Domain.Entities;
@@ -7,28 +6,9 @@ using MediatR;
 
 namespace LLMProxy.Application.Users.Commands;
 
-public record UpdateUserCommand : ICommand<UserDto>
-{
-    public Guid UserId { get; set; }
-    public string Name { get; init; } = string.Empty;
-    public string Role { get; init; } = string.Empty;
-}
-
-public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
-{
-    public UpdateUserCommandValidator()
-    {
-        RuleFor(x => x.UserId).NotEmpty();
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
-        RuleFor(x => x.Role).NotEmpty().Must(BeValidRole).WithMessage("Invalid role. Valid roles: User, Admin, TenantAdmin");
-    }
-
-    private bool BeValidRole(string role)
-    {
-        return Enum.TryParse<UserRole>(role, true, out _);
-    }
-}
-
+/// <summary>
+/// Gestionnaire pour la commande de mise à jour d'utilisateur.
+/// </summary>
 public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result<UserDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -67,34 +47,5 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
         };
 
         return Result.Success(dto);
-    }
-}
-
-public record DeleteUserCommand : ICommand
-{
-    public Guid UserId { get; init; }
-}
-
-public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Result>
-{
-    private readonly IUnitOfWork _unitOfWork;
-
-    public DeleteUserCommandHandler(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
-
-    public async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
-    {
-        var user = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
-        if (user == null)
-        {
-            return Result.Failure($"User with ID {request.UserId} not found");
-        }
-
-        await _unitOfWork.Users.DeleteAsync(request.UserId, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
     }
 }
