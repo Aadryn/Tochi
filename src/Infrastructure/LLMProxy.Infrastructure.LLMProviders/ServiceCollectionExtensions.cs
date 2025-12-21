@@ -13,8 +13,8 @@ namespace LLMProxy.Infrastructure.LLMProviders;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Enregistre l'infrastructure LLM providers avec circuit breaker.
-    /// Conforme à ADR-032 (Circuit Breaker Pattern).
+    /// Enregistre l'infrastructure LLM providers avec circuit breaker et retry.
+    /// Conforme à ADR-032 (Circuit Breaker) et ADR-033 (Retry Pattern).
     /// </summary>
     /// <param name="services">Collection de services.</param>
     /// <param name="configuration">Configuration application.</param>
@@ -33,51 +33,52 @@ public static class ServiceCollectionExtensions
         
         services.AddSingleton(circuitBreakerOptions);
 
-        // HttpClient factory avec circuit breaker par provider
-        ConfigureHttpClientsWithCircuitBreaker(services, circuitBreakerOptions);
+        // Retry Policy configuration
+        var retryOptions = configuration
+            .GetSection("RetryPolicy")
+            .Get<RetryPolicyOptions>() ?? new RetryPolicyOptions();
+        
+        services.AddSingleton(retryOptions);
+
+        // HttpClient factory avec résilience complète par provider
+        ConfigureHttpClientsWithResilience(services, circuitBreakerOptions, retryOptions);
 
         return services;
     }
 
     /// <summary>
-    /// Configure les HttpClient pour chaque provider LLM avec circuit breaker isolé.
+    /// Configure les HttpClient pour chaque provider LLM avec résilience complète (circuit breaker + retry).
     /// </summary>
-    private static void ConfigureHttpClientsWithCircuitBreaker(
+    private static void ConfigureHttpClientsWithResilience(
         IServiceCollection services,
-        CircuitBreakerOptions options)
+        CircuitBreakerOptions circuitBreakerOptions,
+        RetryPolicyOptions retryOptions)
     {
-        // OpenAI provider avec circuit breaker
+        var logger = services.BuildServiceProvider().GetRequiredService<ILogger<object>>();
+
+        // OpenAI provider avec résilience complète
         services.AddHttpClient("OpenAI", client =>
         {
             client.BaseAddress = new Uri("https://api.openai.com/");
             client.Timeout = TimeSpan.FromSeconds(30);
         })
-        .AddCircuitBreakerPolicy(
-            "OpenAI",
-            options,
-            services.BuildServiceProvider().GetRequiredService<ILogger<object>>());
+        .AddResiliencePolicies("OpenAI", circuitBreakerOptions, retryOptions, logger);
 
-        // Anthropic provider avec circuit breaker isolé
+        // Anthropic provider avec résilience complète
         services.AddHttpClient("Anthropic", client =>
         {
             client.BaseAddress = new Uri("https://api.anthropic.com/");
             client.Timeout = TimeSpan.FromSeconds(30);
         })
-        .AddCircuitBreakerPolicy(
-            "Anthropic",
-            options,
-            services.BuildServiceProvider().GetRequiredService<ILogger<object>>());
+        .AddResiliencePolicies("Anthropic", circuitBreakerOptions, retryOptions, logger);
 
-        // Ollama provider local avec circuit breaker
+        // Ollama provider local avec résilience complète
         services.AddHttpClient("Ollama", client =>
         {
             client.BaseAddress = new Uri("http://localhost:11434/");
             client.Timeout = TimeSpan.FromSeconds(60);
         })
-        .AddCircuitBreakerPolicy(
-            "Ollama",
-            options,
-            services.BuildServiceProvider().GetRequiredService<ILogger<object>>());
+        .AddResiliencePolicies("Ollama", circuitBreakerOptions, retryOptions, logger);
     }
 
     /// <summary>

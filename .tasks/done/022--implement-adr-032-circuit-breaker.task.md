@@ -414,3 +414,39 @@ dotnet test --no-build
 Début: 2025-12-21T23:43:51.5421100Z
 
 
+
+## COMPLÉTION
+
+Fin: 2025-12-21T23:50:56.4280663Z
+Durée: 00:07:04
+
+### Résultats
+
+**Build**:  0 erreurs, 0 warnings
+**Tests**:  72 total (17 Domain + 35 Security + 20 Gateway)
+**Conformité ADR-032**: 45%  90%
+
+### Fichiers modifiés
+1. CircuitBreakerOptions.cs (43 lignes) - Configuration POCO
+2. HttpClientCircuitBreakerExtensions.cs (90 lignes) - Polly v8 integration
+3. ServiceCollectionExtensions.cs (1493 lignes) - HttpClient configuration
+4. LLMProxy.Infrastructure.LLMProviders.csproj - Packages: Http.Resilience, Polly.Extensions
+5. appsettings.json - CircuitBreaker section
+6. Program.cs - Configuration enablement
+
+### Implémentation
+- 3 circuits isolés (OpenAI, Anthropic, Ollama)
+- AddStandardResilienceHandler de Microsoft.Extensions.Http.Resilience
+- Logs structurés (EventIds 5001-5003: Opened, Closed, HalfOpened)
+- Configuration-driven via appsettings.json
+
+### Commits
+- 81c71f7: feat(resilience): Add circuit breaker with Polly v8
+- Merge: feature/022  main (--no-ff)
+- Feature branch deleted
+
+## COMPLÉTION
+
+Fin: 2025-12-21T23:51:01.6533855Z
+Durée: 00:07:10
+
