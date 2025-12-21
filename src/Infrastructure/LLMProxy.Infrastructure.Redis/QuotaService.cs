@@ -5,18 +5,37 @@ using System.Text.Json;
 
 namespace LLMProxy.Infrastructure.Redis;
 
+/// <summary>
+/// Service de gestion des quotas utilisateurs basé sur Redis.
+/// </summary>
+/// <remarks>
+/// Implémente la vérification, l'incrémentation et la gestion des limites de quotas en temps réel
+/// avec stockage distribué Redis pour des performances élevées et expiration automatique des fenêtres.
+/// </remarks>
 public class QuotaService : IQuotaService
 {
     private readonly IConnectionMultiplexer _redis;
     private readonly IDatabase _db;
     private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
+    /// <summary>
+    /// Initialise une nouvelle instance de <see cref="QuotaService"/>.
+    /// </summary>
+    /// <param name="redis">Le multiplexeur de connexions Redis.</param>
     public QuotaService(IConnectionMultiplexer redis)
     {
         _redis = redis;
         _db = redis.GetDatabase();
     }
 
+    /// <summary>
+    /// Vérifie si un quota peut être consommé sans dépasser la limite.
+    /// </summary>
+    /// <param name="userId">Identifiant de l'utilisateur.</param>
+    /// <param name="quotaType">Type de quota à vérifier.</param>
+    /// <param name="amount">Montant à consommer (par défaut 1).</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>Résultat de vérification indiquant autorisation ou refus avec détails.</returns>
     public async Task<QuotaCheckResult> CheckQuotaAsync(Guid userId, QuotaType quotaType, long amount = 1, CancellationToken cancellationToken = default)
     {
         var key = GetQuotaKey(userId, quotaType);
@@ -55,6 +74,14 @@ public class QuotaService : IQuotaService
         return QuotaCheckResult.Allow(quotaUsage);
     }
 
+    /// <summary>
+    /// Incrémente l'utilisation d'un quota de manière atomique.
+    /// </summary>
+    /// <param name="userId">Identifiant de l'utilisateur.</param>
+    /// <param name="quotaType">Type de quota à incrémenter.</param>
+    /// <param name="amount">Montant à ajouter (par défaut 1).</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>État du quota après incrémentation.</returns>
     public async Task<QuotaUsage> IncrementUsageAsync(Guid userId, QuotaType quotaType, long amount = 1, CancellationToken cancellationToken = default)
     {
         var key = GetQuotaKey(userId, quotaType);
@@ -95,6 +122,13 @@ public class QuotaService : IQuotaService
         };
     }
 
+    /// <summary>
+    /// Récupère l'utilisation actuelle d'un quota.
+    /// </summary>
+    /// <param name="userId">Identifiant de l'utilisateur.</param>
+    /// <param name="quotaType">Type de quota à consulter.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>État actuel du quota ou null si non configuré.</returns>
     public async Task<QuotaUsage?> GetUsageAsync(Guid userId, QuotaType quotaType, CancellationToken cancellationToken = default)
     {
         var key = GetQuotaKey(userId, quotaType);
@@ -127,6 +161,12 @@ public class QuotaService : IQuotaService
         };
     }
 
+    /// <summary>
+    /// Récupère l'ensemble des quotas d'un utilisateur.
+    /// </summary>
+    /// <param name="userId">Identifiant de l'utilisateur.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>Collection de tous les quotas configurés pour l'utilisateur.</returns>
     public async Task<IEnumerable<QuotaUsage>> GetAllUsagesAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var usages = new List<QuotaUsage>();
@@ -143,6 +183,11 @@ public class QuotaService : IQuotaService
         return usages;
     }
 
+    /// <summary>
+    /// Réinitialise les quotas expirés (opération automatique sous Redis).
+    /// </summary>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>Tâche asynchrone.</returns>
     public async Task ResetExpiredQuotasAsync(CancellationToken cancellationToken = default)
     {
         // Redis automatically expires keys based on TTL, so this is mostly a no-op
@@ -150,6 +195,11 @@ public class QuotaService : IQuotaService
         await Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Synchronise les données de quotas Redis vers PostgreSQL pour persistance.
+    /// </summary>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>Tâche asynchrone.</returns>
     public async Task SyncQuotaToDatabaseAsync(CancellationToken cancellationToken = default)
     {
         // Sync all quota data from Redis to PostgreSQL for persistence
@@ -182,12 +232,28 @@ public class QuotaService : IQuotaService
         }
     }
 
+    /// <summary>
+    /// Réinitialise un quota spécifique en supprimant sa clé Redis.
+    /// </summary>
+    /// <param name="userId">Identifiant de l'utilisateur.</param>
+    /// <param name="quotaType">Type de quota à réinitialiser.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>Tâche asynchrone.</returns>
     public async Task ResetQuotaAsync(Guid userId, QuotaType quotaType, CancellationToken cancellationToken = default)
     {
         var key = GetQuotaKey(userId, quotaType);
         await _db.KeyDeleteAsync(key);
     }
 
+    /// <summary>
+    /// Définit la limite d'un quota utilisateur.
+    /// </summary>
+    /// <param name="userId">Identifiant de l'utilisateur.</param>
+    /// <param name="quotaType">Type de quota à configurer.</param>
+    /// <param name="period">Période de la fenêtre de quota.</param>
+    /// <param name="maxValue">Valeur maximale autorisée.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>Tâche asynchrone.</returns>
     public async Task SetQuotaLimitAsync(Guid userId, QuotaType quotaType, QuotaPeriod period, long maxValue, CancellationToken cancellationToken = default)
     {
         var limitKey = GetLimitKey(userId, quotaType);
@@ -204,6 +270,14 @@ public class QuotaService : IQuotaService
         await _db.StringSetAsync(limitKey, json, TimeSpan.FromDays(30)); // Cache for 30 days
     }
 
+    /// <summary>
+    /// Tente de consommer un quota de manière atomique (vérification + incrémentation).
+    /// </summary>
+    /// <param name="userId">Identifiant de l'utilisateur.</param>
+    /// <param name="quotaType">Type de quota à consommer.</param>
+    /// <param name="amount">Montant à consommer.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>True si consommation réussie, false si quota dépassé.</returns>
     public async Task<bool> TryConsumeQuotaAsync(Guid userId, QuotaType quotaType, long amount, CancellationToken cancellationToken = default)
     {
         // Use Lua script for atomic check-and-increment
@@ -261,13 +335,5 @@ public class QuotaService : IQuotaService
             QuotaPeriod.Month => TimeSpan.FromDays(30),
             _ => throw new ArgumentException($"Unknown quota period: {period}")
         };
-    }
-
-    private class QuotaLimitCache
-    {
-        public Guid UserId { get; set; }
-        public QuotaType QuotaType { get; set; }
-        public QuotaPeriod Period { get; set; }
-        public long MaxValue { get; set; }
     }
 }

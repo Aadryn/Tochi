@@ -6,9 +6,13 @@ using System.Text;
 namespace LLMProxy.Infrastructure.Security;
 
 /// <summary>
-/// Multi-environment secret management service
-/// Supports: Environment Variables, Azure KeyVault, HashiCorp Vault, Encrypted DB Storage
+/// Service de gestion des secrets multi-environnement.
 /// </summary>
+/// <remarks>
+/// Supporte plusieurs fournisseurs de secrets : variables d'environnement, Azure KeyVault,
+/// HashiCorp Vault et stockage en base de données chiffrée. Inclut un cache en mémoire
+/// pour optimiser les accès répétés et des méthodes de chiffrement/déchiffrement AES-256.
+/// </remarks>
 public class SecretService : ISecretService
 {
     private readonly IConfiguration _configuration;
@@ -19,6 +23,10 @@ public class SecretService : ISecretService
     // Encryption key for DB-stored secrets (should be loaded from secure location in production)
     private static readonly byte[] _encryptionKey = Encoding.UTF8.GetBytes("CHANGE_THIS_32_BYTE_KEY_IN_PROD!"); // 32 bytes for AES-256
 
+    /// <summary>
+    /// Initialise une nouvelle instance de <see cref="SecretService"/>.
+    /// </summary>
+    /// <param name="configuration">Configuration de l'application pour lecture du type de fournisseur.</param>
     public SecretService(IConfiguration configuration)
     {
         _configuration = configuration;
@@ -28,6 +36,12 @@ public class SecretService : ISecretService
         );
     }
 
+    /// <summary>
+    /// Récupère un secret depuis le fournisseur configuré.
+    /// </summary>
+    /// <param name="secretName">Nom du secret à récupérer.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>Valeur du secret ou null si introuvable.</returns>
     public async Task<string?> GetSecretAsync(string secretName, CancellationToken cancellationToken = default)
     {
         // Check cache first
@@ -71,6 +85,13 @@ public class SecretService : ISecretService
         return secret;
     }
 
+    /// <summary>
+    /// Définit un secret dans le fournisseur configuré.
+    /// </summary>
+    /// <param name="secretName">Nom du secret à créer ou mettre à jour.</param>
+    /// <param name="secretValue">Valeur du secret.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>Tâche asynchrone.</returns>
     public async Task SetSecretAsync(string secretName, string secretValue, CancellationToken cancellationToken = default)
     {
         switch (_providerType)
@@ -107,6 +128,12 @@ public class SecretService : ISecretService
         }
     }
 
+    /// <summary>
+    /// Supprime un secret du fournisseur configuré.
+    /// </summary>
+    /// <param name="secretName">Nom du secret à supprimer.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>True si suppression réussie, false sinon.</returns>
     public async Task<bool> DeleteSecretAsync(string secretName, CancellationToken cancellationToken = default)
     {
         try
@@ -152,6 +179,11 @@ public class SecretService : ISecretService
         }
     }
 
+    /// <summary>
+    /// Chiffre un texte clair avec AES-256.
+    /// </summary>
+    /// <param name="plainText">Texte à chiffrer.</param>
+    /// <returns>Texte chiffré encodé en Base64.</returns>
     public string EncryptSecret(string plainText)
     {
         using var aes = Aes.Create();
@@ -173,6 +205,11 @@ public class SecretService : ISecretService
         return Convert.ToBase64String(msEncrypt.ToArray());
     }
 
+    /// <summary>
+    /// Déchiffre un texte chiffré avec AES-256.
+    /// </summary>
+    /// <param name="cipherText">Texte chiffré encodé en Base64.</param>
+    /// <returns>Texte clair déchiffré.</returns>
     public string DecryptSecret(string cipherText)
     {
         var fullCipher = Convert.FromBase64String(cipherText);
@@ -271,13 +308,5 @@ public class SecretService : ISecretService
         // TODO: Implement database storage with encryption
         await Task.CompletedTask;
         throw new NotImplementedException("Encrypted database storage not yet implemented.");
-    }
-
-    private enum SecretProviderType
-    {
-        EnvironmentVariable,
-        AzureKeyVault,
-        HashiCorpVault,
-        EncryptedDatabase
     }
 }
