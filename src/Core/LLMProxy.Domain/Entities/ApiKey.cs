@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace LLMProxy.Domain.Entities;
 
 /// <summary>
-/// Represents an API key for authentication
+/// Représente une clé API pour l'authentification
 /// </summary>
 public class ApiKey : Entity
 {
@@ -97,9 +97,7 @@ public class ApiKey : Entity
     }
 
     public bool IsExpired() => ExpiresAt.HasValue && ExpiresAt.Value <= DateTime.UtcNow;
-
     public bool IsRevoked() => RevokedAt.HasValue;
-
     public bool IsValid() => IsActive && !IsExpired() && !IsRevoked();
 
     public Result Revoke()
@@ -145,9 +143,4 @@ public class ApiKey : Entity
         var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(rawKey));
         return Convert.ToBase64String(hashBytes);
     }
-}
-
-public record ApiKeyCreatedEvent(Guid ApiKeyId, string RawKey) : IDomainEvent
-{
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
 }
