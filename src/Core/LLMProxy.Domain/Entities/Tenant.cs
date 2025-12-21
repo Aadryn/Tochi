@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace LLMProxy.Domain.Entities;
 
 /// <summary>
-/// Represents a tenant in the multi-tenant system with complete isolation
+/// Représente un tenant dans le système multi-tenant avec isolation complète
 /// </summary>
 public class Tenant : Entity
 {
@@ -111,59 +111,4 @@ public class Tenant : Entity
     {
         tenant.AddDomainEvent(domainEvent);
     }
-}
-
-/// <summary>
-/// Tenant settings value object
-/// </summary>
-public class TenantSettings : ValueObject
-{
-    public int MaxUsers { get; private set; }
-    public int MaxProviders { get; private set; }
-    public bool EnableAuditLogging { get; private set; }
-    public int AuditRetentionDays { get; private set; }
-    public bool EnableResponseCache { get; private set; }
-
-    private TenantSettings() { }
-
-    public TenantSettings(
-        int maxUsers,
-        int maxProviders,
-        bool enableAuditLogging,
-        int auditRetentionDays,
-        bool enableResponseCache)
-    {
-        MaxUsers = maxUsers;
-        MaxProviders = maxProviders;
-        EnableAuditLogging = enableAuditLogging;
-        AuditRetentionDays = auditRetentionDays;
-        EnableResponseCache = enableResponseCache;
-    }
-
-    public static TenantSettings Default() => new(
-        maxUsers: 100,
-        maxProviders: 10,
-        enableAuditLogging: true,
-        auditRetentionDays: 90,
-        enableResponseCache: true
-    );
-
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return MaxUsers;
-        yield return MaxProviders;
-        yield return EnableAuditLogging;
-        yield return AuditRetentionDays;
-        yield return EnableResponseCache;
-    }
-}
-
-public record TenantCreatedEvent(Guid TenantId, string TenantName) : IDomainEvent
-{
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-}
-
-public record TenantDeactivatedEvent(Guid TenantId) : IDomainEvent
-{
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
 }
