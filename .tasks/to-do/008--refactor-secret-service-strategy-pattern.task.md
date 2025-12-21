@@ -1,45 +1,18 @@
-using LLMProxy.Domain.Entities;
+﻿# Tâche 008 - Refactor SecretService (Strategy Pattern - ADR-005 SRP)
 
-namespace LLMProxy.Domain.Interfaces;
+**Priorité** : CRITIQUE
+**Estimation** : 8-10 heures
 
-/// <summary>
-/// Résultat de la vérification de quota (implémentation du Result Pattern)
-/// Indique si la requête est autorisée et fournit les détails d'utilisation
-/// </summary>
-public class QuotaCheckResult
-{
-    /// <summary>
-    /// Indique si la requête est autorisée selon les quotas disponibles
-    /// </summary>
-    public bool IsAllowed { get; init; }
-    
-    /// <summary>
-    /// Détails de l'utilisation du quota (actuelle et limite)
-    /// </summary>
-    public QuotaUsage? Usage { get; init; }
-    
-    /// <summary>
-    /// Raison du refus si la requête n'est pas autorisée
-    /// </summary>
-    public string? DenialReason { get; init; }
-    
-    /// <summary>
-    /// Crée un résultat positif (quota disponible)
-    /// </summary>
-    public static QuotaCheckResult Allow(QuotaUsage usage) => new()
-    {
-        IsAllowed = true,
-        Usage = usage
-    };
-    
-    /// <summary>
-    /// Crée un résultat négatif (quota dépassé ou non disponible)
-    /// </summary>
-    public static QuotaCheckResult Deny(string reason, QuotaUsage? usage = null) => new()
-    {
-        IsAllowed = false,
-        DenialReason = reason,
-        Usage = usage
-    };
-}
+## OBJECTIF
+Refactorer SecretService (312 lignes, 4 responsabilités) avec Strategy Pattern.
 
+## ARCHITECTURE CIBLE
+- ISecretProvider interface
+- 4 providers concrets
+- SecretEncryptor séparé
+- SecretService réduit à ~80 lignes
+
+## CRITÈRES DE SUCCÈS
+- [ ] < 100 lignes
+- [ ] Switch cases éliminés
+- [ ] Build + Tests OK
