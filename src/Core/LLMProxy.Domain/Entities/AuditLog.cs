@@ -108,11 +108,9 @@ public class AuditLog : Entity
         string? clientIp,
         string? userAgent)
     {
-        if (tenantId == Guid.Empty)
-            return Result.Failure<AuditLog>("Invalid tenant ID.");
-
         try
         {
+            Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
             Guard.AgainstNullOrWhiteSpace(requestId, nameof(requestId), "Request ID cannot be empty.");
             Guard.AgainstNullOrWhiteSpace(endpoint, nameof(endpoint), "Endpoint cannot be empty.");
             Guard.AgainstNullOrWhiteSpace(httpMethod, nameof(httpMethod), "HTTP method cannot be empty.");

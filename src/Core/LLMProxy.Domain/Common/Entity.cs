@@ -35,6 +35,17 @@ public abstract class Entity
         Debug.Assert(_domainEvents.Contains(domainEvent), "Domain event must be added to collection");
     }
 
+    /// <summary>
+    /// Marque l'entité comme modifiée en mettant à jour la date de modification.
+    /// </summary>
+    /// <remarks>
+    /// Centralise la mise à jour de UpdatedAt pour éviter la duplication (ADR-003 DRY).
+    /// </remarks>
+    protected void MarkAsModified()
+    {
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void ClearDomainEvents()
     {
         _domainEvents.Clear();

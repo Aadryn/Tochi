@@ -1,6 +1,7 @@
 using LLMProxy.Domain.Interfaces;
 using LLMProxy.Domain.Entities;
 using LLMProxy.Gateway.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace LLMProxy.Gateway.Middleware;
 
@@ -53,7 +54,7 @@ public class QuotaEnforcementMiddleware
             if (!quotaCheck.IsAllowed)
             {
                 _logger.LogQuotaExceeded(userId, quotaCheck.DenialReason ?? "Quota exceeded");
-                context.Response.StatusCode = 429; // Too Many Requests
+                context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
                 context.Response.Headers["X-RateLimit-Limit"] = quotaCheck.Usage?.Limit.ToString() ?? "0";
                 context.Response.Headers["X-RateLimit-Remaining"] = quotaCheck.Usage?.Remaining.ToString() ?? "0";
                 context.Response.Headers["X-RateLimit-Reset"] = quotaCheck.Usage?.WindowEnd.ToString("o") ?? "";

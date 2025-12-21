@@ -1,5 +1,6 @@
 using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.Interfaces;
+using LLMProxy.Infrastructure.Redis.Common;
 using StackExchange.Redis;
 using System.Text.Json;
 
@@ -16,7 +17,7 @@ public class QuotaService : IQuotaService
 {
     private readonly IConnectionMultiplexer _redis;
     private readonly IDatabase _db;
-    private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    private static readonly JsonSerializerOptions _jsonOptions = JsonSerializerOptionsFactory.CreateDefault();
 
     /// <summary>
     /// Initialise une nouvelle instance de <see cref="QuotaService"/>.

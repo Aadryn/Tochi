@@ -2,6 +2,7 @@ using LLMProxy.Domain.Interfaces;
 using LLMProxy.Infrastructure.Security;
 using LLMProxy.Gateway.Constants;
 using LLMProxy.Gateway.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace LLMProxy.Gateway.Middleware;
 
@@ -55,7 +56,7 @@ public class ApiKeyAuthenticationMiddleware
         {
             _logger.LogRequestWithoutApiKey(context.Request.Path);
             Guard.AgainstResponseStarted(context.Response);
-            context.Response.StatusCode = 401;
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             await context.Response.WriteAsJsonAsync(new { error = "API key is required" });
             return;
         }

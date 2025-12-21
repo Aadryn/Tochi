@@ -31,11 +31,15 @@ public class QuotaLimit : Entity
 
     public static Result<QuotaLimit> Create(Guid userId, Guid tenantId, QuotaType quotaType, long limit, QuotaPeriod period)
     {
-        if (userId == Guid.Empty)
-            return Result.Failure<QuotaLimit>("Invalid user ID.");
-
-        if (tenantId == Guid.Empty)
-            return Result.Failure<QuotaLimit>("Invalid tenant ID.");
+        try
+        {
+            Guard.AgainstEmptyGuid(userId, nameof(userId), "Invalid user ID.");
+            Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
+        }
+        catch (ArgumentException ex)
+        {
+            return Result.Failure<QuotaLimit>(ex.Message);
+        }
 
         if (limit < 0)
             return Result.Failure<QuotaLimit>("Quota limit cannot be negative.");
@@ -51,7 +55,7 @@ public class QuotaLimit : Entity
             return Result.Failure("Quota limit cannot be negative.");
 
         Limit = newLimit;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }
@@ -62,7 +66,7 @@ public class QuotaLimit : Entity
             return Result.Failure("Quota is already enabled.");
 
         IsEnabled = true;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }
@@ -73,7 +77,7 @@ public class QuotaLimit : Entity
             return Result.Failure("Quota is already disabled.");
 
         IsEnabled = false;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }
