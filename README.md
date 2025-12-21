@@ -99,10 +99,48 @@ Based on **Hexagonal Architecture** (Ports & Adapters) following SOLID, DRY, KIS
 - Request/response logging with anonymization
 - Automatic log retention and purge
 
+### Rate Limiting & Throttling (ADR-041)
+
+**Multi-Level Protection:**
+
+| Level | Strategy | Default Limit | Window | Purpose |
+|-------|----------|---------------|--------|---------|
+| **Global** | Token Bucket | 10,000 req | 1 minute | Infrastructure protection |
+| **Per-Tenant** | Fixed Window | 1,000 req | 1 hour | Fair multi-tenant access |
+| **Per-User** | Sliding Window | 100 req | 1 minute | Individual abuse prevention |
+| **Per-IP** | Fixed Window | 50 req | 1 minute | DDoS protection |
+| **Concurrency** | Limiter | 500 connections | - | Server resource protection |
+
+**HTTP Headers:**
+- `X-RateLimit-Policy`: Applied policies (e.g., "per-user,per-tenant,global")
+- `Retry-After`: Seconds until retry allowed (on 429 responses)
+
+**429 Too Many Requests Response:**
+```json
+{
+  "error": "Too Many Requests",
+  "message": "Rate limit exceeded. Please retry after the specified delay.",
+  "retryAfterSeconds": 60
+}
+```
+
+**Configuration:** `appsettings.json`
+```json
+{
+  "RateLimiting": {
+    "Global": { "PermitLimit": 10000, "Window": "00:01:00" },
+    "PerTenant": { "PermitLimit": 1000, "Window": "01:00:00" },
+    "PerUser": { "PermitLimit": 100, "Window": "00:01:00", "SegmentsPerWindow": 6 },
+    "PerIp": { "PermitLimit": 50, "Window": "00:01:00" },
+    "Concurrency": { "PermitLimit": 500, "QueueLimit": 0 }
+  }
+}
+```
+
 ### Advanced Features
 - Response caching (configurable per endpoint/user)
 - Semantic cache support
-- Rate limiting
+- **Rate Limiting** (Fixed Window, Sliding Window, Token Bucket, Concurrency)
 - Cost tracking
 
 ## 🚀 Tech Stack
