@@ -1,4 +1,5 @@
 using FluentValidation;
+using LLMProxy.Application.Common;
 
 namespace LLMProxy.Application.ApiKeys.Commands;
 
@@ -9,12 +10,19 @@ public class CreateApiKeyCommandValidator : AbstractValidator<CreateApiKeyComman
 {
     public CreateApiKeyCommandValidator()
     {
-        RuleFor(x => x.UserId).NotEmpty();
-        RuleFor(x => x.TenantId).NotEmpty();
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.UserId)
+            .NotEmpty().WithMessage(ValidationMessages.Required("User ID"));
+        
+        RuleFor(x => x.TenantId)
+            .NotEmpty().WithMessage(ValidationMessages.Required("Tenant ID"));
+        
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage(ValidationMessages.Required("Name"))
+            .MaximumLength(200).WithMessage(ValidationMessages.MaxLength("Name", 200));
+        
         RuleFor(x => x.ExpiresAt)
             .Must(expiry => !expiry.HasValue || expiry.Value > DateTime.UtcNow)
             .When(x => x.ExpiresAt.HasValue)
-            .WithMessage("Expiration date must be in the future");
+            .WithMessage(ValidationMessages.MustBeFuture("Expiration date"));
     }
 }

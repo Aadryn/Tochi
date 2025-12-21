@@ -1,4 +1,5 @@
 using FluentValidation;
+using LLMProxy.Application.Common;
 using LLMProxy.Domain.Entities;
 
 namespace LLMProxy.Application.Users.Commands;
@@ -10,9 +11,16 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 {
     public UpdateUserCommandValidator()
     {
-        RuleFor(x => x.UserId).NotEmpty();
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
-        RuleFor(x => x.Role).NotEmpty().Must(BeValidRole).WithMessage("Invalid role. Valid roles: User, Admin, TenantAdmin");
+        RuleFor(x => x.UserId)
+            .NotEmpty().WithMessage(ValidationMessages.Required("User ID"));
+        
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage(ValidationMessages.Required("Name"))
+            .MaximumLength(200).WithMessage(ValidationMessages.MaxLength("Name", 200));
+        
+        RuleFor(x => x.Role)
+            .NotEmpty().WithMessage(ValidationMessages.Required("Role"))
+            .Must(BeValidRole).WithMessage(ValidationMessages.InvalidValue("role", "User, Admin, TenantAdmin"));
     }
 
     private bool BeValidRole(string role)
