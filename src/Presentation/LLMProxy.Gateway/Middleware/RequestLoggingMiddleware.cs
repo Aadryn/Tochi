@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using LLMProxy.Gateway.Extensions;
 
 namespace LLMProxy.Gateway.Middleware;
 
@@ -63,13 +64,10 @@ public class RequestLoggingMiddleware
         try
         {
             // Log début de requête avec données sanitisées
-            _logger.LogInformation(
-                "Request started: {Method} {Path}{QueryString} | RequestId: {RequestId} | Headers: {@Headers}",
+            _logger.LogRequestStarted(
                 context.Request.Method,
-                context.Request.Path,
-                sanitizedQueryString,
-                requestId,
-                sanitizedHeaders);
+                $"{context.Request.Path}{sanitizedQueryString}",
+                Guid.Parse(requestId));
 
             await _next(context);
 
@@ -80,14 +78,15 @@ public class RequestLoggingMiddleware
                       : context.Response.StatusCode >= 400 ? LogLevel.Warning
                       : LogLevel.Information;
 
-            _logger.Log(
-                level,
-                "Request completed: {Method} {Path} | Status: {StatusCode} | Duration: {Duration}ms | RequestId: {RequestId}",
-                context.Request.Method,
-                context.Request.Path,
-                context.Response.StatusCode,
-                sw.ElapsedMilliseconds,
-                requestId);
+            if (level <= LogLevel.Information)
+            {
+                _logger.LogRequestCompleted(
+                    context.Request.Method,
+                    context.Request.Path,
+                    context.Response.StatusCode,
+                    sw.ElapsedMilliseconds,
+                    Guid.Parse(requestId));
+            }
 
             activity?.SetTag("response.status_code", context.Response.StatusCode);
             activity?.SetTag("response.duration_ms", sw.ElapsedMilliseconds);
@@ -96,12 +95,10 @@ public class RequestLoggingMiddleware
         {
             sw.Stop();
 
-            _logger.LogError(ex,
-                "Request failed: {Method} {Path} | Duration: {Duration}ms | RequestId: {RequestId}",
+            _logger.LogRequestError(ex,
                 context.Request.Method,
                 context.Request.Path,
-                sw.ElapsedMilliseconds,
-                requestId);
+                Guid.Parse(requestId));
 
             activity?.SetTag("error", true);
             activity?.SetTag("exception.type", ex.GetType().Name);

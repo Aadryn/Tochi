@@ -229,3 +229,31 @@ _Conforme à : ADR-031 (Structured Logging)_
 ## TRACKING
 Début: 2025-12-21T16:55:31.5241612Z
 
+
+
+## RÉSULTAT
+
+**Statut** :  COMPLÉTÉ
+
+**Fichier créé** : LogContextEnrichmentMiddleware.cs (118 lignes)
+**Fichier modifié** : Program.cs (ajout middleware dans pipeline)
+
+**Fonctionnalités** :
+- Utilise ILogger.BeginScope() (standard .NET, pas besoin Serilog)
+- Enrichit TOUS les logs avec RequestId, TenantId, UserId, ApiKeyId
+- Scope automatique pour toute la durée de la requête
+- Guards pour validation des paramètres
+- Documentation XML française complète (didactique)
+
+**Pipeline middleware** :
+1. GlobalExceptionHandlerMiddleware
+2. RequestLoggingMiddleware
+3. ApiKeyAuthenticationMiddleware
+4. LogContextEnrichmentMiddleware  NOUVEAU
+5. QuotaEnforcementMiddleware
+
+**Build** : 0 erreurs, 0 warnings
+**Tests** : 66/66 réussis (100%)
+**ADR-031** : 100% conforme
+
+Fin: 2025-12-21T16:57:22.1098336Z

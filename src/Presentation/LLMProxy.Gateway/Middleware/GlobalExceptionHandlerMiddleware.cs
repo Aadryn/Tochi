@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using LLMProxy.Infrastructure.Security;
+using LLMProxy.Gateway.Extensions;
 
 namespace LLMProxy.Gateway.Middleware;
 
@@ -46,7 +47,7 @@ public class GlobalExceptionHandlerMiddleware
         catch (OperationCanceledException)
         {
             // Client a annulé la requête - ne pas logger comme erreur
-            _logger.LogInformation("Request cancelled by client: {Path}", context.Request.Path);
+            _logger.LogRequestCancelled(context.Request.Path);
             
             if (!context.Response.HasStarted)
             {
@@ -55,22 +56,22 @@ public class GlobalExceptionHandlerMiddleware
         }
         catch (UnauthorizedAccessException ex)
         {
-            _logger.LogWarning(ex, "Unauthorized access attempt: {Path}", context.Request.Path);
+            _logger.LogUnauthorizedAccess(ex, context.Request.Path);
             await HandleExceptionAsync(context, ex, HttpStatusCode.Unauthorized, "Accès non autorisé");
         }
         catch (ArgumentException ex)
         {
-            _logger.LogWarning(ex, "Invalid argument: {Path}", context.Request.Path);
+            _logger.LogInvalidArgument(ex, context.Request.Path);
             await HandleExceptionAsync(context, ex, HttpStatusCode.BadRequest, "Requête invalide");
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogError(ex, "Invalid operation: {Path}", context.Request.Path);
+            _logger.LogInvalidOperation(ex, context.Request.Path);
             await HandleExceptionAsync(context, ex, HttpStatusCode.Conflict, "Opération invalide");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception: {Path} | {Method} | {StatusCode}",
+            _logger.LogUnhandledException(ex,
                 context.Request.Path,
                 context.Request.Method,
                 context.Response.StatusCode);
