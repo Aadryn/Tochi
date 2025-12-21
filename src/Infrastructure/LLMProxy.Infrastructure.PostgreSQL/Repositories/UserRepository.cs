@@ -6,13 +6,11 @@ namespace LLMProxy.Infrastructure.PostgreSQL.Repositories;
 /// <summary>
 /// Implémentation du repository pour l'entité User.
 /// </summary>
-internal class UserRepository : IUserRepository
+internal class UserRepository : RepositoryBase<Domain.Entities.User>, IUserRepository
 {
-    private readonly LLMProxyDbContext _context;
+    public UserRepository(LLMProxyDbContext context) : base(context) { }
 
-    public UserRepository(LLMProxyDbContext context) => _context = context;
-
-    public async Task<Domain.Entities.User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public override async Task<Domain.Entities.User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Users
             .Include(u => u.ApiKeys)
@@ -34,7 +32,7 @@ internal class UserRepository : IUserRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+    public override async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Users.AnyAsync(u => u.Id == id, cancellationToken);
     }
@@ -42,25 +40,5 @@ internal class UserRepository : IUserRepository
     public async Task<bool> EmailExistsAsync(Guid tenantId, string email, CancellationToken cancellationToken = default)
     {
         return await _context.Users.AnyAsync(u => u.TenantId == tenantId && u.Email == email.ToLowerInvariant(), cancellationToken);
-    }
-
-    public async Task AddAsync(Domain.Entities.User user, CancellationToken cancellationToken = default)
-    {
-        await _context.Users.AddAsync(user, cancellationToken);
-    }
-
-    public Task UpdateAsync(Domain.Entities.User user, CancellationToken cancellationToken = default)
-    {
-        _context.Users.Update(user);
-        return Task.CompletedTask;
-    }
-
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var user = await GetByIdAsync(id, cancellationToken);
-        if (user != null)
-        {
-            _context.Users.Remove(user);
-        }
     }
 }
