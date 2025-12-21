@@ -188,3 +188,23 @@
 ## TRACKING
 Début: 2025-12-21T22:34:33.3063794Z
 
+### Progression
+
+- ✅ **Step 1** : RepositoryBase<TEntity> (-30 lines) - Commit 1 (2025-12-21T22:36:15Z)
+- ✅ **Step 2** : IsValidUrl() dans LLMProvider (-4 lines) - Commit 2 (2025-12-21T22:38:42Z)
+- ✅ **Step 3** : IHashService injection CacheService (-6 lines) - Commit 3 (2025-12-21T22:42:10Z)
+- ✅ **Step 4** : Guard.cs dans Domain + AuditLog (-6 lines) - Commit 4 (2025-12-21T22:52:35Z)
+- ✅ **Step 4b** : Guard dans User/Tenant/LLMProvider/ApiKey (-16 lines) - Commit 5 (2025-12-21T22:56:18Z)
+
+**Total : 62/149 lines saved (42%)**  
+**Commits : 5 atomiques**
+
+### Prochaines Étapes
+
+- ⏭️ Step 5 : TokenUsageMetricFactory
+- 🔜 Step 6 : HttpContextExtensions
+- 🔜 Step 7 : ValidationMessages
+- 🔜 Step 8 : JsonSerializerOptionsFactory
+- 🔜 Step 9 : Pattern `?? throw` (vérification)
+- 🔜 Step 10 : Codes statut HTTP (constantes)
+
