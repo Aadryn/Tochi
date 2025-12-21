@@ -1,0 +1,14 @@
+---
+applyTo: "documentations/**/*.md,documentations/*.md"    
+---
+- La documentation doit être claire, concise et facile à comprendre.
+- Utilisez un langage simple et évitez le jargon technique lorsque cela est possible.
+- Structurez la documentation avec des titres, sous-titres et listes à puces pour améliorer la lisibilité.
+- Incluez des exemples concrets et des cas d'utilisation pour illustrer les concepts.
+- Mettez à jour régulièrement la documentation pour refléter les changements dans le projet.
+- Utilisez des liens internes pour faciliter la navigation entre les différentes sections de la documentation.
+- Découpez la documentation en plusieurs fichiers si elle devient trop volumineuse, en regroupant les informations par thèmes ou fonctionnalités.
+- Assurez-vous que la documentation est cohérente en termes de style et de formatage à travers tous les fichiers.
+- Relisez la documentation pour corriger les fautes d'orthographe et de grammaire.
+- Assurez-vous qu'il n'y a pas de contenu dupliqué entre les différents fichiers de documentation.
+- Assurez-vous qu'il n'y a pas de contradictions ou d'incohérences dans les informations fournies et entre les fichiers.

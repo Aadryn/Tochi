@@ -1,0 +1,149 @@
+using System.Net;
+using System.Text.Json;
+using LLMProxy.Infrastructure.Security;
+
+namespace LLMProxy.Gateway.Middleware;
+
+/// <summary>
+/// Middleware global pour la gestion centralisée des exceptions.
+/// Capture toutes les exceptions non gérées et retourne des réponses structurées au client.
+/// </summary>
+public class GlobalExceptionHandlerMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<GlobalExceptionHandlerMiddleware> _logger;
+    private readonly IHostEnvironment _environment;
+
+    /// <summary>
+    /// Initialise une nouvelle instance du middleware de gestion globale des exceptions.
+    /// </summary>
+    /// <param name="next">Délégué vers le prochain middleware dans le pipeline.</param>
+    /// <param name="logger">Logger pour enregistrer les exceptions.</param>
+    /// <param name="environment">Environnement d'exécution de l'application.</param>
+    public GlobalExceptionHandlerMiddleware(
+        RequestDelegate next,
+        ILogger<GlobalExceptionHandlerMiddleware> logger,
+        IHostEnvironment environment)
+    {
+        _next = next;
+        _logger = logger;
+        _environment = environment;
+    }
+
+    /// <summary>
+    /// Invoque le middleware de gestion des exceptions.
+    /// </summary>
+    /// <param name="context">Contexte HTTP de la requête en cours.</param>
+    /// <param name="cancellationToken">Token d'annulation pour interrompre l'opération.</param>
+    public async Task InvokeAsync(HttpContext context, CancellationToken cancellationToken = default)
+    {
+        Guard.AgainstNull(context, nameof(context));
+
+        try
+        {
+            await _next(context);
+        }
+        catch (OperationCanceledException)
+        {
+            // Client a annulé la requête - ne pas logger comme erreur
+            _logger.LogInformation("Request cancelled by client: {Path}", context.Request.Path);
+            
+            if (!context.Response.HasStarted)
+            {
+                context.Response.StatusCode = StatusCodes.Status499ClientClosedRequest;
+            }
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogWarning(ex, "Unauthorized access attempt: {Path}", context.Request.Path);
+            await HandleExceptionAsync(context, ex, HttpStatusCode.Unauthorized, "Accès non autorisé");
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Invalid argument: {Path}", context.Request.Path);
+            await HandleExceptionAsync(context, ex, HttpStatusCode.BadRequest, "Requête invalide");
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Invalid operation: {Path}", context.Request.Path);
+            await HandleExceptionAsync(context, ex, HttpStatusCode.Conflict, "Opération invalide");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unhandled exception: {Path} | {Method} | {StatusCode}",
+                context.Request.Path,
+                context.Request.Method,
+                context.Response.StatusCode);
+            
+            await HandleExceptionAsync(context, ex, HttpStatusCode.InternalServerError, "Erreur interne du serveur");
+        }
+    }
+
+    /// <summary>
+    /// Gère une exception en retournant une réponse structurée au client.
+    /// </summary>
+    /// <param name="context">Contexte HTTP de la requête.</param>
+    /// <param name="exception">Exception à gérer.</param>
+    /// <param name="statusCode">Code de statut HTTP à retourner.</param>
+    /// <param name="message">Message d'erreur pour le client.</param>
+    private async Task HandleExceptionAsync(
+        HttpContext context,
+        Exception exception,
+        HttpStatusCode statusCode,
+        string message)
+    {
+        Guard.AgainstResponseStarted(context.Response);
+
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)statusCode;
+
+        var response = new ErrorResponse
+        {
+            Error = new ErrorDetail
+            {
+                Message = message,
+                Type = exception.GetType().Name,
+                StatusCode = (int)statusCode,
+                RequestId = context.Items.TryGetValue("RequestId", out var reqId) ? reqId?.ToString() : null,
+                Timestamp = DateTime.UtcNow
+            }
+        };
+
+        // Inclure la stack trace uniquement en développement
+        if (_environment.IsDevelopment())
+        {
+            response.Error.Details = exception.Message;
+            response.Error.StackTrace = exception.StackTrace;
+        }
+
+        var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = _environment.IsDevelopment()
+        });
+
+        await context.Response.WriteAsync(json);
+    }
+
+    /// <summary>
+    /// Réponse d'erreur structurée retournée au client.
+    /// </summary>
+    private class ErrorResponse
+    {
+        public ErrorDetail Error { get; set; } = null!;
+    }
+
+    /// <summary>
+    /// Détails d'une erreur dans la réponse structurée.
+    /// </summary>
+    private class ErrorDetail
+    {
+        public string Message { get; set; } = null!;
+        public string Type { get; set; } = null!;
+        public int StatusCode { get; set; }
+        public string? RequestId { get; set; }
+        public DateTime Timestamp { get; set; }
+        public string? Details { get; set; }
+        public string? StackTrace { get; set; }
+    }
+}

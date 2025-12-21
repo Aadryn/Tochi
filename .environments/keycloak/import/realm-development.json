@@ -1,0 +1,77 @@
+﻿{
+  "realm": "development",
+  "enabled": true,
+  "displayName": "Development",
+
+  "users": [
+    {
+      "username": "alice",
+      "firstName": "Alice",
+      "lastName": "Admin",
+      "email": "alice@example.com",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "alice_pwd", "temporary": false }],
+      "realmRoles": ["admin", "offline_access", "uma_authorization"]
+    },
+    {
+      "username": "bob",
+      "firstName": "Bob",
+      "lastName": "Manager",
+      "email": "bob@example.com",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "bob_pwd", "temporary": false }]
+    },
+    {
+      "username": "charlie",
+      "firstName": "Charlie",
+      "lastName": "Developer",
+      "email": "charlie@example.com",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "charlie_pwd", "temporary": false }]
+    }
+  ],
+
+  "clients": [
+    {
+      "clientId": "webapp-portal",
+      "name": "WebApp Portal",
+      "description": "Front office portal",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "portal_secret",
+      "redirectUris": ["http://localhost:5173/*"],
+      "webOrigins": ["+"],
+      "standardFlowEnabled": true
+    },
+    {
+      "clientId": "webapp-management",
+      "name": "WebApp Management",
+      "description": "Back office admin",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "management_secret",
+      "redirectUris": ["http://localhost:5174/*"],
+      "webOrigins": ["+"],
+      "standardFlowEnabled": true
+    },
+    {
+      "clientId": "webapi",
+      "name": "Web API",
+      "description": "Protected API",
+      "protocol": "openid-connect",
+      "bearerOnly": true
+    },
+
+    {
+      "clientId": "grafana",
+      "name": "Grafana",
+      "description": "SSO for Grafana",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "grafana_secret",
+      "redirectUris": ["http://localhost:3000/login/generic_oauth"],
+      "webOrigins": ["http://localhost:3000"],
+      "standardFlowEnabled": true
+    }
+  ]
+}

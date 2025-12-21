@@ -1,0 +1,152 @@
+services:
+  # ────────────────────── Prometheus (latest) ─────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    environment: { TZ: Europe/Paris }
+    volumes:
+      - ./prometheus:/etc/prometheus:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    ports: ["9090:9090"]
+    networks: [monitoring-net]
+
+  # ─────────────────────── Grafana (latest) ───────────────────
+  grafana:
+    image: grafana/grafana-oss:latest
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Paris
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_GENERIC_OAUTH_ENABLED: "true"
+      GF_AUTH_GENERIC_OAUTH_NAME: "Keycloak"
+      GF_AUTH_GENERIC_OAUTH_CLIENT_ID: grafana
+      GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: grafana_secret
+      GF_AUTH_GENERIC_OAUTH_SCOPES: "openid profile email"
+      GF_AUTH_GENERIC_OAUTH_AUTH_URL: "http://localhost:8080/realms/development/protocol/openid-connect/auth"
+      GF_AUTH_GENERIC_OAUTH_TOKEN_URL: "http://localhost:8080/realms/development/protocol/openid-connect/token"
+      GF_AUTH_GENERIC_OAUTH_API_URL: "http://localhost:8080/realms/development/protocol/openid-connect/userinfo"
+      GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(realm_access.roles[*], 'admin') && 'Admin' || 'Viewer'"
+      GF_USERS_AUTO_LOGIN: "true"
+      GF_SERVER_ROOT_URL: "http://localhost:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on: [prometheus]
+    ports: ["3000:3000"]
+    networks: [monitoring-net]
+
+  # ───────────────────── Node Exporter (latest) ───────────────
+  node_exporter:
+    image: prom/node-exporter:latest
+    restart: unless-stopped
+    environment: { TZ: Europe/Paris }
+    pid: host
+    networks: [monitoring-net]
+
+  # ────────────────────── PostgreSQL (latest) ─────────────────
+  postgres:
+    build:
+      context: ./postgres/   # Path to where the Dockerfile is
+      dockerfile: Dockerfile  # Optional if named 'Dockerfile'         # ← repasse en latest
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Paris
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    ports: ["15432:5432"]
+    networks: [monitoring-net]
+
+  # ─────────────────────── Keycloak (latest) ──────────────────
+  #  keycloak:
+  #    image: quay.io/keycloak/keycloak:latest   # ← repasse en latest
+  #    restart: unless-stopped
+  #    command: start-dev --http-port=8080 --import-realm
+  #    environment:
+  #      TZ: Europe/Paris
+  #      KC_DB: postgres
+  #      KC_DB_URL_HOST: postgres
+  #      KC_DB_URL_DATABASE: keycloak
+  #      KC_DB_USERNAME: keycloak
+  #      KC_DB_PASSWORD: password
+  #      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+  #      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+  #      KC_HEALTH_ENABLED: "true"
+  #      KC_METRICS_ENABLED: "true"
+  #    volumes:
+  #      - keycloak_data:/opt/keycloak/data
+  #      - ./keycloak/import:/opt/keycloak/data/import:ro
+  #    depends_on: [postgres]
+  #    ports: ["8080:8080"]
+  #    networks: [monitoring-net]
+  # ───────────────────── Jaeger Query ─────────────────────
+  #  jaeger:
+  #    image: jaegertracing/jaeger:latest
+  #    restart: unless-stopped
+  #    environment:
+  #      TZ: Europe/Paris
+  #    ports:
+  #      - "16686:16686"
+  #      - "4317:4317"
+  #      - "4318:4318"
+  #      - "8888:8888"
+  #    networks: [monitoring-net]
+
+  # ──────────────────────── Loki ──────────────────────────
+  #  loki:
+  #    image: grafana/loki:latest
+  #    restart: unless-stopped
+  #    command: -config.file=/etc/loki/local-config.yaml
+  #    environment: { TZ: Europe/Paris }
+  #    volumes:
+  #      - loki_data:/loki
+  #    ports: ["3100:3100"]
+  #    networks: [monitoring-net]
+
+  # ───────────────────────────── Redis ─────────────────────────────
+  #  redis:
+  #    image: redis:latest
+  #    restart: unless-stopped
+  #    environment: { TZ: Europe/Paris }
+  #    command: ["redis-server", "--appendonly", "yes"]   # persistance AOF
+  #    volumes:
+  #      - redis_data:/data
+  #    ports:
+  #      - "6379:6379"
+  #    networks: [monitoring-net]
+
+  # ─────────────────────────── RabbitMQ ────────────────────────────
+#  rabbitmq:
+#    image: rabbitmq:management          # ← dernière build officielle + UI
+#    restart: unless-stopped
+#    environment:
+#      TZ: Europe/Paris
+#      RABBITMQ_DEFAULT_USER: rabbit
+#      RABBITMQ_DEFAULT_PASS: password
+#    volumes:
+#      - rabbitmq_data:/var/lib/rabbitmq
+#    ports:
+#      - "5672:5672"     # AMQP
+#      - "15672:15672"   # Management UI
+#    networks: [monitoring-net]
+
+# ─────────────────── Réseau & Volumes ─────────────────────
+networks:
+  monitoring-net:
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  postgres_data:
+  keycloak_data:
+  jaeger_data:
+  loki_data:
+  rabbitmq_data:
+  redis_data:
+  nginx_data:
