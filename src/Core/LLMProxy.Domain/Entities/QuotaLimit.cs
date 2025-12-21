@@ -55,7 +55,7 @@ public class QuotaLimit : Entity
             return Result.Failure("Quota limit cannot be negative.");
 
         Limit = newLimit;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }
@@ -66,7 +66,7 @@ public class QuotaLimit : Entity
             return Result.Failure("Quota is already enabled.");
 
         IsEnabled = true;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }
@@ -77,7 +77,7 @@ public class QuotaLimit : Entity
             return Result.Failure("Quota is already disabled.");
 
         IsEnabled = false;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }

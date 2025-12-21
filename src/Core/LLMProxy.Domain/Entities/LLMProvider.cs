@@ -125,7 +125,7 @@ public class LLMProvider : Entity
     public Result UpdateConfiguration(ProviderConfiguration configuration)
     {
         Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }
@@ -136,7 +136,7 @@ public class LLMProvider : Entity
             return Result.Failure("Provider is already inactive.");
 
         IsActive = false;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }
@@ -147,7 +147,7 @@ public class LLMProvider : Entity
             return Result.Failure("Provider is already active.");
 
         IsActive = true;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }
@@ -158,7 +158,7 @@ public class LLMProvider : Entity
             throw new ArgumentException("Invalid base URL.", nameof(baseUrl));
 
         BaseUrl = baseUrl;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
     }
 
     public void UpdatePriority(int priority)
@@ -167,7 +167,7 @@ public class LLMProvider : Entity
             throw new ArgumentException("Priority cannot be negative.", nameof(priority));
 
         Priority = priority;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
     }
 
     public void UpdateCustomHeaders(Dictionary<string, string> headers)

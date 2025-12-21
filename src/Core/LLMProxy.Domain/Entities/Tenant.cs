@@ -73,7 +73,7 @@ public class Tenant : Entity
 
         IsActive = false;
         DeactivatedAt = DateTime.UtcNow;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         AddDomainEvent(this, new TenantDeactivatedEvent(Id));
         
@@ -91,7 +91,7 @@ public class Tenant : Entity
 
         IsActive = true;
         DeactivatedAt = null;
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         // Post-condition : Le tenant doit être actif après activation
         Debug.Assert(IsActive, "Tenant must be active after activation");
@@ -103,7 +103,7 @@ public class Tenant : Entity
     public Result UpdateSettings(TenantSettings settings)
     {
         Settings = settings ?? throw new ArgumentNullException(nameof(settings));
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
         
         return Result.Success();
     }

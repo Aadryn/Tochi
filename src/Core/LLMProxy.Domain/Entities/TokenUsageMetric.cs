@@ -76,7 +76,7 @@ public class TokenUsageMetric : Entity
         
         EstimatedCost += cost;
         
-        UpdatedAt = DateTime.UtcNow;
+        MarkAsModified();
     }
 
     private static DateTime CalculatePeriodEnd(DateTime start, MetricPeriod period)
