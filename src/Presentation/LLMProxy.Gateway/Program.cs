@@ -190,7 +190,7 @@ builder.Services.AddRateLimiter(options =>
 // Add Infrastructure services
 builder.Services.AddRedisInfrastructure(builder.Configuration);
 builder.Services.AddSecurityInfrastructure(builder.Configuration);
-builder.Services.AddLLMProviderInfrastructure();
+builder.Services.AddLLMProviderInfrastructure(builder.Configuration); // ADR-032: Circuit Breaker enabled
 
 // Add Hash Service
 builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IHashService, LLMProxy.Infrastructure.Security.Sha256HashService>();
