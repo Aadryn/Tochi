@@ -1,0 +1,14 @@
+apiVersion: 1
+
+providers:
+  - name: 'standard'
+    folder: 'Standard'          # Nom du dossier visible dans Grafana
+    type: file
+    disableDeletion: false
+    editable: false             # on peut passer à true si vous voulez modifier via l’UI
+    allowUiUpdates: true
+
+    options:
+      path: /etc/grafana/provisioning/dashboards   # ← juste ce dossier
+      recurse: true             # parcourt récursivement le dossier
+

@@ -1,0 +1,74 @@
+apiVersion: 1
+
+datasources:
+  # ───────── Prometheus (métriques) ─────────
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      timeInterval: "15s"
+
+  # ────────── Loki (logs) ──────────
+  - name: Loki
+    uid: loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: true
+
+  # ───────── Jaeger (traces) ─────────
+  - name: Jaeger
+    uid: jaeger
+    type: jaeger
+    access: proxy
+    url: http://jaeger-query:16686
+    editable: true
+
+  # ───────── PostgreSQL – dev database ─────────
+  - name: PostgreSQL (development)
+    uid: postgres-dev
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    user: supervisor
+    secureJsonData:
+      password: supervisor_pwd
+    database: development
+    editable: true
+    jsonData:
+      sslmode: "disable"
+      postgresVersion: 1600
+      timeInterval: "30s"
+
+  # ───────── PostgreSQL – keycloak database ─────────
+  - name: PostgreSQL (keycloak)
+    uid: postgres-keycloak
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    user: keycloak           # ou keycloak / keycloak_pwd si vous préférez
+    secureJsonData:
+      password: keycloak_pwd
+    database: keycloak
+    editable: true
+    jsonData:
+      sslmode: "disable"
+      postgresVersion: 1600
+      timeInterval: "30s"
+
+  # ───────── Redis (plugin) ─────────
+  - name: Redis
+    uid: redis
+    type: redis-datasource     # nécessite le plugin redis‑datasource
+    access: proxy
+    url: redis://redis:6379
+    editable: true
+    jsonData:
+      poolSize: 5
+      timeout: 10
+      pingInterval: 0
+      client: standalone

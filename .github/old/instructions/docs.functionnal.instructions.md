@@ -1,0 +1,14 @@
+---
+applyTo: "docs/fonctionnelles/**/*.md"
+---
+- Group files by business concern, then by feature; design the folder hierarchy deliberately.
+- Document each scenario with the Given/When/Then keywords and write every sentence in French.
+- Focus on observable behavior; omit implementation details.
+- Translate the given/when/then keywords into French.
+- Ensure one file per business scenario, avoiding multiple scenarios in a single file.
+- Use clear and descriptive file names that reflect the scenario being documented.
+- Maintain consistency in formatting and style across all documentation files.
+- Regularly review and update documentation to keep it current with business processes.
+- Organize sections per Domains, Subdomains, and Bounded Contexts.
+- Include prerequisites, steps, notes, and validation date in each scenario document.
+- Be meticulous about spelling and grammar in French.
