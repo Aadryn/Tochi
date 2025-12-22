@@ -139,4 +139,23 @@ public sealed class Result<T>
         else
             onFailure(Error);
     }
+
+    /// <summary>
+    /// [OBSOLÈTE - Migration] Crée un résultat d'échec depuis un message d'erreur texte.
+    /// </summary>
+    /// <param name="message">Le message d'erreur.</param>
+    /// <returns>Un résultat d'échec.</returns>
+    /// <remarks>
+    /// ⚠️ Cette méthode est obsolète et existe uniquement pour la compatibilité 
+    /// lors de la migration vers ADR-023. Utilisez <see cref="Failure(Error)"/> avec un Error typé.
+    /// </remarks>
+    [Obsolete("Utilisez Result<T>.Failure(Error) avec un Error typé. Cette méthode sera supprimée dans une version future.")]
+    public static Result<T> Failure(string message) => 
+        Failure(new Error("Legacy.Error", message));
+
+    /// <summary>
+    /// Accès legacy à l'erreur sous forme de string (pour compatibilité).
+    /// </summary>
+    [Obsolete("Utilisez la propriété Error (de type Error) directement.")]
+    public string? ErrorMessage => IsFailure ? Error.Message : null;
 }
