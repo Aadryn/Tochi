@@ -2,6 +2,7 @@ using LLMProxy.Gateway.Middleware;
 using LLMProxy.Gateway.Configuration;
 using LLMProxy.Gateway.HealthChecks;
 using LLMProxy.Gateway.Extensions;
+using LLMProxy.Application.Extensions;
 using LLMProxy.Infrastructure.Redis;
 using LLMProxy.Infrastructure.Security;
 using LLMProxy.Infrastructure.LLMProviders;
@@ -295,9 +296,10 @@ builder.Services.AddDbContext<LLMProxy.Infrastructure.PostgreSQL.LLMProxyDbConte
 // Add Repositories
 builder.Services.AddScoped<LLMProxy.Domain.Interfaces.IUnitOfWork, LLMProxy.Infrastructure.PostgreSQL.UnitOfWork>();
 
-// Add Application services (MediatR)
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
-    typeof(LLMProxy.Application.Tenants.Commands.CreateTenantCommand).Assembly));
+// ═══════════════════════════════════════════════════════════════
+// APPLICATION LAYER (ADR-007 Vertical Slice, ADR-013 CQRS)
+// ═══════════════════════════════════════════════════════════════
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 

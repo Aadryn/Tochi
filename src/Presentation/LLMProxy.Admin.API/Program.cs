@@ -1,4 +1,5 @@
 using LLMProxy.Admin.API.Configuration;
+using LLMProxy.Application.Extensions;
 using LLMProxy.Infrastructure.PostgreSQL;
 using LLMProxy.Infrastructure.Redis;
 using LLMProxy.Infrastructure.Security;
@@ -32,8 +33,10 @@ builder.Services.AddOpenTelemetry()
             options.Endpoint = new Uri(builder.Configuration["OpenTelemetry:Endpoint"] ?? "http://localhost:4317");
         }));
 
-// Add MediatR
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LLMProxy.Application.Common.ICommand).Assembly));
+// ═══════════════════════════════════════════════════════════════
+// APPLICATION LAYER (ADR-007 Vertical Slice, ADR-013 CQRS)
+// ═══════════════════════════════════════════════════════════════
+builder.Services.AddApplicationServices();
 
 // Database & Infrastructure
 builder.Services.AddDbContext<LLMProxyDbContext>(options =>
