@@ -1,4 +1,5 @@
 using LLMProxy.Domain.Entities;
+using LLMProxy.Domain.Entities.Routing;
 using LLMProxy.Infrastructure.PostgreSQL.Configurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -55,6 +56,21 @@ public class LLMProxyDbContext : DbContext
     /// Obtient le DbSet des métriques d'utilisation de tokens.
     /// </summary>
     public DbSet<TokenUsageMetric> TokenUsageMetrics => Set<TokenUsageMetric>();
+
+    /// <summary>
+    /// Obtient le DbSet des routes du proxy YARP.
+    /// </summary>
+    public DbSet<ProxyRoute> ProxyRoutes => Set<ProxyRoute>();
+
+    /// <summary>
+    /// Obtient le DbSet des clusters du proxy YARP.
+    /// </summary>
+    public DbSet<ProxyCluster> ProxyClusters => Set<ProxyCluster>();
+
+    /// <summary>
+    /// Obtient le DbSet des destinations de clusters YARP.
+    /// </summary>
+    public DbSet<ClusterDestination> ClusterDestinations => Set<ClusterDestination>();
 
     /// <summary>
     /// Configure le modèle de base de données lors de la création.
