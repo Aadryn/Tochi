@@ -209,4 +209,66 @@ public sealed record Error(string Code, string Message)
             new($"Validation.{fieldName}.OutOfRange", 
                 $"Le champ '{fieldName}' doit être entre {min} et {max}");
     }
+
+    /// <summary>
+    /// Erreurs liées à la base de données et aux repositories.
+    /// </summary>
+    public static class Database
+    {
+        /// <summary>
+        /// Erreur générique d'accès à la base de données.
+        /// </summary>
+        public static Error AccessError(string operation, string details) =>
+            new("Database.AccessError", 
+                $"Erreur lors de l'opération '{operation}' : {details}");
+
+        /// <summary>
+        /// Violation de contrainte unique.
+        /// </summary>
+        public static Error UniqueConstraintViolation(string constraintName) =>
+            new("Database.UniqueConstraint", 
+                $"Violation de contrainte unique : '{constraintName}'");
+
+        /// <summary>
+        /// Violation de contrainte de clé étrangère.
+        /// </summary>
+        public static Error ForeignKeyViolation(string constraintName) =>
+            new("Database.ForeignKey", 
+                $"Impossible de supprimer : contrainte de clé étrangère '{constraintName}'");
+
+        /// <summary>
+        /// Conflit de concurrence (version obsolète).
+        /// </summary>
+        public static Error ConcurrencyConflict(string entityType) =>
+            new("Database.ConcurrencyConflict", 
+                $"Conflit de concurrence détecté pour l'entité '{entityType}'. L'entité a été modifiée par un autre processus.");
+
+        /// <summary>
+        /// Délai d'attente de la base de données dépassé.
+        /// </summary>
+        public static Error Timeout(string operation) =>
+            new("Database.Timeout", 
+                $"Délai d'attente dépassé lors de l'opération '{operation}'");
+
+        /// <summary>
+        /// Connexion à la base de données échouée.
+        /// </summary>
+        public static Error ConnectionFailed =>
+            new("Database.ConnectionFailed", 
+                "Impossible de se connecter à la base de données");
+
+        /// <summary>
+        /// Entité non trouvée (générique).
+        /// </summary>
+        public static Error EntityNotFound(string entityType, Guid id) =>
+            new($"{entityType}.NotFound", 
+                $"L'entité {entityType} avec l'ID {id:N} n'a pas été trouvée");
+
+        /// <summary>
+        /// Entité déjà existante (générique).
+        /// </summary>
+        public static Error EntityAlreadyExists(string entityType, Guid id) =>
+            new($"{entityType}.AlreadyExists", 
+                $"L'entité {entityType} avec l'ID {id:N} existe déjà");
+    }
 }
