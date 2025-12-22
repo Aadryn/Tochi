@@ -43,7 +43,7 @@ public class TenantTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Should().Contain("name");
+        result.Error.Message.Should().Contain("name");
     }
 
     [Theory]
@@ -63,7 +63,7 @@ public class TenantTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Should().Contain("slug");
+        result.Error.Message.Should().Contain("slug");
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class TenantTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Should().Contain("already deactivated");
+        result.Error.Message.Should().Contain("already deactivated");
     }
 
     [Fact]

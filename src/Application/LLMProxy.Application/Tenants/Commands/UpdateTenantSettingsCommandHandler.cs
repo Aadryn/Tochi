@@ -50,7 +50,7 @@ public class UpdateTenantSettingsCommandHandler : IRequestHandler<UpdateTenantSe
         var result = tenant.UpdateSettings(newSettings);
         if (result.IsFailure)
         {
-            return Result.Failure<TenantDto>(result.Error!);
+            return Result<TenantDto>.Failure(result.Error);
         }
 
         await _unitOfWork.Tenants.UpdateAsync(tenant, cancellationToken);

@@ -88,7 +88,7 @@ public sealed class QuotaLimitIdempotenceTests
 
         // Assert
         Assert.True(result.IsFailure);
-        Assert.Contains("Transaction ID cannot be empty", result.Error);
+        Assert.Contains("Transaction ID cannot be empty", result.Error.Message);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public sealed class QuotaLimitIdempotenceTests
 
         // Assert
         Assert.True(result.IsFailure);
-        Assert.Contains("Token amount must be positive", result.Error);
+        Assert.Contains("Token amount must be positive", result.Error.Message);
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public sealed class QuotaLimitIdempotenceTests
 
         // Assert
         Assert.True(result.IsFailure);
-        Assert.Contains("Token amount must be positive", result.Error);
+        Assert.Contains("Token amount must be positive", result.Error.Message);
     }
 
     [Fact]

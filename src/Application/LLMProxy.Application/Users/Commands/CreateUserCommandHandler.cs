@@ -43,7 +43,7 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserD
             var tenantValidation = await ValidateTenant(request.TenantId, cancellationToken);
             if (tenantValidation.IsFailure)
             {
-                return Result.Failure<UserDto>(tenantValidation.Error!);
+                return Result<UserDto>.Failure(tenantValidation.Error);
             }
 
             if (await _unitOfWork.Users.EmailExistsAsync(request.TenantId, request.Email, cancellationToken))
@@ -60,11 +60,11 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserD
             if (userResult.IsFailure)
             {
                 _logger.UserCreationFailed(
-                    new InvalidOperationException(userResult.Error!),
+                    new InvalidOperationException(userResult.Error.Message),
                     request.Email,
                     request.TenantId,
-                    userResult.Error!);
-                return Result.Failure<UserDto>(userResult.Error!);
+                    userResult.Error.Message);
+                return Result<UserDto>.Failure(userResult.Error);
             }
 
             var user = userResult.Value;

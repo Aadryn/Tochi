@@ -261,7 +261,7 @@ public class StreamInterceptionMiddleware
             }
             else
             {
-                _logger.LogAuditLogCreationError(auditLogResult.Error ?? "Unknown error");
+                _logger.LogAuditLogCreationError(auditLogResult.Error.Message);
             }
         }
         catch (Exception ex)
