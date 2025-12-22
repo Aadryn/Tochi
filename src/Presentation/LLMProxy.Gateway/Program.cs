@@ -1,6 +1,7 @@
 using LLMProxy.Gateway.Middleware;
 using LLMProxy.Gateway.Configuration;
 using LLMProxy.Gateway.HealthChecks;
+using LLMProxy.Gateway.Extensions;
 using LLMProxy.Infrastructure.Redis;
 using LLMProxy.Infrastructure.Security;
 using LLMProxy.Infrastructure.LLMProviders;
@@ -11,15 +12,34 @@ using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
+using Serilog;
 using System.Threading.RateLimiting;
 
-var builder = WebApplication.CreateBuilder(args);
+// ═══════════════════════════════════════════════════════════════
+// SERILOG BOOTSTRAP (ADR-031)
+// Configuration initiale avant le builder pour capturer les erreurs de démarrage
+// ═══════════════════════════════════════════════════════════════
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+
+try
+{
+    Log.Information("Démarrage de LLMProxy.Gateway...");
+    
+    var builder = WebApplication.CreateBuilder(args);
 
 // ==================== Configuration ====================
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
+
+// ═══════════════════════════════════════════════════════════════
+// SERILOG (ADR-031) - Remplace le logging par défaut
+// ═══════════════════════════════════════════════════════════════
+builder.ConfigureSerilog();
 
 // ==================== Services ====================
 
@@ -43,6 +63,9 @@ builder.Services.AddOpenTelemetry()
         .AddMeter("LLMProxy.*")
         .AddConsoleExporter()
         .AddOtlpExporter());
+
+// HttpContextAccessor - Required for Serilog enrichers
+builder.Services.AddHttpContextAccessor();
 
 // Add Authentication
 builder.Services.AddAuthentication()
@@ -294,6 +317,9 @@ var app = builder.Build();
 
 // ==================== Middleware Pipeline ====================
 
+// Serilog request logging (ADR-031) - MUST be early to capture all requests
+app.UseSerilogRequestLogging();
+
 // Global exception handler MUST be first to catch all exceptions
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
@@ -364,4 +390,13 @@ app.MapReverseProxy(proxyPipeline =>
     proxyPipeline.UseMiddleware<StreamInterceptionMiddleware>();
 });
 
-app.Run();
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "L'application a échoué au démarrage");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

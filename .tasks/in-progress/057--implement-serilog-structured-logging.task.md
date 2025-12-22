@@ -106,3 +106,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 - [Serilog ASP.NET Core](https://github.com/serilog/serilog-aspnetcore)
 - ADR-031 (Structured Logging)
 - ADR-054 (Request/Response Logging)
+
+
+## TRACKING
+Début: 2025-12-22T17:11:35.0407448Z
+
