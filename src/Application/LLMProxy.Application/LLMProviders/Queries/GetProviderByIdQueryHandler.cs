@@ -22,7 +22,7 @@ public class GetProviderByIdQueryHandler : IRequestHandler<GetProviderByIdQuery,
         var providerResult = await _unitOfWork.Providers.GetByIdAsync(request.ProviderId, cancellationToken);
         if (providerResult.IsFailure)
         {
-            return Result.Failure<LLMProviderDto>(providerResult.Error);
+            return Result<LLMProviderDto>.Failure(providerResult.Error);
         }
 
         var provider = providerResult.Value;

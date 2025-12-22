@@ -36,7 +36,7 @@ public class UpdateTenantSettingsCommandHandler : IRequestHandler<UpdateTenantSe
         var tenantResult = await _unitOfWork.Tenants.GetByIdAsync(request.TenantId, cancellationToken);
         if (tenantResult.IsFailure)
         {
-            return Result.Failure<TenantDto>(tenantResult.Error);
+            return Result<TenantDto>.Failure(tenantResult.Error);
         }
 
         var tenant = tenantResult.Value;
@@ -57,7 +57,7 @@ public class UpdateTenantSettingsCommandHandler : IRequestHandler<UpdateTenantSe
         var updateResult = await _unitOfWork.Tenants.UpdateAsync(tenant, cancellationToken);
         if (updateResult.IsFailure)
         {
-            return Result.Failure<TenantDto>(updateResult.Error);
+            return Result<TenantDto>.Failure(updateResult.Error);
         }
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -22,7 +22,7 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, Result<
         var userResult = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
         if (userResult.IsFailure)
         {
-            return Result.Failure<UserDto>(userResult.Error);
+            return Result<UserDto>.Failure(userResult.Error);
         }
 
         var user = userResult.Value;

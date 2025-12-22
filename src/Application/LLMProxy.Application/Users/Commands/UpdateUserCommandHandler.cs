@@ -23,7 +23,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
         var userResult = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
         if (userResult.IsFailure)
         {
-            return Result.Failure<UserDto>(userResult.Error);
+            return Result<UserDto>.Failure(userResult.Error);
         }
 
         var user = userResult.Value;
@@ -34,7 +34,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
         var updateResult = await _unitOfWork.Users.UpdateAsync(user, cancellationToken);
         if (updateResult.IsFailure)
         {
-            return Result.Failure<UserDto>(updateResult.Error);
+            return Result<UserDto>.Failure(updateResult.Error);
         }
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -23,7 +23,7 @@ public class CreateApiKeyCommandHandler : IRequestHandler<CreateApiKeyCommand, R
         var userResult = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
         if (userResult.IsFailure)
         {
-            return Result.Failure<ApiKeyDto>(userResult.Error);
+            return Result<ApiKeyDto>.Failure(userResult.Error);
         }
 
         var plainKey = ApiKey.GenerateKey();
@@ -38,7 +38,7 @@ public class CreateApiKeyCommandHandler : IRequestHandler<CreateApiKeyCommand, R
         var addResult = await _unitOfWork.ApiKeys.AddAsync(apiKey, cancellationToken);
         if (addResult.IsFailure)
         {
-            return Result.Failure<ApiKeyDto>(addResult.Error);
+            return Result<ApiKeyDto>.Failure(addResult.Error);
         }
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);

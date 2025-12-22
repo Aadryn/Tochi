@@ -22,7 +22,7 @@ public class UpdateProviderCommandHandler : IRequestHandler<UpdateProviderComman
         var providerResult = await _unitOfWork.Providers.GetByIdAsync(request.ProviderId, cancellationToken);
         if (providerResult.IsFailure)
         {
-            return Result.Failure<LLMProviderDto>(providerResult.Error);
+            return Result<LLMProviderDto>.Failure(providerResult.Error);
         }
 
         var provider = providerResult.Value;
@@ -40,7 +40,7 @@ public class UpdateProviderCommandHandler : IRequestHandler<UpdateProviderComman
         var updateResult = await _unitOfWork.Providers.UpdateAsync(provider, cancellationToken);
         if (updateResult.IsFailure)
         {
-            return Result.Failure<LLMProviderDto>(updateResult.Error);
+            return Result<LLMProviderDto>.Failure(updateResult.Error);
         }
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);
