@@ -1,4 +1,4 @@
-namespace LLMProxy.Infrastructure.Security.Providers;
+namespace LLMProxy.Infrastructure.Security.Abstractions.Providers;
 
 /// <summary>
 /// Contrat pour les fournisseurs de secrets (Strategy Pattern - ADR-005 SRP).

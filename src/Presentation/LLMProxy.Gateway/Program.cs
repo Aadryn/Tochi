@@ -4,6 +4,8 @@ using LLMProxy.Gateway.HealthChecks;
 using LLMProxy.Infrastructure.Redis;
 using LLMProxy.Infrastructure.Security;
 using LLMProxy.Infrastructure.LLMProviders;
+using LLMProxy.Infrastructure.Configuration.FeatureFlags;
+using LLMProxy.Domain.Interfaces;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Resources;
@@ -57,6 +59,20 @@ builder.Services.AddAuthentication()
 
 // Add Authorization
 builder.Services.AddAuthorization();
+
+// API Versioning avec namespace convention (ADR-037)
+builder.Services.AddApiVersioningWithNamespaceConvention();
+
+// ═══════════════════════════════════════════════════════════════
+// FEATURE FLAGS (ADR-030)
+// ═══════════════════════════════════════════════════════════════
+
+builder.Services.AddSingleton<IFeatureFlags>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var logger = sp.GetRequiredService<ILogger<ConfigurationFeatureFlags>>();
+    return new ConfigurationFeatureFlags(configuration, logger);
+});
 
 // ═══════════════════════════════════════════════════════════════
 // HEALTH CHECKS (ADR-038)
@@ -258,10 +274,10 @@ builder.Services.AddSingleton<LLMProxy.Infrastructure.Redis.Idempotency.IIdempot
     LLMProxy.Infrastructure.Redis.Idempotency.RedisIdempotencyStore>();
 
 // Add Hash Service
-builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IHashService, LLMProxy.Infrastructure.Security.Sha256HashService>();
-builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IApiKeyExtractor, LLMProxy.Infrastructure.Security.HeaderApiKeyExtractor>();
-builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IApiKeyValidator, LLMProxy.Infrastructure.Security.ApiKeyValidator>();
-builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IApiKeyAuthenticator, LLMProxy.Infrastructure.Security.ApiKeyAuthenticator>();
+builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.Abstractions.IHashService, LLMProxy.Infrastructure.Security.Sha256HashService>();
+builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.Abstractions.IApiKeyExtractor, LLMProxy.Infrastructure.Security.HeaderApiKeyExtractor>();
+builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.Abstractions.IApiKeyValidator, LLMProxy.Infrastructure.Security.ApiKeyValidator>();
+builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.Abstractions.IApiKeyAuthenticator, LLMProxy.Infrastructure.Security.ApiKeyAuthenticator>();
 
 // Add Database (PostgreSQL)
 builder.Services.AddDbContext<LLMProxy.Infrastructure.PostgreSQL.LLMProxyDbContext>(options =>

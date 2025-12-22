@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using LLMProxy.Infrastructure.Security.Abstractions;
 
 namespace LLMProxy.Infrastructure.Security;
 

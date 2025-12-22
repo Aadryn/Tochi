@@ -1,4 +1,4 @@
-namespace LLMProxy.Infrastructure.Security;
+namespace LLMProxy.Infrastructure.Security.Abstractions;
 
 /// <summary>
 /// Service de hachage cryptographique.

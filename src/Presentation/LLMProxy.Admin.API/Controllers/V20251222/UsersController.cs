@@ -4,10 +4,14 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LLMProxy.Admin.API.Controllers;
+namespace LLMProxy.Admin.API.Controllers.V20251222;
 
+/// <summary>
+/// Users API - Version 2025-12-22
+/// Version détectée automatiquement depuis le namespace
+/// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Authorize(Policy = "TenantAdmin")]
 public class UsersController : ControllerBase
 {

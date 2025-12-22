@@ -28,6 +28,8 @@
     <PackageReference Include="Polly" Version="8.4.2" />
     <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
+    <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" Version="9.0.0" />
     <PackageReference Include="SharpToken" Version="2.0.3" />
   </ItemGroup>
@@ -37,9 +39,11 @@
     <ProjectReference Include="..\..\Application\LLMProxy.Application\LLMProxy.Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.PostgreSQL\LLMProxy.Infrastructure.PostgreSQL.csproj" />
     <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Redis\LLMProxy.Infrastructure.Redis.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Security.Abstractions\LLMProxy.Infrastructure.Security.Abstractions.csproj" />
     <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Security\LLMProxy.Infrastructure.Security.csproj" />
     <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Telemetry\LLMProxy.Infrastructure.Telemetry.csproj" />
     <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.LLMProviders\LLMProxy.Infrastructure.LLMProviders.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Configuration\LLMProxy.Infrastructure.Configuration.csproj" />
   </ItemGroup>
 
 </Project>

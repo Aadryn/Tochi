@@ -1,3 +1,4 @@
+using LLMProxy.Admin.API.Configuration;
 using LLMProxy.Infrastructure.PostgreSQL;
 using LLMProxy.Infrastructure.Redis;
 using LLMProxy.Infrastructure.Security;
@@ -69,6 +70,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("TenantAdmin", policy => policy.RequireRole("Admin", "TenantAdmin"));
 });
+
+// Add API Versioning avec namespace convention (ADR-037)
+builder.Services.AddApiVersioningWithNamespaceConvention();
 
 // Add Controllers and Swagger
 builder.Services.AddControllers();

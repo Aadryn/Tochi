@@ -1,6 +1,6 @@
 using LLMProxy.Domain.Interfaces;
 
-namespace LLMProxy.Infrastructure.Security;
+namespace LLMProxy.Infrastructure.Security.Abstractions;
 
 /// <summary>
 /// Service d'authentification par clé API.

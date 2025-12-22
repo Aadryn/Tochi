@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace LLMProxy.Infrastructure.Security;
+namespace LLMProxy.Infrastructure.Security.Abstractions;
 
 /// <summary>
 /// Service d'extraction des clés API depuis les en-têtes HTTP.

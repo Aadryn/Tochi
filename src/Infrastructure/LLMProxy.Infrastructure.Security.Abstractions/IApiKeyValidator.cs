@@ -1,6 +1,6 @@
 using LLMProxy.Domain.Entities;
 
-namespace LLMProxy.Infrastructure.Security;
+namespace LLMProxy.Infrastructure.Security.Abstractions;
 
 /// <summary>
 /// Service de validation métier des clés API.

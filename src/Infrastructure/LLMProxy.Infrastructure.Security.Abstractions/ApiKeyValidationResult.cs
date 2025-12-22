@@ -1,7 +1,7 @@
 using LLMProxy.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
-namespace LLMProxy.Infrastructure.Security;
+namespace LLMProxy.Infrastructure.Security.Abstractions;
 
 /// <summary>
 /// Résultat de la validation d'une clé API.
