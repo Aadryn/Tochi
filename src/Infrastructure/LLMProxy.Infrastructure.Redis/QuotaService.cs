@@ -163,6 +163,39 @@ public class QuotaService : IQuotaService
     }
 
     /// <summary>
+    /// Récupère l'utilisation actuelle d'un quota ou retourne un quota illimité.
+    /// Conforme à ADR-026 (Null Object Pattern).
+    /// </summary>
+    /// <param name="userId">Identifiant de l'utilisateur.</param>
+    /// <param name="quotaType">Type de quota.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    /// <returns>État actuel du quota ou quota illimité si non configuré.</returns>
+    /// <remarks>
+    /// Élimine les null checks dans le code appelant.
+    /// Retourne un quota illimité (limit = long.MaxValue) si aucun quota configuré.
+    /// </remarks>
+    public async Task<QuotaUsage> GetUsageOrUnlimitedAsync(Guid userId, QuotaType quotaType, CancellationToken cancellationToken = default)
+    {
+        var usage = await GetUsageAsync(userId, quotaType, cancellationToken);
+        
+        if (usage == null)
+        {
+            // Aucun quota configuré - retourner quota illimité (Null Object Pattern)
+            return new QuotaUsage
+            {
+                UserId = userId,
+                QuotaType = quotaType,
+                CurrentUsage = 0,
+                Limit = long.MaxValue,
+                WindowStart = DateTime.UtcNow,
+                WindowEnd = DateTime.MaxValue
+            };
+        }
+
+        return usage;
+    }
+
+    /// <summary>
     /// Récupère l'ensemble des quotas d'un utilisateur.
     /// </summary>
     /// <param name="userId">Identifiant de l'utilisateur.</param>
