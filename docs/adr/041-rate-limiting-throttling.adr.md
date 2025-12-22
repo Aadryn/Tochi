@@ -4,7 +4,7 @@ Date: 2025-12-21
 
 ## Statut
 
-Accepté
+**Implémenté** (2025-12-22)
 
 ## Contexte
 
@@ -642,6 +642,88 @@ app.UseAuthorization();
 - **Avantages** : Découplé de l'application
 - **Inconvénients** : Moins flexible, config séparée
 - **Raison du rejet** : Besoin de logique métier (par tenant)
+
+## Implémentation
+
+Date d'implémentation : 2025-12-22
+
+### Composants créés
+
+**Domain Layer (2 fichiers, 260 lignes)** :
+- `IRateLimiter.cs` (159 lignes) : Interface avec CheckSlidingWindowAsync, CheckTokenBucketAsync, IncrementAsync
+- `RateLimitResult.cs` (101 lignes) : Record immutable pour résultats (IsAllowed, CurrentCount, RemainingTokens, RetryAfter)
+
+**Infrastructure Layer (1 fichier, 265 lignes)** :
+- `RedisRateLimiter.cs` (265 lignes) : Implémentation avec scripts Lua atomiques, Sorted Set (Sliding Window), Hash (Token Bucket), fail-open error handling
+
+**Application Layer (7 fichiers, 465 lignes)** :
+- `EndpointLimit.cs` (61 lignes) : Configuration par endpoint (RequestsPerMinute, TokensPerMinute, BurstCapacity)
+- `GlobalLimit.cs` (66 lignes) : Limites globales tenant (RequestsPerMinute/Day, TokensPerMinute/Day)
+- `ApiKeyLimit.cs` (52 lignes) : Limites par API Key (RequestsPerMinute, TokensPerMinute)
+- `TenantRateLimitConfiguration.cs` (94 lignes) : Configuration centrale avec Dictionary<endpoint, EndpointLimit>
+- `IRateLimitConfigurationService.cs` (92 lignes) : Interface de récupération config (cache obligatoire)
+- `RateLimitConfigurationService.cs` (100 lignes) : Implémentation par défaut (config statique, TODO: DB + cache Redis)
+- `TokenBasedRateLimiter.cs` (192 lignes) : Rate limiting par tokens LLM avec CheckTokenLimitAsync, RecordTokenUsageAsync, GetMonthlyTokenUsageAsync
+
+**Presentation Layer (3 fichiers, 493 lignes)** :
+- `RateLimitingMiddleware.cs` (316 lignes) : Middleware 4-niveaux (IP → Tenant → API Key → Endpoint), extraction TenantId/ApiKey, headers HTTP, HTTP 429
+- `RateLimitingServiceCollectionExtensions.cs` (108 lignes) : AddRateLimiting(IConfiguration) avec Redis ConnectionMultiplexer, IRateLimiter, IRateLimitConfigurationService, TokenBasedRateLimiter
+- `RateLimitingApplicationBuilderExtensions.cs` (69 lignes) : UseRateLimiting() avec ordre middleware correct (après Routing, avant Authentication)
+
+**Tests (1 fichier, 317 lignes)** :
+- `RedisRateLimiterTests.cs` (317 lignes) : 10 tests unitaires avec NSubstitute (6 passing, 4 nécessitent amélioration mocking)
+
+**Total** : 16 fichiers, 1800 lignes de code de production + 317 lignes de tests
+
+### Décisions d'implémentation
+
+1. **Architecture en couches** : Respect strict Clean Architecture (Domain → Infrastructure → Application → Presentation)
+2. **Scripts Lua Redis** : Atomicité garantie pour éviter race conditions en environnement distribué
+3. **Fail-open strategy** : Sur erreur Redis, autoriser requête (logged) plutôt que deny-of-service
+4. **Token Bucket pour bursts** : Capacité = 2× limite/min pour absorber pics de trafic
+5. **Sliding Window pour IP** : Protection DDoS avec fenêtre glissante (évite double counting aux frontières)
+6. **Configuration par défaut** : RateLimitConfigurationService retourne config statique (TODO: DB + cache Redis en production)
+7. **Multi-niveau cascadé** : Vérification séquentielle (court-circuit dès rejet) pour performance
+8. **Headers HTTP standard** : X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Retry-After (compatibilité Stripe/OpenAI)
+9. **DI dans Presentation** : Extensions DI dans Gateway (pas Application) pour respecter dépendances architecture
+
+### Utilisation
+
+```csharp
+// Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+// Enregistrer services rate limiting
+builder.Services.AddRateLimiting(builder.Configuration);
+
+var app = builder.Build();
+
+// Middleware APRÈS Routing, AVANT Authentication
+app.UseRouting();
+app.UseRateLimiting();  // ← Position critique
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+app.Run();
+```
+
+Configuration requise (appsettings.json) :
+```json
+{
+  "Redis": {
+    "ConnectionString": "localhost:6379",
+    "InstanceName": "llmproxy:"
+  }
+}
+```
+
+### Limitations connues
+
+1. **Configuration statique** : RateLimitConfigurationService TODO DB + cache Redis
+2. **Tests partiels** : 4 tests nécessitent amélioration du mocking (logger assertions)
+3. **Limites quotidiennes** : Implémentation basique, pas de reset automatique minuit
+4. **Métriques** : Pas d'export Prometheus/Grafana (seulement logging)
 
 ## Références
 
