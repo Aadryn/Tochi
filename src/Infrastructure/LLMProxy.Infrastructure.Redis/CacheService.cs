@@ -1,6 +1,6 @@
 using LLMProxy.Domain.Interfaces;
 using LLMProxy.Infrastructure.Redis.Common;
-using LLMProxy.Infrastructure.Security;
+using LLMProxy.Infrastructure.Security.Abstractions;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json;
