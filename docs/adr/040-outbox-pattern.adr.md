@@ -1,10 +1,41 @@
 # 40. Outbox Pattern pour la publication fiable d'événements
 
-Date: 2025-12-21
+Date: 2025-12-21  
+Dernière mise à jour: 2025-12-21
 
 ## Statut
 
-Accepté
+**Implémenté**
+
+### Détails d'implémentation
+
+**Fichiers créés** :
+- `src/Core/LLMProxy.Domain/Entities/OutboxMessage.cs` (156 lignes) - Entité Outbox
+- `src/Core/LLMProxy.Domain/Entities/OutboxDeadLetter.cs` (109 lignes) - Dead Letter Queue
+- `src/Core/LLMProxy.Domain/Interfaces/IEventPublisher.cs` (31 lignes) - Interface publication événements
+- `src/Infrastructure/LLMProxy.Infrastructure.PostgreSQL/Configurations/OutboxMessageConfiguration.cs` (69 lignes) - Configuration EF Core avec index partiels JSONB
+- `src/Infrastructure/LLMProxy.Infrastructure.PostgreSQL/Configurations/OutboxDeadLetterConfiguration.cs` (69 lignes) - Configuration EF Core Dead Letter
+- `src/Infrastructure/LLMProxy.Infrastructure.PostgreSQL/Interceptors/OutboxInterceptor.cs` (151 lignes) - SaveChangesInterceptor automatique
+- `src/Application/LLMProxy.Application/Common/EventPublishing/MediatREventPublisher.cs` (70 lignes) - Implémentation IEventPublisher avec MediatR
+- `src/Application/LLMProxy.Application/BackgroundServices/OutboxProcessor.cs` (175 lignes) - Worker de traitement asynchrone
+- `src/Application/LLMProxy.Application/BackgroundServices/OutboxCleanupService.cs` (105 lignes) - Worker de nettoyage périodique
+- `src/Application/LLMProxy.Application/BackgroundServices/OutboxDeadLetterService.cs` (121 lignes) - Worker de gestion Dead Letter
+- `src/Application/LLMProxy.Application/Configuration/OutboxOptions.cs` (128 lignes) - Configuration avec validation
+- `src/Application/LLMProxy.Application/Extensions/OutboxServiceCollectionExtensions.cs` (82 lignes) - Extensions DI
+
+**Tests créés** : 75 tests unitaires (100% passing)
+- `tests/LLMProxy.Application.Tests/Entities/OutboxMessageTests.cs` (13 tests)
+- `tests/LLMProxy.Application.Tests/Entities/OutboxDeadLetterTests.cs` (5 tests)
+- `tests/LLMProxy.Application.Tests/Configuration/OutboxOptionsTests.cs` (17 tests)
+- Plus 40 tests existants (Null Objects de Task 037)
+
+**Décisions d'implémentation** :
+1. **Clean Architecture** : Application utilise `DbContext` abstrait (pas `LlmProxyDbContext` concret)
+2. **Sérialisation JSON** : `AssemblyQualifiedName` + `JsonSerializer` pour polymorphisme événements
+3. **Retry strategy** : MaxRetries=3, Dead Letter pour messages bloquants
+4. **Rétention** : 7 jours par défaut, cleanup automatique toutes les heures
+5. **Index partiels PostgreSQL** : Performance optimale (unprocessed, cleanup, failed)
+6. **JSONB natif** : Stockage efficace avec capacité de requêtage PostgreSQL
 
 ## Contexte
 
