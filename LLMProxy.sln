@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLMProxy.Infrastructure.Con
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLMProxy.Infrastructure.Telemetry.Tests", "tests\LLMProxy.Infrastructure.Telemetry.Tests\LLMProxy.Infrastructure.Telemetry.Tests.csproj", "{71359376-5459-4C9C-B162-313F6B9F317B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLMProxy.Application.Tests", "tests\LLMProxy.Application.Tests\LLMProxy.Application.Tests.csproj", "{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -259,6 +261,18 @@ Global
 		{71359376-5459-4C9C-B162-313F6B9F317B}.Release|x64.Build.0 = Release|Any CPU
 		{71359376-5459-4C9C-B162-313F6B9F317B}.Release|x86.ActiveCfg = Release|Any CPU
 		{71359376-5459-4C9C-B162-313F6B9F317B}.Release|x86.Build.0 = Release|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Debug|x64.Build.0 = Debug|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Debug|x86.Build.0 = Debug|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Release|x64.ActiveCfg = Release|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Release|x64.Build.0 = Release|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Release|x86.ActiveCfg = Release|Any CPU
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -273,5 +287,6 @@ Global
 		{36D26593-5CF3-4C4F-8219-75E3D00C4D5F} = {9048EB7F-3875-A59E-E36B-5BD4C6F2A282}
 		{5229760D-C7CC-4700-B782-ED389CB92839} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{71359376-5459-4C9C-B162-313F6B9F317B} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{6B0B3E42-DAB5-40C8-808A-6C7FB36EA508} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal
