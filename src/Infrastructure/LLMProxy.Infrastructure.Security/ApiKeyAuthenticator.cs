@@ -1,7 +1,8 @@
 using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.Interfaces;
-using Microsoft.Extensions.Logging;
 using LLMProxy.Infrastructure.Security.Abstractions;
+using LLMProxy.Infrastructure.Telemetry.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace LLMProxy.Infrastructure.Security;
 
@@ -53,7 +54,9 @@ public class ApiKeyAuthenticator : IApiKeyAuthenticator
 
             if (apiKeyEntity == null)
             {
-                _logger.LogWarning("Invalid API key prefix: {Prefix}", prefix);
+                _logger.ApiKeyValidationFailed(
+                    Guid.Empty,
+                    "Invalid API key prefix");
                 return ApiKeyAuthenticationResult.Failure("Invalid API key");
             }
 
@@ -63,7 +66,9 @@ public class ApiKeyAuthenticator : IApiKeyAuthenticator
 
             if (validKey == null || validKey.Id != apiKeyEntity.Id)
             {
-                _logger.LogWarning("Invalid API key hash for user {UserId}", apiKeyEntity.UserId);
+                _logger.ApiKeyValidationFailed(
+                    apiKeyEntity.TenantId,
+                    "Invalid API key hash");
                 return ApiKeyAuthenticationResult.Failure("Invalid API key");
             }
 
@@ -71,7 +76,9 @@ public class ApiKeyAuthenticator : IApiKeyAuthenticator
             var user = await unitOfWork.Users.GetByIdAsync(validKey.UserId);
             if (user == null)
             {
-                _logger.LogWarning("User not found for API key: {UserId}", validKey.UserId);
+                _logger.ApiKeyValidationFailed(
+                    validKey.TenantId,
+                    "User not found");
                 return ApiKeyAuthenticationResult.Failure("User not found");
             }
 
@@ -84,8 +91,7 @@ public class ApiKeyAuthenticator : IApiKeyAuthenticator
                     validationResult.StatusCode);
             }
 
-            _logger.LogInformation("API key authenticated: User={UserId}, Tenant={TenantId}",
-                user.Id, user.TenantId);
+            _logger.ApiKeyValidated(user.TenantId);
 
             return ApiKeyAuthenticationResult.Success(validKey, user);
         }
