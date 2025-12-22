@@ -1,3 +1,4 @@
+using LLMProxy.Domain.Common;
 using LLMProxy.Domain.Interfaces;
 using LLMProxy.Infrastructure.PostgreSQL.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -9,10 +10,15 @@ namespace LLMProxy.Infrastructure.PostgreSQL;
 /// Implémentation du pattern Unit of Work.
 /// Centralise la gestion des transactions et des repositories.
 /// </summary>
+/// <remarks>
+/// Conforme à l'ADR-029 (Unit of Work Pattern) et ADR-025 (Domain Events).
+/// Dispatche automatiquement les Domain Events après SaveChanges.
+/// </remarks>
 public class UnitOfWork : IUnitOfWork
 {
     private readonly LLMProxyDbContext _context;
     private readonly ILoggerFactory _loggerFactory;
+    private readonly IDomainEventDispatcher _eventDispatcher;
     private IDbContextTransaction? _transaction;
 
     // Lazy initialization of repositories
@@ -24,10 +30,20 @@ public class UnitOfWork : IUnitOfWork
     private IAuditLogRepository? _auditLogs;
     private ITokenUsageMetricRepository? _tokenMetrics;
 
-    public UnitOfWork(LLMProxyDbContext context, ILoggerFactory loggerFactory)
+    /// <summary>
+    /// Initialise une nouvelle instance du Unit of Work.
+    /// </summary>
+    /// <param name="context">Le contexte de base de données.</param>
+    /// <param name="loggerFactory">Factory pour créer les loggers.</param>
+    /// <param name="eventDispatcher">Dispatcher pour les événements du domaine.</param>
+    public UnitOfWork(
+        LLMProxyDbContext context, 
+        ILoggerFactory loggerFactory,
+        IDomainEventDispatcher eventDispatcher)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+        _eventDispatcher = eventDispatcher ?? throw new ArgumentNullException(nameof(eventDispatcher));
     }
 
     public ITenantRepository Tenants => _tenants ??= new TenantRepository(_context, _loggerFactory.CreateLogger<TenantRepository>());
@@ -44,9 +60,47 @@ public class UnitOfWork : IUnitOfWork
 
     public ITokenUsageMetricRepository TokenMetrics => _tokenMetrics ??= new TokenUsageMetricRepository(_context, _loggerFactory.CreateLogger<TokenUsageMetricRepository>());
 
+    /// <summary>
+    /// Sauvegarde les changements et dispatche les événements du domaine.
+    /// </summary>
+    /// <param name="cancellationToken">Token d'annulation.</param>
+    /// <returns>Le nombre d'entités sauvegardées.</returns>
+    /// <remarks>
+    /// Conforme à l'ADR-025 : collecte les événements AVANT SaveChanges,
+    /// sauvegarde les entités, puis dispatche les événements APRÈS commit.
+    /// Cela garantit que les événements ne sont publiés que si la persistance réussit.
+    /// </remarks>
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.SaveChangesAsync(cancellationToken);
+        // 1. Collecter les événements du domaine AVANT SaveChanges
+        var domainEvents = _context.ChangeTracker
+            .Entries<IHasDomainEvents>()
+            .Where(e => e.Entity.DomainEvents.Any())
+            .SelectMany(e => e.Entity.DomainEvents)
+            .ToList();
+
+        // 2. Sauvegarder les changements dans la base de données
+        var result = await _context.SaveChangesAsync(cancellationToken);
+
+        // 3. Clear les événements des entités
+        var entitiesWithEvents = _context.ChangeTracker
+            .Entries<IHasDomainEvents>()
+            .Where(e => e.Entity.DomainEvents.Any())
+            .Select(e => e.Entity)
+            .ToList();
+
+        foreach (var entity in entitiesWithEvents)
+        {
+            entity.ClearDomainEvents();
+        }
+
+        // 4. Dispatcher les événements APRÈS commit réussi
+        if (domainEvents.Any())
+        {
+            await _eventDispatcher.DispatchAsync(domainEvents, cancellationToken);
+        }
+
+        return result;
     }
 
     public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
