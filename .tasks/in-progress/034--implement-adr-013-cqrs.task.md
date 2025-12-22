@@ -39,3 +39,21 @@ Implémenter Command Query Responsibility Segregation (CQRS) pour séparer les o
 - GetUserById, GetUserByEmail
 - GetTenantById, GetTenantStatistics
 - ListActiveApiKeys
+
+
+## TRACKING
+Début: 2025-12-22T14:54:27.7269138Z
+
+## ÉTAT INITIAL
+
+**Infrastructure déjà en place:**
+-  Interfaces ICommand, IQuery, ICommandHandler, IQueryHandler
+-  MediatR configuré dans Program.cs
+-  ~20+ Commands et Queries existantes
+-  Result<T> pattern utilisé partout
+
+**À implémenter:**
+1. Optimisation queries avec projections SQL directes
+2. Tests unitaires pour handlers CQRS
+3. Documentation README.md complète
+
