@@ -1,4 +1,5 @@
 using LLMProxy.Domain.Interfaces;
+using LLMProxy.Infrastructure.Security.Abstractions.Providers;
 using LLMProxy.Infrastructure.Security.Providers;
 using Microsoft.Extensions.Configuration;
 

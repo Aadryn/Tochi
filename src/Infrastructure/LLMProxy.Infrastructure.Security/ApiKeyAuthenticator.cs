@@ -1,6 +1,7 @@
 using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
+using LLMProxy.Infrastructure.Security.Abstractions;
 
 namespace LLMProxy.Infrastructure.Security;
 

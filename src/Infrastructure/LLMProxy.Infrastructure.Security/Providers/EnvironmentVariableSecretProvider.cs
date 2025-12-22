@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Configuration;
 
+using LLMProxy.Infrastructure.Security.Abstractions.Providers;
+
 namespace LLMProxy.Infrastructure.Security.Providers;
 
 /// <summary>

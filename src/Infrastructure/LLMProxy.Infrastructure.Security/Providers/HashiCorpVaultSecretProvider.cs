@@ -1,3 +1,5 @@
+using LLMProxy.Infrastructure.Security.Abstractions.Providers;
+
 namespace LLMProxy.Infrastructure.Security.Providers;
 
 /// <summary>

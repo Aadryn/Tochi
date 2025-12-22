@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using LLMProxy.Infrastructure.Security.Abstractions;
 
 namespace LLMProxy.Infrastructure.Security;
 
