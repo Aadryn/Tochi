@@ -1,60 +1,68 @@
-using Asp.Versioning;
-using LLMProxy.Application.ApiKeys.Commands;
-using LLMProxy.Application.ApiKeys.Queries;
+using LLMProxy.Application.LLMProviders.Commands;
+using LLMProxy.Application.LLMProviders.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LLMProxy.Admin.API.Controllers;
+namespace LLMProxy.Admin.API.Controllers.V20251222;
 
+/// <summary>
+/// Providers API - Version 2025-12-22
+/// Version détectée automatiquement depuis le namespace
+/// </summary>
 [ApiController]
-[ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 [Authorize(Policy = "TenantAdmin")]
-public class ApiKeysController : ControllerBase
+public class ProvidersController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<ApiKeysController> _logger;
+    private readonly ILogger<ProvidersController> _logger;
 
-    public ApiKeysController(IMediator mediator, ILogger<ApiKeysController> logger)
+    public ProvidersController(IMediator mediator, ILogger<ProvidersController> logger)
     {
         _mediator = mediator;
         _logger = logger;
     }
 
     /// <summary>
-    /// Get API keys for a user
+    /// Get provider by ID
     /// </summary>
-    [HttpGet("user/{userId:guid}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetByUserId(Guid userId, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var query = new GetApiKeysByUserIdQuery { UserId = userId };
+        var query = new GetProviderByIdQuery { ProviderId = id };
         var result = await _mediator.Send(query, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return NotFound(result.Error);
+        }
 
         return Ok(result.Value);
     }
 
     /// <summary>
-    /// Get API keys for a tenant
+    /// Get providers for a tenant
     /// </summary>
     [HttpGet("tenant/{tenantId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByTenantId(Guid tenantId, CancellationToken cancellationToken)
     {
-        var query = new GetApiKeysByTenantIdQuery { TenantId = tenantId };
+        var query = new GetProvidersByTenantIdQuery { TenantId = tenantId };
         var result = await _mediator.Send(query, cancellationToken);
 
         return Ok(result.Value);
     }
 
     /// <summary>
-    /// Create new API key
+    /// Create new LLM provider
     /// </summary>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] CreateApiKeyCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateProviderCommand command, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(command, cancellationToken);
 
@@ -63,37 +71,38 @@ public class ApiKeysController : ControllerBase
             return BadRequest(result.Error);
         }
 
-        return CreatedAtAction(nameof(GetByUserId), new { userId = command.UserId }, result.Value);
+        return CreatedAtAction(nameof(GetById), new { id = result.Value.Id }, result.Value);
     }
 
     /// <summary>
-    /// Revoke API key
+    /// Update provider configuration
     /// </summary>
-    [HttpPost("{id:guid}/revoke")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Revoke(Guid id, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProviderCommand command, CancellationToken cancellationToken)
     {
-        var command = new RevokeApiKeyCommand { ApiKeyId = id };
+        command.ProviderId = id;
         var result = await _mediator.Send(command, cancellationToken);
 
         if (!result.IsSuccess)
         {
-            return NotFound(result.Error);
+            return BadRequest(result.Error);
         }
 
-        return Ok();
+        return Ok(result.Value);
     }
 
     /// <summary>
-    /// Delete API key permanently
+    /// Delete provider
     /// </summary>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var command = new DeleteApiKeyCommand { ApiKeyId = id };
+        var command = new DeleteProviderCommand { ProviderId = id };
         var result = await _mediator.Send(command, cancellationToken);
 
         if (!result.IsSuccess)

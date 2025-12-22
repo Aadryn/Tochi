@@ -491,3 +491,81 @@ Actuellement, **AUCUN versioning** n'est implémenté :
 ## TRACKING
 Début: 2025-12-22T08:52:22.9943180Z
 
+
+## TRACKING
+
+Début: 2025-12-22T08:52:22.9943180Z
+Durée actuelle: ~3h (en cours)
+
+## PROGRESSION DÉTAILLÉE
+
+###  Step 1: Packages & Configuration (COMPLÉTÉ - 30min)
+-  Asp.Versioning.Http v8.1.0 (Gateway + Admin.API)
+-  Asp.Versioning.Mvc.ApiExplorer v8.1.0 (Gateway + Admin.API)
+-  ApiVersioningConfiguration.cs créé (2 projets)
+-  Build réussi
+-  Note: v9.0.0 n'existe pas, utilisé v8.1.0
+
+###  Step 2: Intégration Program.cs + Migration v1.0 (COMPLÉTÉ - 1h)
+-  Program.cs modifiés (Gateway + Admin.API)
+-  4 contrôleurs migrés vers v1.0 (Users, Tenants, Providers, ApiKeys)
+-  Routes changées: /api/[controller]  /api/v{version}/[controller]
+-  Attributes [ApiVersion("1.0")] ajoutés
+-  Build réussi, tests 119/120 passing
+
+###  Step 3: Demo Multi-Version v2.0 (PARTIEL - 1h30)
+-  TenantsV2Controller créé (201 lines)
+-  Route: /api/v2/tenants (explicite)
+-  Features v2: Pagination, métadonnées enrichies, CreatedAtAction
+-  Tests créés: 13 tests API versioning
+-  Tests: 6/13 passing (7 échouent sur dynamic cast)
+-  Projet LLMProxy.Admin.API.Tests créé
+-  Problème: Tests v2 utilisent \s dynamic\ qui échoue
+
+###  Step 4-8: RESTE À FAIRE
+- [ ] Step 4: Corriger tests API versioning (dynamic  JSON deserialization)
+- [ ] Step 5: Support dépréciation ([ApiVersion("1.0", Deprecated = true)])
+- [ ] Step 6: Documentation README (exemples versioning)
+- [ ] Step 7: Tests production config
+- [ ] Step 8: Validation finale + merge
+
+## COMMITS
+
+1. **feat(api-versioning): Add Asp.Versioning packages and configuration** (260a4bc)
+   - Packages v8.1.0 ajoutés
+   - Configuration classes créées
+
+2. **feat(api-versioning): Integrate versioning in Program.cs and migrate controllers to v1.0** (73979e5)
+   - Program.cs intégration
+   - 4 contrôleurs migrés v1.0
+
+3. **feat(api-versioning): Add v2.0 example controller and integration tests** (da8784d)
+   - TenantsV2Controller avec pagination
+   - 13 tests (6/13 passing)
+
+## PROBLÈMES RÉSOLUS
+
+1. **Package v9.0.0 introuvable**  Utilisé v8.1.0 (latest disponible)
+2. **AddApiExplorer non trouvé**  Ajouté package Asp.Versioning.Mvc.ApiExplorer
+3. **NSubstitute types anonymes**  Changé pour TenantDto réel
+4. **Result<Guid> vs Result<TenantDto>**  CreateTenantCommand retourne TenantDto
+
+## PROBLÈME ACTUEL
+
+**Tests v2 échouent** (7/13):
+- Cause: \esponse as dynamic\ ne fonctionne pas bien avec JSON anonymes
+- Ligne: ApiVersioningTests.cs:176, 249, 280, 302, 315
+- Solution nécessaire: Utiliser JsonSerializer pour deserialize réponses
+
+## ÉTAT BUILD
+
+-  Build: 13/13 projets (0 errors, 3 warnings KubernetesClient)
+-  Tests: 125/132 passing (7 failed - tests API v2)
+-  Conformité ADR-037: **~60%** (au lieu de 90% visé)
+
+## NEXT STEPS
+
+1. **PRIORITÉ HAUTE**: Fixer tests v2 (use JsonSerializer instead of dynamic)
+2. Ajouter tests dépréciation
+3. Documenter dans README
+4. Validation finale

@@ -1,56 +1,52 @@
 using Asp.Versioning;
+using Asp.Versioning.Conventions;
 
 namespace LLMProxy.Gateway.Configuration;
 
 /// <summary>
-/// Configuration centralisée du versioning d'API REST.
-/// Conforme à ADR-037 (API Versioning Strategy).
+/// Configuration du versioning d'API avec détection par namespace
 /// </summary>
 /// <remarks>
-/// Stratégie choisie : URL-based versioning (`/api/v{version}/...`)
-/// - Plus visible et explicite pour les clients
-/// - Cache-friendly (différentes URLs = différents caches)
-/// - SEO-friendly pour documentation API
-/// - Support multi-version simultané en production
+/// Stratégie : Namespace-based versioning avec fallbacks multiples
+/// - Détection automatique depuis namespace
+/// - Formats supportés : v{major}.{minor}, v{year}, v{year}-{month}-{day}
+/// - Readers : UrlSegment, Header (X-Api-Version), QueryString (api-version)
+/// - Routes : /api/v{version:apiVersion}/[controller]
 /// </remarks>
 public static class ApiVersioningConfiguration
 {
     /// <summary>
-    /// Configure le versioning d'API avec stratégie URL-based.
+    /// Configure le versioning d'API avec namespace convention
     /// </summary>
-    /// <param name="services">Collection de services.</param>
-    /// <returns>Collection de services pour chaînage.</returns>
-    /// <remarks>
-    /// Configuration appliquée :
-    /// - Version par défaut : 1.0 (backward compatibility)
-    /// - Versioning par URL : `/api/v{version}/resource`
-    /// - Headers de version exposés : `api-supported-versions`, `api-deprecated-versions`
-    /// - Assume version par défaut si non spécifiée
-    /// </remarks>
-    public static IServiceCollection AddApiVersioningConfiguration(this IServiceCollection services)
+    public static IServiceCollection AddApiVersioningWithNamespaceConvention(this IServiceCollection services)
     {
         services.AddApiVersioning(options =>
         {
-            // Stratégie de lecture : URL Segment (/api/v1/users, /api/v2/users)
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
-            
-            // Version par défaut si client ne spécifie pas de version
-            // Permet backward compatibility pour clients existants
-            options.DefaultApiVersion = new ApiVersion(1, 0);
+            // Détection par namespace + URL + header + query string
+            options.ApiVersionReader = ApiVersionReader.Combine(
+                new UrlSegmentApiVersionReader(),
+                new HeaderApiVersionReader("X-Api-Version"),
+                new QueryStringApiVersionReader("api-version")
+            );
+
+            // Version par défaut : date UTC actuelle
+            options.DefaultApiVersion = new ApiVersion(DateOnly.FromDateTime(DateTime.UtcNow));
             options.AssumeDefaultVersionWhenUnspecified = true;
-            
-            // Reporter les versions supportées et dépréciées dans response headers
-            // Headers ajoutés : api-supported-versions, api-deprecated-versions
+
+            // Inclure version dans headers de réponse
             options.ReportApiVersions = true;
+        })
+        .AddMvc(options =>
+        {
+            // Convention : Détection automatique depuis namespace
+            options.Conventions.Add(new VersionByNamespaceConvention());
         })
         .AddApiExplorer(options =>
         {
-            // Format du nom de groupe pour Swagger : 'v'major[.minor][-status]
-            // Exemple : v1, v2, v2.1
-            options.GroupNameFormat = "'v'VVV";
+            // Format d'affichage pour Swagger (v2025-12-22)
+            options.GroupNameFormat = "'v'yyyy-MM-dd";
             
-            // Substituer {version:apiVersion} dans routes par valeur réelle
-            // /api/v{version:apiVersion}/users → /api/v1/users
+            // Activer version dans URL
             options.SubstituteApiVersionInUrl = true;
         });
         

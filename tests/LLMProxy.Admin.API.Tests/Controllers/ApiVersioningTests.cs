@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using FluentAssertions;
-using LLMProxy.Admin.API.Controllers;
+using LLMProxy.Admin.API.Controllers.V20251222;
+using LLMProxy.Admin.API.Controllers.V20260115;
 using LLMProxy.Application.Common;
 using LLMProxy.Application.Tenants.Commands;
 using LLMProxy.Application.Tenants.Queries;
@@ -38,41 +39,47 @@ public class ApiVersioningTests
     }
 
     /// <summary>
-    /// Vérifie que le contrôleur v1.0 possède l'attribut [ApiVersion("1.0")]
+    /// Vérifie que le contrôleur v1 utilise le namespace V20251222
     /// </summary>
     [Fact]
     public void TenantsController_ShouldHaveVersion1Attribute()
     {
         // Arrange & Act
         var controllerType = typeof(TenantsController);
+        var namespaceName = controllerType.Namespace;
+
+        // Assert - La version est détectée depuis le namespace
+        Check.That(namespaceName).IsEqualTo("LLMProxy.Admin.API.Controllers.V20251222");
+        
+        // Vérifier qu'il n'y a PAS d'attribut ApiVersion (namespace convention)
         var versionAttribute = controllerType.GetCustomAttributes(typeof(ApiVersionAttribute), false)
             .Cast<ApiVersionAttribute>()
             .FirstOrDefault();
-
-        // Assert
-        Check.That(versionAttribute).IsNotNull();
-        Check.That(versionAttribute!.Versions).ContainsExactly(new ApiVersion(1, 0));
+        Check.That(versionAttribute).IsNull();
     }
 
     /// <summary>
-    /// Vérifie que le contrôleur v2.0 possède l'attribut [ApiVersion("2.0")]
+    /// Vérifie que le contrôleur v2 utilise le namespace V20260115
     /// </summary>
     [Fact]
     public void TenantsV2Controller_ShouldHaveVersion2Attribute()
     {
         // Arrange & Act
         var controllerType = typeof(TenantsV2Controller);
+        var namespaceName = controllerType.Namespace;
+
+        // Assert - La version est détectée depuis le namespace
+        Check.That(namespaceName).IsEqualTo("LLMProxy.Admin.API.Controllers.V20260115");
+        
+        // Vérifier qu'il n'y a PAS d'attribut ApiVersion (namespace convention)
         var versionAttribute = controllerType.GetCustomAttributes(typeof(ApiVersionAttribute), false)
             .Cast<ApiVersionAttribute>()
             .FirstOrDefault();
-
-        // Assert
-        Check.That(versionAttribute).IsNotNull();
-        Check.That(versionAttribute!.Versions).ContainsExactly(new ApiVersion(2, 0));
+        Check.That(versionAttribute).IsNull();
     }
 
     /// <summary>
-    /// Vérifie que la route v1.0 utilise le format api/v{version}/[controller]
+    /// Vérifie que la route utilise le format api/v{version:apiVersion}/[controller]
     /// </summary>
     [Fact]
     public void TenantsController_ShouldHaveVersionedRoute()
@@ -89,7 +96,9 @@ public class ApiVersioningTests
     }
 
     /// <summary>
-    /// Vérifie que la route v2.0 utilise le format api/v{version}/tenants (explicite)
+    /// Vérifie que la route v2 utilise le format api/v{version:apiVersion}/tenants
+    /// <summary>
+    /// Vérifie que la route v2 utilise le format api/v{version:apiVersion}/tenants
     /// </summary>
     [Fact]
     public void TenantsV2Controller_ShouldHaveVersionedRoute()
@@ -175,7 +184,7 @@ public class ApiVersioningTests
         // V2: Réponse enrichie avec métadonnées
         response.Should().NotBeNull();
         ((object)response!.data).Should().Be(tenantDto);
-        ((string)response.version).Should().Be("2.0");
+        ((string)response.version).Should().Be("2026-01-15");
         ((object)response.requestId).Should().NotBeNull();
         ((object)response.timestamp).Should().NotBeNull();
     }
@@ -341,11 +350,10 @@ public class ApiVersioningTests
         
         createdResult.ActionName.Should().Be(nameof(TenantsV2Controller.GetById));
         createdResult.RouteValues.Should().ContainKey("id");
-        createdResult.RouteValues.Should().ContainKey("version");
-        createdResult.RouteValues!["version"].Should().Be("2.0");
+        // Pas de version dans RouteValues avec header versioning
         
         var response = createdResult.Value as dynamic;
         ((Guid)response!.data.id).Should().Be(newTenantId);
-        ((string)response.version).Should().Be("2.0");
+        ((string)response.version).Should().Be("2026-01-15");
     }
 }

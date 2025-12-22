@@ -1,36 +1,38 @@
-using Asp.Versioning;
-using LLMProxy.Application.Tenants.Commands;
-using LLMProxy.Application.Tenants.Queries;
+using LLMProxy.Application.Users.Commands;
+using LLMProxy.Application.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LLMProxy.Admin.API.Controllers;
+namespace LLMProxy.Admin.API.Controllers.V20251222;
 
+/// <summary>
+/// Users API - Version 2025-12-22
+/// Version détectée automatiquement depuis le namespace
+/// </summary>
 [ApiController]
-[ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
-[Authorize(Policy = "AdminOnly")]
-public class TenantsController : ControllerBase
+[Authorize(Policy = "TenantAdmin")]
+public class UsersController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<TenantsController> _logger;
+    private readonly ILogger<UsersController> _logger;
 
-    public TenantsController(IMediator mediator, ILogger<TenantsController> logger)
+    public UsersController(IMediator mediator, ILogger<UsersController> logger)
     {
         _mediator = mediator;
         _logger = logger;
     }
 
     /// <summary>
-    /// Get tenant by ID
+    /// Get user by ID
     /// </summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var query = new GetTenantByIdQuery { TenantId = id };
+        var query = new GetUserByIdQuery { UserId = id };
         var result = await _mediator.Send(query, cancellationToken);
 
         if (!result.IsSuccess)
@@ -42,25 +44,25 @@ public class TenantsController : ControllerBase
     }
 
     /// <summary>
-    /// Get all tenants
+    /// Get users by tenant ID
     /// </summary>
-    [HttpGet]
+    [HttpGet("tenant/{tenantId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByTenantId(Guid tenantId, CancellationToken cancellationToken)
     {
-        var query = new GetAllTenantsQuery();
+        var query = new GetUsersByTenantIdQuery { TenantId = tenantId };
         var result = await _mediator.Send(query, cancellationToken);
 
         return Ok(result.Value);
     }
 
     /// <summary>
-    /// Create new tenant
+    /// Create new user
     /// </summary>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] CreateTenantCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateUserCommand command, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(command, cancellationToken);
 
@@ -73,15 +75,15 @@ public class TenantsController : ControllerBase
     }
 
     /// <summary>
-    /// Update tenant settings
+    /// Update user
     /// </summary>
-    [HttpPut("{id:guid}/settings")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateSettings(Guid id, [FromBody] UpdateTenantSettingsCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserCommand command, CancellationToken cancellationToken)
     {
-        command.TenantId = id;
+        command.UserId = id;
         var result = await _mediator.Send(command, cancellationToken);
 
         if (!result.IsSuccess)
@@ -93,14 +95,14 @@ public class TenantsController : ControllerBase
     }
 
     /// <summary>
-    /// Deactivate tenant
+    /// Delete user
     /// </summary>
-    [HttpPost("{id:guid}/deactivate")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Deactivate(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var command = new DeactivateTenantCommand { TenantId = id };
+        var command = new DeleteUserCommand { UserId = id };
         var result = await _mediator.Send(command, cancellationToken);
 
         if (!result.IsSuccess)
@@ -108,25 +110,6 @@ public class TenantsController : ControllerBase
             return NotFound(result.Error);
         }
 
-        return Ok();
-    }
-
-    /// <summary>
-    /// Activate tenant
-    /// </summary>
-    [HttpPost("{id:guid}/activate")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Activate(Guid id, CancellationToken cancellationToken)
-    {
-        var command = new ActivateTenantCommand { TenantId = id };
-        var result = await _mediator.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            return NotFound(result.Error);
-        }
-
-        return Ok();
+        return NoContent();
     }
 }

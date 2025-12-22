@@ -71,8 +71,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("TenantAdmin", policy => policy.RequireRole("Admin", "TenantAdmin"));
 });
 
-// Add API Versioning (ADR-037)
-builder.Services.AddApiVersioningConfiguration();
+// Add API Versioning avec namespace convention (ADR-037)
+builder.Services.AddApiVersioningWithNamespaceConvention();
 
 // Add Controllers and Swagger
 builder.Services.AddControllers();

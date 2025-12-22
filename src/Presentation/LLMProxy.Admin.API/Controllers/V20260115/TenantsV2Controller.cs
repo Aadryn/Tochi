@@ -1,23 +1,22 @@
-using Asp.Versioning;
 using LLMProxy.Application.Tenants.Commands;
 using LLMProxy.Application.Tenants.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LLMProxy.Admin.API.Controllers;
+namespace LLMProxy.Admin.API.Controllers.V20260115;
 
 /// <summary>
-/// API v2.0 des Tenants avec réponses enrichies et support de pagination
+/// Tenants API v2 - Version 2026-01-15
+/// Version détectée automatiquement depuis le namespace
 /// </summary>
 /// <remarks>
 /// Cette version ajoute :
-/// - Pagination native (GET /api/v2/tenants?page=1&amp;pageSize=20)
+/// - Pagination native (GET /api/v2026-01-15/tenants?page=1&amp;pageSize=20)
 /// - Réponses enrichies avec métadonnées (total, hasMore, etc.)
 /// - Codes HTTP plus explicites (201 Created avec Location header)
 /// </remarks>
 [ApiController]
-[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/tenants")]
 [Authorize(Policy = "AdminOnly")]
 public class TenantsV2Controller : ControllerBase
@@ -165,13 +164,13 @@ public class TenantsV2Controller : ControllerBase
         // V2: CreatedAtAction avec Location header explicite
         return CreatedAtAction(
             nameof(GetById),
-            new { id = tenantId, version = "2.0" },
+            new { id = tenantId },
             new 
             {
                 data = new { id = tenantId },
                 requestId = HttpContext.TraceIdentifier,
                 timestamp = DateTime.UtcNow,
-                version = "2.0"
+                version = "2026-01-15"
             });
     }
 }
