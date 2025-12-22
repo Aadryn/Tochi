@@ -1,7 +1,7 @@
 using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.Interfaces;
 using LLMProxy.Gateway.Middleware;
-using LLMProxy.Infrastructure.Security;
+using LLMProxy.Infrastructure.Security.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

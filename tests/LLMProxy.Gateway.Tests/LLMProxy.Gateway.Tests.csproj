@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Infrastructure\LLMProxy.Infrastructure.Security.Abstractions\LLMProxy.Infrastructure.Security.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\Presentation\LLMProxy.Gateway\LLMProxy.Gateway.csproj" />
   </ItemGroup>
 
