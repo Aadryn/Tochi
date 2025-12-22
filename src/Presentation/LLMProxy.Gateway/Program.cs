@@ -261,10 +261,10 @@ builder.Services.AddSingleton<LLMProxy.Infrastructure.Redis.Idempotency.IIdempot
     LLMProxy.Infrastructure.Redis.Idempotency.RedisIdempotencyStore>();
 
 // Add Hash Service
-builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IHashService, LLMProxy.Infrastructure.Security.Sha256HashService>();
-builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IApiKeyExtractor, LLMProxy.Infrastructure.Security.HeaderApiKeyExtractor>();
-builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IApiKeyValidator, LLMProxy.Infrastructure.Security.ApiKeyValidator>();
-builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IApiKeyAuthenticator, LLMProxy.Infrastructure.Security.ApiKeyAuthenticator>();
+builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.Abstractions.IHashService, LLMProxy.Infrastructure.Security.Sha256HashService>();
+builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.Abstractions.IApiKeyExtractor, LLMProxy.Infrastructure.Security.HeaderApiKeyExtractor>();
+builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.Abstractions.IApiKeyValidator, LLMProxy.Infrastructure.Security.ApiKeyValidator>();
+builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.Abstractions.IApiKeyAuthenticator, LLMProxy.Infrastructure.Security.ApiKeyAuthenticator>();
 
 // Add Database (PostgreSQL)
 builder.Services.AddDbContext<LLMProxy.Infrastructure.PostgreSQL.LLMProxyDbContext>(options =>

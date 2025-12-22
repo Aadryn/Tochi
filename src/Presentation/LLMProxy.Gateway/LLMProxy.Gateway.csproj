@@ -39,6 +39,7 @@
     <ProjectReference Include="..\..\Application\LLMProxy.Application\LLMProxy.Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.PostgreSQL\LLMProxy.Infrastructure.PostgreSQL.csproj" />
     <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Redis\LLMProxy.Infrastructure.Redis.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Security.Abstractions\LLMProxy.Infrastructure.Security.Abstractions.csproj" />
     <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Security\LLMProxy.Infrastructure.Security.csproj" />
     <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Telemetry\LLMProxy.Infrastructure.Telemetry.csproj" />
     <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.LLMProviders\LLMProxy.Infrastructure.LLMProviders.csproj" />

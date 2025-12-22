@@ -1,5 +1,6 @@
 using LLMProxy.Domain.Interfaces;
 using LLMProxy.Infrastructure.Security;
+using LLMProxy.Infrastructure.Security.Abstractions;
 using LLMProxy.Gateway.Constants;
 using LLMProxy.Gateway.Extensions;
 using Microsoft.AspNetCore.Http;
