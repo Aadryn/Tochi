@@ -187,6 +187,93 @@ curl -X POST https://api.example.com/tenants \
 - Store: Redis (key prefix: `idempotency:`)
 - Methods: POST, PATCH (GET/PUT/DELETE naturally idempotent)
 
+### Health Checks (ADR-038)
+
+**Comprehensive health checks** for Kubernetes and monitoring.
+
+**Endpoints:**
+
+| Endpoint | Usage | Description |
+|----------|-------|-------------|
+| `/health/live` | Kubernetes liveness probe | Vérifie que le processus est vivant |
+| `/health/ready` | Kubernetes readiness probe | Vérifie que toutes les dépendances sont OK |
+| `/health` | Monitoring complet | Retourne le détail de tous les checks |
+| `/healthchecks-ui` | UI (dev/staging) | Interface visuelle des health checks |
+
+**Vérifications effectuées:**
+
+- ✅ **PostgreSQL**: Connexion et query simple (Unhealthy si échec)
+- ✅ **Redis**: Ping command (Degraded si échec)
+- ✅ **Disk Space**: Minimum 1GB disponible (Degraded si insuffisant)
+- ✅ **Memory**: Maximum 2GB allouée au processus (Degraded si dépassé)
+- ✅ **Quota Service**: Accès Redis via QuotaService (Degraded si échec)
+
+**Réponse JSON (exemple `/health`):**
+
+```json
+{
+  "status": "Healthy",
+  "totalDuration": "00:00:00.1234567",
+  "entries": {
+    "self": {
+      "status": "Healthy",
+      "description": "Gateway is alive",
+      "duration": "00:00:00.0001234"
+    },
+    "postgresql": {
+      "status": "Healthy",
+      "duration": "00:00:00.0501234",
+      "tags": ["ready", "db"]
+    },
+    "redis": {
+      "status": "Healthy",
+      "duration": "00:00:00.0301234",
+      "tags": ["ready", "cache"]
+    },
+    "disk": {
+      "status": "Healthy",
+      "data": { "FreeSpace": "50GB" },
+      "duration": "00:00:00.0051234",
+      "tags": ["ready", "infrastructure"]
+    },
+    "memory": {
+      "status": "Healthy",
+      "data": { "AllocatedMemory": "512MB", "Threshold": "2048MB" },
+      "duration": "00:00:00.0011234",
+      "tags": ["ready", "infrastructure"]
+    }
+  }
+}
+```
+
+**Codes de statut HTTP:**
+- `200 OK`: Healthy ou Degraded (service opérationnel)
+- `503 Service Unavailable`: Unhealthy (service non fonctionnel)
+
+**Kubernetes Configuration:**
+
+```yaml
+livenessProbe:
+  httpGet:
+    path: /health/live
+    port: 80
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: 80
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  failureThreshold: 2
+```
+
+**Health Checks UI (dev/staging):**
+
+Accessible sur `http://localhost:5000/healthchecks-ui` pour visualiser l'état des dépendances en temps réel.
+
 ### Advanced Features
 - Response caching (configurable per endpoint/user)
 - Semantic cache support

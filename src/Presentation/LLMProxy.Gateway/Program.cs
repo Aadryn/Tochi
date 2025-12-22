@@ -1,5 +1,6 @@
 using LLMProxy.Gateway.Middleware;
 using LLMProxy.Gateway.Configuration;
+using LLMProxy.Gateway.HealthChecks;
 using LLMProxy.Infrastructure.Redis;
 using LLMProxy.Infrastructure.Security;
 using LLMProxy.Infrastructure.LLMProviders;
@@ -57,8 +58,68 @@ builder.Services.AddAuthentication()
 // Add Authorization
 builder.Services.AddAuthorization();
 
-// Add Health Checks
-builder.Services.AddHealthChecks();
+// ═══════════════════════════════════════════════════════════════
+// HEALTH CHECKS (ADR-038)
+// ═══════════════════════════════════════════════════════════════
+
+builder.Services.AddHealthChecks()
+    
+    // ═══ LIVENESS CHECKS (Process vivant) ═══
+    .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy("Gateway is alive"), tags: new[] { "live" })
+    
+    // ═══ READINESS CHECKS (Dépendances critiques) ═══
+    
+    // PostgreSQL - Base de données principale
+    .AddNpgSql(
+        builder.Configuration.GetConnectionString("PostgreSQL")!,
+        name: "postgresql",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy, // CRITIQUE : app non fonctionnelle sans DB
+        tags: new[] { "ready", "db" },
+        timeout: TimeSpan.FromSeconds(5))
+    
+    // Redis - Cache et quotas temps réel
+    .AddRedis(
+        builder.Configuration.GetConnectionString("Redis")!,
+        name: "redis",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded, // Dégradé mais app reste fonctionnelle
+        tags: new[] { "ready", "cache" },
+        timeout: TimeSpan.FromSeconds(3))
+    
+    // ═══ INFRASTRUCTURE CHECKS ═══
+    
+    // Disk Space - Minimum 1GB disponible (C:\)
+    .AddDiskStorageHealthCheck(
+        options => options.AddDrive("C:\\", 1024), // 1GB minimum
+        name: "disk",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded,
+        tags: new[] { "ready", "infrastructure" })
+    
+    // Memory - Maximum 2GB allouée au processus
+    .AddProcessAllocatedMemoryHealthCheck(
+        maximumMegabytesAllocated: 2048, // 2GB max
+        name: "memory",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded,
+        tags: new[] { "ready", "infrastructure" })
+    
+    // ═══ BUSINESS CHECKS ═══
+    
+    // Quota Service - Vérifier accès Redis via QuotaService
+    .AddCheck<QuotaServiceHealthCheck>(
+        name: "quota-service",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded,
+        tags: new[] { "ready", "business" });
+
+// ═══ HEALTH CHECKS UI (Dev/Staging uniquement) ═══
+if (builder.Environment.IsDevelopment() || builder.Environment.IsStaging())
+{
+    builder.Services.AddHealthChecksUI(setup =>
+    {
+        setup.SetEvaluationTimeInSeconds(30); // Refresh toutes les 30s
+        setup.MaximumHistoryEntriesPerEndpoint(50);
+        setup.AddHealthCheckEndpoint("Gateway", "/health");
+    })
+    .AddInMemoryStorage();
+}
 
 // Configure Rate Limiting (ADR-041)
 var rateLimitOptions = builder.Configuration.GetSection("RateLimiting").Get<RateLimitingOptions>() 
@@ -250,8 +311,25 @@ app.UseMiddleware<IdempotencyMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map endpoints
-app.MapHealthChecks("/health");
+// Health Check Endpoints (ADR-038)
+// Liveness probe - Pour Kubernetes liveness
+app.MapHealthChecks("/health/live", HealthCheckOptionsHelper.CreateLivenessOptions());
+
+// Readiness probe - Pour Kubernetes readiness + Load Balancer
+app.MapHealthChecks("/health/ready", HealthCheckOptionsHelper.CreateReadinessOptions());
+
+// Endpoint complet (tous les checks) - Pour monitoring
+app.MapHealthChecks("/health", HealthCheckOptionsHelper.CreateMonitoringOptions());
+
+// Health Checks UI (Dev/Staging uniquement)
+if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
+{
+    app.MapHealthChecksUI(options =>
+    {
+        options.UIPath = "/healthchecks-ui";
+        options.ApiPath = "/healthchecks-api";
+    });
+}
 
 // YARP Reverse Proxy
 app.MapReverseProxy(proxyPipeline =>
