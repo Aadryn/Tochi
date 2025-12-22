@@ -51,23 +51,23 @@ public class QuotaLimit : Entity
             Guard.AgainstEmptyGuid(userId, nameof(userId), "Invalid user ID.");
             Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException)
         {
-            return Result.Failure<QuotaLimit>(ex.Message);
+            return Error.Validation.Required(nameof(userId));
         }
 
         if (limit < 0)
-            return Result.Failure<QuotaLimit>("Quota limit cannot be negative.");
+            return Error.Validation.OutOfRange(nameof(limit), 0, long.MaxValue);
 
         var quotaLimit = new QuotaLimit(userId, tenantId, quotaType, limit, period);
         
-        return Result.Success(quotaLimit);
+        return quotaLimit;
     }
 
     public Result UpdateLimit(long newLimit)
     {
         if (newLimit < 0)
-            return Result.Failure("Quota limit cannot be negative.");
+            return Error.Validation.OutOfRange(nameof(newLimit), 0, long.MaxValue);
 
         Limit = newLimit;
         MarkAsModified();
@@ -78,7 +78,7 @@ public class QuotaLimit : Entity
     public Result Enable()
     {
         if (IsEnabled)
-            return Result.Failure("Quota is already enabled.");
+            return new Error("Quota.AlreadyEnabled", "Quota is already enabled.");
 
         IsEnabled = true;
         MarkAsModified();
@@ -89,7 +89,7 @@ public class QuotaLimit : Entity
     public Result Disable()
     {
         if (!IsEnabled)
-            return Result.Failure("Quota is already disabled.");
+            return new Error("Quota.AlreadyDisabled", "Quota is already disabled.");
 
         IsEnabled = false;
         MarkAsModified();
@@ -111,26 +111,26 @@ public class QuotaLimit : Entity
         {
             Guard.AgainstEmptyGuid(transactionId, nameof(transactionId), "Transaction ID cannot be empty.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException)
         {
-            return Result.Failure<long>(ex.Message);
+            return Error.Validation.Required(nameof(transactionId));
         }
 
         if (tokens <= 0)
-            return Result.Failure<long>("Token amount must be positive.");
+            return Error.Validation.OutOfRange(nameof(tokens), 1, long.MaxValue);
 
         // Vérifier si la transaction a déjà été appliquée (idempotence)
         if (_appliedTransactions.Contains(transactionId))
         {
             // Transaction déjà traitée - retourne l'usage actuel sans modification
             // Ceci garantit l'idempotence : appeler RecordUsage() 2x avec même ID = même résultat
-            return Result.Success(0L); // 0 tokens ajoutés (déjà comptés)
+            return 0L; // 0 tokens ajoutés (déjà comptés)
         }
 
         // Première application de cette transaction
         _appliedTransactions.Add(transactionId);
         MarkAsModified();
 
-        return Result.Success(tokens); // Retourne nombre de tokens effectivement ajoutés
+        return tokens; // Retourne nombre de tokens effectivement ajoutés
     }
 }

@@ -51,6 +51,6 @@ public sealed class UnlimitedQuotaLimit : QuotaLimit
     public override Result<long> RecordUsage(Guid transactionId, long tokens)
     {
         // Toujours accepté, retourne 0 (pas de quota consommé pour quota illimité)
-        return Result.Success(0L);
+        return 0L;
     }
 }

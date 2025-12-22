@@ -41,9 +41,9 @@ public class TokenUsageMetric : Entity
         {
             Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException)
         {
-            return Result.Failure<TokenUsageMetric>(ex.Message);
+            return Error.Validation.Required(nameof(tenantId));
         }
 
         var metric = new TokenUsageMetric
@@ -56,7 +56,7 @@ public class TokenUsageMetric : Entity
             Period = period
         };
         
-        return Result.Success(metric);
+        return metric;
     }
 
     public void IncrementUsage(long inputTokens, long outputTokens, int durationMs, bool isSuccess, decimal cost = 0)

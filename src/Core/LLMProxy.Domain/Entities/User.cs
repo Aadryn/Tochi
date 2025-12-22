@@ -53,24 +53,24 @@ public class User : Entity
             Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
             Guard.AgainstNullOrWhiteSpace(email, nameof(email), "Email cannot be empty.");
             if (!IsValidEmail(email))
-                return Result.Failure<User>("Invalid email address.");
+                return Error.Validation.InvalidEmail(email);
 
             Guard.AgainstNullOrWhiteSpace(name, nameof(name), "User name cannot be empty.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException)
         {
-            return Result.Failure<User>(ex.Message);
+            return Error.Validation.Required(nameof(email));
         }
 
         var user = new User(tenantId, email.NormalizeEmail(), name, role);
         
-        return Result.Success(user);
+        return user;
     }
 
     public Result<ApiKey> CreateApiKey(string name, DateTime? expiresAt = null)
     {
         if (!IsActive)
-            return Result.Failure<ApiKey>("Cannot create API key for inactive user.");
+            return new Error("User.Inactive", "Cannot create API key for inactive user.");
 
         var apiKeyResult = ApiKey.Create(Id, TenantId, name, expiresAt);
         if (apiKeyResult.IsFailure)
@@ -79,7 +79,7 @@ public class User : Entity
         _apiKeys.Add(apiKeyResult.Value);
         MarkAsModified();
         
-        return Result.Success(apiKeyResult.Value);
+        return apiKeyResult.Value;
     }
 
     public Result SetQuotaLimit(QuotaType quotaType, long limit, QuotaPeriod period)
@@ -108,7 +108,7 @@ public class User : Entity
     public Result Deactivate()
     {
         if (!IsActive)
-            return Result.Failure("User is already inactive.");
+            return new Error("User.AlreadyDeactivated", "User is already deactivated.");
 
         IsActive = false;
         MarkAsModified();
@@ -125,7 +125,7 @@ public class User : Entity
     public Result Activate()
     {
         if (IsActive)
-            return Result.Failure("User is already active.");
+            return new Error("User.AlreadyActive", "User is already active.");
 
         IsActive = true;
         MarkAsModified();

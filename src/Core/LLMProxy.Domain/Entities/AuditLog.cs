@@ -115,9 +115,9 @@ public class AuditLog : Entity
             Guard.AgainstNullOrWhiteSpace(endpoint, nameof(endpoint), "Endpoint cannot be empty.");
             Guard.AgainstNullOrWhiteSpace(httpMethod, nameof(httpMethod), "HTTP method cannot be empty.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException)
         {
-            return Result.Failure<AuditLog>(ex.Message);
+            return Error.Validation.Required(nameof(requestId));
         }
 
         var auditLog = new AuditLog(
@@ -125,7 +125,7 @@ public class AuditLog : Entity
             requestPath, statusCode, requestBody, responseBody, isAnonymized,
             requestTokens, responseTokens, durationMs, clientIp, userAgent);
         
-        return Result.Success(auditLog);
+        return auditLog;
     }
 
     public void SetError(string errorMessage, string? stackTrace = null)

@@ -33,23 +33,23 @@ public sealed class Email : ValueObject
         {
             Guard.AgainstNullOrWhiteSpace(email, nameof(email), "Email ne peut pas être vide.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException)
         {
-            return Result.Failure<Email>(ex.Message);
+            return Error.Validation.Required(nameof(email));
         }
 
         if (email.Length > 255)
         {
-            return Result.Failure<Email>("Email ne peut pas dépasser 255 caractères.");
+            return Error.Validation.TooLong(nameof(email), 255);
         }
 
         // Validation basique format email
         if (!email.Contains('@') || !email.Contains('.'))
         {
-            return Result.Failure<Email>("Format d'email invalide.");
+            return Error.Validation.InvalidEmail(email);
         }
 
-        return Result.Success(new Email(email));
+        return new Email(email);
     }
 
     protected override IEnumerable<object> GetEqualityComponents()

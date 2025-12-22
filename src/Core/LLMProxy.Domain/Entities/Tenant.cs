@@ -66,11 +66,11 @@ public class Tenant : Entity
             Guard.AgainstNullOrWhiteSpace(name, nameof(name), "Tenant name cannot be empty.");
             Guard.AgainstNullOrWhiteSpace(slug, nameof(slug), "Slug cannot be empty.");
             if (!IsValidSlug(slug))
-                return Result.Failure<Tenant>("Invalid tenant slug. Use only lowercase letters, numbers, and hyphens.");
+                return new Error("Validation.Slug.InvalidFormat", "Invalid tenant slug. Use only lowercase letters, numbers, and hyphens.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException)
         {
-            return Result.Failure<Tenant>(ex.Message);
+            return Error.Validation.Required(nameof(name));
         }
 
         var tenantSettings = settings ?? TenantSettings.Default();
@@ -78,13 +78,13 @@ public class Tenant : Entity
         
         AddDomainEvent(tenant, new TenantCreatedEvent(tenant.Id, tenant.Name));
         
-        return Result.Success(tenant);
+        return tenant;
     }
 
     public Result Deactivate()
     {
         if (!IsActive)
-            return Result.Failure("Tenant is already deactivated.");
+            return new Error("Tenant.AlreadyDeactivated", "Tenant is already deactivated.");
 
         IsActive = false;
         DeactivatedAt = DateTime.UtcNow;
@@ -102,7 +102,7 @@ public class Tenant : Entity
     public Result Activate()
     {
         if (IsActive)
-            return Result.Failure("Tenant is already active.");
+            return new Error("Tenant.AlreadyActive", "Tenant is already active.");
 
         IsActive = true;
         DeactivatedAt = null;

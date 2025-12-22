@@ -70,20 +70,20 @@ public class LLMProvider : Entity
             Guard.AgainstNullOrWhiteSpace(name, nameof(name), "Provider name cannot be empty.");
             Guard.AgainstNullOrWhiteSpace(model, nameof(model), "Model name cannot be empty.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException)
         {
-            return Result.Failure<LLMProvider>(ex.Message);
+            return Error.Validation.Required(nameof(name));
         }
 
         if (!IsValidUrl(baseUrl))
-            return Result.Failure<LLMProvider>("Invalid base URL.");
+            return new Error("Validation.Url.Invalid", "Invalid base URL.");
 
         if (priority < 0)
-            return Result.Failure<LLMProvider>("Priority cannot be negative.");
+            return Error.Validation.OutOfRange(nameof(priority), 0, int.MaxValue);
 
         var provider = new LLMProvider(tenantId, name, type, baseUrl, model, configuration, routingStrategy, priority);
         
-        return Result.Success(provider);
+        return provider;
     }
 
     // Overload for command-based creation with simpler parameters
@@ -133,7 +133,7 @@ public class LLMProvider : Entity
     public Result Deactivate()
     {
         if (!IsActive)
-            return Result.Failure("Provider is already inactive.");
+            return new Error("Provider.AlreadyDeactivated", "Provider is already deactivated.");
 
         IsActive = false;
         MarkAsModified();
@@ -144,7 +144,7 @@ public class LLMProvider : Entity
     public Result Activate()
     {
         if (IsActive)
-            return Result.Failure("Provider is already active.");
+            return new Error("Provider.AlreadyActive", "Provider is already active.");
 
         IsActive = true;
         MarkAsModified();

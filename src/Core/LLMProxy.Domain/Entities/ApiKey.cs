@@ -58,13 +58,13 @@ public class ApiKey : Entity
             Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
             Guard.AgainstNullOrWhiteSpace(name, nameof(name), "API key name cannot be empty.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException)
         {
-            return Result.Failure<ApiKey>(ex.Message);
+            return Error.Validation.Required(nameof(name));
         }
 
         if (expiresAt.HasValue && expiresAt.Value <= DateTime.UtcNow)
-            return Result.Failure<ApiKey>("Expiration date must be in the future.");
+            return new Error("Validation.ExpiresAt.Invalid", "Expiration date must be in the future.");
 
         // Generate a secure random key
         var rawKey = GenerateSecureKey();
@@ -76,7 +76,7 @@ public class ApiKey : Entity
         // Store the raw key in a domain event so it can be returned once (never stored)
         apiKey.AddDomainEvent(new ApiKeyCreatedEvent(apiKey.Id, rawKey));
         
-        return Result.Success(apiKey);
+        return apiKey;
     }
 
     // Overload for when a plain key is provided (for command handlers)
@@ -105,7 +105,7 @@ public class ApiKey : Entity
     public Result Revoke()
     {
         if (IsRevoked())
-            return Result.Failure("API key is already revoked.");
+            return new Error("ApiKey.AlreadyRevoked", "API key is already revoked.");
 
         IsActive = false;
         RevokedAt = DateTime.UtcNow;
