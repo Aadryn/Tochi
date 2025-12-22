@@ -2,6 +2,7 @@ using LLMProxy.Application.Common;
 using LLMProxy.Domain.Common;
 using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.Interfaces;
+using LLMProxy.Infrastructure.Telemetry.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace LLMProxy.Application.Tenants.Commands;
@@ -26,7 +27,10 @@ public class CreateTenantCommandHandler : ICommandHandler<CreateTenantCommand, T
         {
             if (await _unitOfWork.Tenants.SlugExistsAsync(request.Slug, cancellationToken))
             {
-                _logger.LogWarning("Tenant slug {Slug} already exists", request.Slug);
+                _logger.TenantCreationFailed(
+                    new InvalidOperationException($"Slug '{request.Slug}' already exists"),
+                    request.Name,
+                    $"Tenant with slug '{request.Slug}' already exists");
                 return Result.Failure<TenantDto>($"Tenant with slug '{request.Slug}' already exists.");
             }
 
@@ -35,7 +39,10 @@ public class CreateTenantCommandHandler : ICommandHandler<CreateTenantCommand, T
             
             if (tenantResult.IsFailure)
             {
-                _logger.LogWarning("Failed to create tenant: {Error}", tenantResult.Error);
+                _logger.TenantCreationFailed(
+                    new InvalidOperationException(tenantResult.Error!),
+                    request.Name,
+                    tenantResult.Error!);
                 return Result.Failure<TenantDto>(tenantResult.Error!);
             }
 
@@ -43,13 +50,13 @@ public class CreateTenantCommandHandler : ICommandHandler<CreateTenantCommand, T
             await _unitOfWork.Tenants.AddAsync(tenant, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Tenant {TenantId} created successfully with slug {Slug}", tenant.Id, tenant.Slug);
+            _logger.TenantCreated(tenant.Id, tenant.Name);
 
             return Result.Success(MapToDto(tenant));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating tenant with slug {Slug}", request.Slug);
+            _logger.TenantCreationFailed(ex, request.Name, "An error occurred while creating the tenant");
             return Result.Failure<TenantDto>("An error occurred while creating the tenant.");
         }
     }

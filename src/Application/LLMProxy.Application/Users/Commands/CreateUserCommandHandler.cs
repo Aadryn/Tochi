@@ -2,6 +2,7 @@ using LLMProxy.Application.Common;
 using LLMProxy.Domain.Common;
 using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.Interfaces;
+using LLMProxy.Infrastructure.Telemetry.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace LLMProxy.Application.Users.Commands;
@@ -47,14 +48,22 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserD
 
             if (await _unitOfWork.Users.EmailExistsAsync(request.TenantId, request.Email, cancellationToken))
             {
-                _logger.LogWarning("User with email {Email} already exists in tenant {TenantId}", request.Email, request.TenantId);
+                _logger.UserCreationFailed(
+                    new InvalidOperationException($"Email '{request.Email}' already exists in tenant '{request.TenantId}'"),
+                    request.Email,
+                    request.TenantId,
+                    $"User with email '{request.Email}' already exists");
                 return Result.Failure<UserDto>($"User with email '{request.Email}' already exists.");
             }
 
             var userResult = User.Create(request.TenantId, request.Email, request.Name, request.Role);
             if (userResult.IsFailure)
             {
-                _logger.LogWarning("Failed to create user: {Error}", userResult.Error);
+                _logger.UserCreationFailed(
+                    new InvalidOperationException(userResult.Error!),
+                    request.Email,
+                    request.TenantId,
+                    userResult.Error!);
                 return Result.Failure<UserDto>(userResult.Error!);
             }
 
@@ -62,13 +71,13 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserD
             await _unitOfWork.Users.AddAsync(user, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("User {UserId} created successfully for tenant {TenantId}", user.Id, request.TenantId);
+            _logger.UserCreated(user.Id, user.Email, user.TenantId);
 
             return Result.Success(MapToDto(user));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating user with email {Email}", request.Email);
+            _logger.UserCreationFailed(ex, request.Email, request.TenantId, "An error occurred while creating the user");
             return Result.Failure<UserDto>("An error occurred while creating the user.");
         }
     }

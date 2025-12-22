@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\LLMProxy.Domain\LLMProxy.Domain.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Telemetry\LLMProxy.Infrastructure.Telemetry.csproj" />
   </ItemGroup>
 
 </Project>
