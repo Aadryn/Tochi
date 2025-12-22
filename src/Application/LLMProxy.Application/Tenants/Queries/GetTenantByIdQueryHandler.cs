@@ -39,14 +39,15 @@ public class GetTenantByIdQueryHandler : IQueryHandler<GetTenantByIdQuery, Tenan
     {
         try
         {
-            var tenant = await _unitOfWork.Tenants.GetByIdAsync(request.TenantId, cancellationToken);
+            var tenantResult = await _unitOfWork.Tenants.GetByIdAsync(request.TenantId, cancellationToken);
 
-            if (tenant == null)
+            if (tenantResult.IsFailure)
             {
                 _logger.LogWarning("Tenant {TenantId} not found", request.TenantId);
-                return Result.Failure<TenantDto>("Tenant not found.");
+                return Result<TenantDto>.Failure(tenantResult.Error);
             }
 
+            var tenant = tenantResult.Value;
             var dto = new TenantDto
             {
                 Id = tenant.Id,
@@ -65,12 +66,12 @@ public class GetTenantByIdQueryHandler : IQueryHandler<GetTenantByIdQuery, Tenan
                 UpdatedAt = tenant.UpdatedAt ?? DateTime.MinValue
             };
 
-            return Result.Success(dto);
+            return dto;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving tenant {TenantId}", request.TenantId);
-            return Result.Failure<TenantDto>("An error occurred while retrieving the tenant.");
+            return new Error("Tenant.QueryError", "An error occurred while retrieving the tenant.");
         }
     }
 }

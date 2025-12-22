@@ -1,47 +1,62 @@
+using LLMProxy.Domain.Common;
+using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace LLMProxy.Infrastructure.PostgreSQL.Repositories;
 
 /// <summary>
-/// Implémentation du repository pour l'entité AuditLog.
+/// Implémentation du repository pour l'agrégat AuditLog avec support Result Pattern.
 /// </summary>
-internal class AuditLogRepository : IAuditLogRepository
+internal class AuditLogRepository : RepositoryBase<AuditLog>, IAuditLogRepository
 {
-    private readonly LLMProxyDbContext _context;
-
-    public AuditLogRepository(LLMProxyDbContext context) => _context = context;
-
-    public async Task<Domain.Entities.AuditLog?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public AuditLogRepository(LLMProxyDbContext context, ILogger<AuditLogRepository> logger) 
+        : base(context, logger)
     {
-        return await _context.AuditLogs.FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
     }
 
-    public async Task<IEnumerable<Domain.Entities.AuditLog>> GetByTenantIdAsync(Guid tenantId, DateTime? from = null, DateTime? to = null, CancellationToken cancellationToken = default)
+    public async Task<Result<IReadOnlyList<AuditLog>>> GetByTenantIdAsync(Guid tenantId, DateTime? from = null, DateTime? to = null, CancellationToken cancellationToken = default)
     {
-        var query = _context.AuditLogs.Where(a => a.TenantId == tenantId);
-        if (from.HasValue) query = query.Where(a => a.CreatedAt >= from.Value);
-        if (to.HasValue) query = query.Where(a => a.CreatedAt <= to.Value);
-        return await query.OrderByDescending(a => a.CreatedAt).ToListAsync(cancellationToken);
+        try
+        {
+            var query = DbSet.Where(a => a.TenantId == tenantId);
+            if (from.HasValue) query = query.Where(a => a.CreatedAt >= from.Value);
+            if (to.HasValue) query = query.Where(a => a.CreatedAt <= to.Value);
+            var logs = await query.OrderByDescending(a => a.CreatedAt).ToListAsync(cancellationToken);
+            Logger.LogDebug("Récupéré {Count} AuditLogs pour tenant {TenantId}", logs.Count, tenantId);
+            return Result<IReadOnlyList<AuditLog>>.Success(logs.AsReadOnly());
+        }
+        catch (OperationCanceledException) { Logger.LogInformation("Opération GetByTenantIdAsync annulée"); throw; }
+        catch (Exception ex) { Logger.LogError(ex, "Erreur lors de la récupération des AuditLogs du tenant {TenantId}", tenantId); return Error.Database.AccessError("GetByTenantIdAsync", ex.Message); }
     }
 
-    public async Task<IEnumerable<Domain.Entities.AuditLog>> GetByUserIdAsync(Guid userId, DateTime? from = null, DateTime? to = null, CancellationToken cancellationToken = default)
+    public async Task<Result<IReadOnlyList<AuditLog>>> GetByUserIdAsync(Guid userId, DateTime? from = null, DateTime? to = null, CancellationToken cancellationToken = default)
     {
-        var query = _context.AuditLogs.Where(a => a.UserId == userId);
-        if (from.HasValue) query = query.Where(a => a.CreatedAt >= from.Value);
-        if (to.HasValue) query = query.Where(a => a.CreatedAt <= to.Value);
-        return await query.OrderByDescending(a => a.CreatedAt).ToListAsync(cancellationToken);
+        try
+        {
+            var query = DbSet.Where(a => a.UserId == userId);
+            if (from.HasValue) query = query.Where(a => a.CreatedAt >= from.Value);
+            if (to.HasValue) query = query.Where(a => a.CreatedAt <= to.Value);
+            var logs = await query.OrderByDescending(a => a.CreatedAt).ToListAsync(cancellationToken);
+            Logger.LogDebug("Récupéré {Count} AuditLogs pour user {UserId}", logs.Count, userId);
+            return Result<IReadOnlyList<AuditLog>>.Success(logs.AsReadOnly());
+        }
+        catch (OperationCanceledException) { Logger.LogInformation("Opération GetByUserIdAsync annulée"); throw; }
+        catch (Exception ex) { Logger.LogError(ex, "Erreur lors de la récupération des AuditLogs de l'utilisateur {UserId}", userId); return Error.Database.AccessError("GetByUserIdAsync", ex.Message); }
     }
 
-    public async Task AddAsync(Domain.Entities.AuditLog auditLog, CancellationToken cancellationToken = default)
+    public async Task<Result<int>> DeleteOlderThanAsync(DateTime threshold, CancellationToken cancellationToken = default)
     {
-        await _context.AuditLogs.AddAsync(auditLog, cancellationToken);
-    }
-
-    public async Task<int> DeleteOlderThanAsync(DateTime threshold, CancellationToken cancellationToken = default)
-    {
-        var logsToDelete = await _context.AuditLogs.Where(a => a.CreatedAt < threshold).ToListAsync(cancellationToken);
-        _context.AuditLogs.RemoveRange(logsToDelete);
-        return logsToDelete.Count;
+        try
+        {
+            var logsToDelete = await DbSet.Where(a => a.CreatedAt < threshold).ToListAsync(cancellationToken);
+            DbSet.RemoveRange(logsToDelete);
+            var count = logsToDelete.Count;
+            Logger.LogInformation("Supprimé {Count} AuditLogs antérieurs à {Threshold}", count, threshold);
+            return Result<int>.Success(count);
+        }
+        catch (OperationCanceledException) { Logger.LogInformation("Opération DeleteOlderThanAsync annulée"); throw; }
+        catch (Exception ex) { Logger.LogError(ex, "Erreur lors de la suppression des AuditLogs antérieurs à {Threshold}", threshold); return Error.Database.AccessError("DeleteOlderThanAsync", ex.Message); }
     }
 }

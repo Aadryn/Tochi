@@ -19,8 +19,13 @@ public class GetApiKeysByTenantIdQueryHandler : IRequestHandler<GetApiKeysByTena
 
     public async Task<Result<IEnumerable<ApiKeyDto>>> Handle(GetApiKeysByTenantIdQuery request, CancellationToken cancellationToken)
     {
-        var apiKeys = await _unitOfWork.ApiKeys.GetByTenantIdAsync(request.TenantId, cancellationToken);
-        var dtos = apiKeys.Select(k => new ApiKeyDto
+        var apiKeysResult = await _unitOfWork.ApiKeys.GetByTenantIdAsync(request.TenantId, cancellationToken);
+        if (apiKeysResult.IsFailure)
+        {
+            return Result<IEnumerable<ApiKeyDto>>.Failure(apiKeysResult.Error);
+        }
+        
+        var dtos = apiKeysResult.Value.Select(k => new ApiKeyDto
         {
             Id = k.Id,
             UserId = k.UserId,
@@ -34,6 +39,6 @@ public class GetApiKeysByTenantIdQueryHandler : IRequestHandler<GetApiKeysByTena
             UpdatedAt = k.UpdatedAt ?? DateTime.MinValue
         });
 
-        return Result.Success(dtos);
+        return Result<IEnumerable<ApiKeyDto>>.Success(dtos);
     }
 }

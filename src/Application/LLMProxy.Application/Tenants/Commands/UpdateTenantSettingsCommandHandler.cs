@@ -33,12 +33,13 @@ public class UpdateTenantSettingsCommandHandler : IRequestHandler<UpdateTenantSe
     /// <returns>Résultat contenant le DTO du tenant mis à jour ou une erreur.</returns>
     public async Task<Result<TenantDto>> Handle(UpdateTenantSettingsCommand request, CancellationToken cancellationToken)
     {
-        var tenant = await _unitOfWork.Tenants.GetByIdAsync(request.TenantId, cancellationToken);
-        if (tenant == null)
+        var tenantResult = await _unitOfWork.Tenants.GetByIdAsync(request.TenantId, cancellationToken);
+        if (tenantResult.IsFailure)
         {
-            return Result.Failure<TenantDto>($"Tenant with ID {request.TenantId} not found");
+            return Result<TenantDto>.Failure(tenantResult.Error);
         }
 
+        var tenant = tenantResult.Value;
         var newSettings = new Domain.Entities.TenantSettings(
             request.MaxUsers,
             request.MaxProviders,
@@ -47,13 +48,18 @@ public class UpdateTenantSettingsCommandHandler : IRequestHandler<UpdateTenantSe
             request.EnableResponseCache
         );
 
-        var result = tenant.UpdateSettings(newSettings);
-        if (result.IsFailure)
+        var settingsResult = tenant.UpdateSettings(newSettings);
+        if (settingsResult.IsFailure)
         {
-            return Result<TenantDto>.Failure(result.Error);
+            return Result<TenantDto>.Failure(settingsResult.Error);
         }
 
-        await _unitOfWork.Tenants.UpdateAsync(tenant, cancellationToken);
+        var updateResult = await _unitOfWork.Tenants.UpdateAsync(tenant, cancellationToken);
+        if (updateResult.IsFailure)
+        {
+            return Result<TenantDto>.Failure(updateResult.Error);
+        }
+        
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var dto = new TenantDto
@@ -74,6 +80,6 @@ public class UpdateTenantSettingsCommandHandler : IRequestHandler<UpdateTenantSe
             UpdatedAt = tenant.UpdatedAt ?? DateTime.MinValue
         };
 
-        return Result.Success(dto);
+        return dto;
     }
 }

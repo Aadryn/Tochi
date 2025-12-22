@@ -18,15 +18,19 @@ public class DeleteApiKeyCommandHandler : IRequestHandler<DeleteApiKeyCommand, R
 
     public async Task<Result> Handle(DeleteApiKeyCommand request, CancellationToken cancellationToken)
     {
-        var apiKey = await _unitOfWork.ApiKeys.GetByIdAsync(request.ApiKeyId, cancellationToken);
-        if (apiKey == null)
+        var apiKeyResult = await _unitOfWork.ApiKeys.GetByIdAsync(request.ApiKeyId, cancellationToken);
+        if (apiKeyResult.IsFailure)
         {
-            return Result.Failure($"API Key with ID {request.ApiKeyId} not found");
+            return apiKeyResult.Error;
         }
 
-        await _unitOfWork.ApiKeys.DeleteAsync(request.ApiKeyId, cancellationToken);
+        var deleteResult = await _unitOfWork.ApiKeys.DeleteAsync(request.ApiKeyId, cancellationToken);
+        if (deleteResult.IsFailure)
+        {
+            return deleteResult;
+        }
+        
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
         return Result.Success();
     }
 }

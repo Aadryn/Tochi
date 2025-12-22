@@ -19,8 +19,13 @@ public class GetProvidersByTenantIdQueryHandler : IRequestHandler<GetProvidersBy
 
     public async Task<Result<IEnumerable<LLMProviderDto>>> Handle(GetProvidersByTenantIdQuery request, CancellationToken cancellationToken)
     {
-        var providers = await _unitOfWork.Providers.GetByTenantIdAsync(request.TenantId, true, cancellationToken);
-        var dtos = providers.Select(p => new LLMProviderDto
+        var providersResult = await _unitOfWork.Providers.GetByTenantIdAsync(request.TenantId, true, cancellationToken);
+        if (providersResult.IsFailure)
+        {
+            return Result<IEnumerable<LLMProviderDto>>.Failure(providersResult.Error);
+        }
+        
+        var dtos = providersResult.Value.Select(p => new LLMProviderDto
         {
             Id = p.Id,
             TenantId = p.TenantId,
@@ -34,6 +39,6 @@ public class GetProvidersByTenantIdQueryHandler : IRequestHandler<GetProvidersBy
             UpdatedAt = p.UpdatedAt ?? DateTime.MinValue
         });
 
-        return Result.Success(dtos);
+        return Result<IEnumerable<LLMProviderDto>>.Success(dtos);
     }
 }

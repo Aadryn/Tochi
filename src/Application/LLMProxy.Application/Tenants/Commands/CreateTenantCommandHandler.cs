@@ -25,13 +25,17 @@ public class CreateTenantCommandHandler : ICommandHandler<CreateTenantCommand, T
     {
         try
         {
-            if (await _unitOfWork.Tenants.SlugExistsAsync(request.Slug, cancellationToken))
+            var slugExistsResult = await _unitOfWork.Tenants.SlugExistsAsync(request.Slug, cancellationToken);
+            if (slugExistsResult.IsFailure)
+                return Result<TenantDto>.Failure(slugExistsResult.Error);
+            
+            if (slugExistsResult.Value)
             {
                 _logger.TenantCreationFailed(
                     new InvalidOperationException($"Slug '{request.Slug}' already exists"),
                     request.Name,
                     $"Tenant with slug '{request.Slug}' already exists");
-                return Result.Failure<TenantDto>($"Tenant with slug '{request.Slug}' already exists.");
+                return Error.Tenant.SlugAlreadyExists(request.Slug);
             }
 
             var settings = MapSettings(request.Settings);
@@ -52,12 +56,12 @@ public class CreateTenantCommandHandler : ICommandHandler<CreateTenantCommand, T
 
             _logger.TenantCreated(tenant.Id, tenant.Name);
 
-            return Result.Success(MapToDto(tenant));
+            return MapToDto(tenant);
         }
         catch (Exception ex)
         {
             _logger.TenantCreationFailed(ex, request.Name, "An error occurred while creating the tenant");
-            return Result.Failure<TenantDto>("An error occurred while creating the tenant.");
+            return new Error("Tenant.CreationError", "An error occurred while creating the tenant.");
         }
     }
 

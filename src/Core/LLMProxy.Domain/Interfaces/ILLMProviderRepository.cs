@@ -4,14 +4,17 @@ using LLMProxy.Domain.Entities;
 namespace LLMProxy.Domain.Interfaces;
 
 /// <summary>
-/// Repository interface for LLMProvider aggregate (Port)
+/// Repository pour l'agrégat LLMProvider (Port dans l'architecture hexagonale).
 /// </summary>
-public interface ILLMProviderRepository
+public interface ILLMProviderRepository : IRepository<LLMProvider>
 {
-    Task<LLMProvider?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<LLMProvider>> GetByTenantIdAsync(Guid tenantId, bool onlyActive = true, CancellationToken cancellationToken = default);
-    Task<IEnumerable<LLMProvider>> GetByRoutingStrategyAsync(Guid tenantId, RoutingMethod method, string value, CancellationToken cancellationToken = default);
-    Task AddAsync(LLMProvider provider, CancellationToken cancellationToken = default);
-    Task UpdateAsync(LLMProvider provider, CancellationToken cancellationToken = default);
-    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Récupère les providers d'un tenant avec filtrage optionnel par statut actif.
+    /// </summary>
+    Task<Result<IReadOnlyList<LLMProvider>>> GetByTenantIdAsync(Guid tenantId, bool onlyActive = true, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Récupère les providers par stratégie de routage.
+    /// </summary>
+    Task<Result<IReadOnlyList<LLMProvider>>> GetByRoutingStrategyAsync(Guid tenantId, RoutingMethod method, string value, CancellationToken cancellationToken = default);
 }

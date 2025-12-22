@@ -18,15 +18,19 @@ public class DeleteProviderCommandHandler : IRequestHandler<DeleteProviderComman
 
     public async Task<Result> Handle(DeleteProviderCommand request, CancellationToken cancellationToken)
     {
-        var provider = await _unitOfWork.Providers.GetByIdAsync(request.ProviderId, cancellationToken);
-        if (provider == null)
+        var providerResult = await _unitOfWork.Providers.GetByIdAsync(request.ProviderId, cancellationToken);
+        if (providerResult.IsFailure)
         {
-            return Result.Failure($"Provider with ID {request.ProviderId} not found");
+            return providerResult.Error;
         }
 
-        await _unitOfWork.Providers.DeleteAsync(request.ProviderId, cancellationToken);
+        var deleteResult = await _unitOfWork.Providers.DeleteAsync(request.ProviderId, cancellationToken);
+        if (deleteResult.IsFailure)
+        {
+            return deleteResult;
+        }
+        
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
         return Result.Success();
     }
 }

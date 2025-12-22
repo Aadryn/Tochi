@@ -19,12 +19,13 @@ public class GetProviderByIdQueryHandler : IRequestHandler<GetProviderByIdQuery,
 
     public async Task<Result<LLMProviderDto>> Handle(GetProviderByIdQuery request, CancellationToken cancellationToken)
     {
-        var provider = await _unitOfWork.Providers.GetByIdAsync(request.ProviderId, cancellationToken);
-        if (provider == null)
+        var providerResult = await _unitOfWork.Providers.GetByIdAsync(request.ProviderId, cancellationToken);
+        if (providerResult.IsFailure)
         {
-            return Result.Failure<LLMProviderDto>($"Provider with ID {request.ProviderId} not found");
+            return Result<LLMProviderDto>.Failure(providerResult.Error);
         }
 
+        var provider = providerResult.Value;
         var dto = new LLMProviderDto
         {
             Id = provider.Id,
@@ -39,6 +40,6 @@ public class GetProviderByIdQueryHandler : IRequestHandler<GetProviderByIdQuery,
             UpdatedAt = provider.UpdatedAt ?? DateTime.MinValue
         };
 
-        return Result.Success(dto);
+        return dto;
     }
 }

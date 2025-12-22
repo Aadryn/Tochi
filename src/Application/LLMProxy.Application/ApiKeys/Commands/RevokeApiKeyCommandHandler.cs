@@ -18,16 +18,22 @@ public class RevokeApiKeyCommandHandler : IRequestHandler<RevokeApiKeyCommand, R
 
     public async Task<Result> Handle(RevokeApiKeyCommand request, CancellationToken cancellationToken)
     {
-        var apiKey = await _unitOfWork.ApiKeys.GetByIdAsync(request.ApiKeyId, cancellationToken);
-        if (apiKey == null)
+        var apiKeyResult = await _unitOfWork.ApiKeys.GetByIdAsync(request.ApiKeyId, cancellationToken);
+        if (apiKeyResult.IsFailure)
         {
-            return Result.Failure($"API Key with ID {request.ApiKeyId} not found");
+            return apiKeyResult.Error;
         }
 
+        var apiKey = apiKeyResult.Value;
         apiKey.Revoke();
-        await _unitOfWork.ApiKeys.UpdateAsync(apiKey, cancellationToken);
+        
+        var updateResult = await _unitOfWork.ApiKeys.UpdateAsync(apiKey, cancellationToken);
+        if (updateResult.IsFailure)
+        {
+            return updateResult;
+        }
+        
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
         return Result.Success();
     }
 }

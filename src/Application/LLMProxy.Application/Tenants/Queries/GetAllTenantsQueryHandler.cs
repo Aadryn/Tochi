@@ -19,8 +19,13 @@ public class GetAllTenantsQueryHandler : IRequestHandler<GetAllTenantsQuery, Res
 
     public async Task<Result<IEnumerable<TenantDto>>> Handle(GetAllTenantsQuery request, CancellationToken cancellationToken)
     {
-        var tenants = await _unitOfWork.Tenants.GetAllAsync(includeInactive: false, cancellationToken);
-        var dtos = tenants.Select(t => new TenantDto
+        var tenantsResult = await _unitOfWork.Tenants.GetAllAsync(includeInactive: false, cancellationToken);
+        if (tenantsResult.IsFailure)
+        {
+            return Result<IEnumerable<TenantDto>>.Failure(tenantsResult.Error);
+        }
+        
+        var dtos = tenantsResult.Value.Select(t => new TenantDto
         {
             Id = t.Id,
             Name = t.Name,
@@ -38,6 +43,6 @@ public class GetAllTenantsQueryHandler : IRequestHandler<GetAllTenantsQuery, Res
             UpdatedAt = t.UpdatedAt ?? DateTime.MinValue
         });
 
-        return Result.Success(dtos);
+        return Result<IEnumerable<TenantDto>>.Success(dtos);
     }
 }

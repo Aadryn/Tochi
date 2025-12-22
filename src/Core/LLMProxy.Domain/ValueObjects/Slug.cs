@@ -36,24 +36,24 @@ public sealed class Slug : ValueObject
         {
             Guard.AgainstNullOrWhiteSpace(slug, nameof(slug), "Slug ne peut pas être vide.");
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException)
         {
-            return Result.Failure<Slug>(ex.Message);
+            return Error.Validation.Required(nameof(slug));
         }
 
         if (slug.Length > 100)
         {
-            return Result.Failure<Slug>("Slug ne peut pas dépasser 100 caractères.");
+            return Error.Validation.TooLong(nameof(slug), 100);
         }
 
         var normalized = slug.ToLowerInvariant();
 
         if (!SlugPattern.IsMatch(normalized))
         {
-            return Result.Failure<Slug>("Slug doit contenir uniquement des lettres minuscules, chiffres et tirets.");
+            return new Error("Validation.Slug.InvalidFormat", "Slug doit contenir uniquement des lettres minuscules, chiffres et tirets.");
         }
 
-        return Result.Success(new Slug(slug));
+        return new Slug(slug);
     }
 
     protected override IEnumerable<object> GetEqualityComponents()
