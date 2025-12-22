@@ -26,7 +26,15 @@ public class QuotaLimit : Entity
 
     private QuotaLimit() { } // EF Core
 
-    private QuotaLimit(Guid userId, Guid tenantId, QuotaType quotaType, long limit, QuotaPeriod period)
+    /// <summary>
+    /// Constructeur protégé permettant l'héritage par <see cref="UnlimitedQuotaLimit"/>.
+    /// </summary>
+    /// <param name="userId">Identifiant de l'utilisateur.</param>
+    /// <param name="tenantId">Identifiant du tenant.</param>
+    /// <param name="quotaType">Type de quota.</param>
+    /// <param name="limit">Limite du quota.</param>
+    /// <param name="period">Période du quota.</param>
+    protected QuotaLimit(Guid userId, Guid tenantId, QuotaType quotaType, long limit, QuotaPeriod period)
     {
         UserId = userId;
         TenantId = tenantId;
@@ -97,7 +105,7 @@ public class QuotaLimit : Entity
     /// <param name="transactionId">Identifiant unique de la transaction (fourni par le client via Idempotency-Key).</param>
     /// <param name="tokens">Nombre de tokens à incrémenter dans l'usage.</param>
     /// <returns>Résultat de l'opération avec état actuel du quota.</returns>
-    public Result<long> RecordUsage(Guid transactionId, long tokens)
+    public virtual Result<long> RecordUsage(Guid transactionId, long tokens)
     {
         try
         {
