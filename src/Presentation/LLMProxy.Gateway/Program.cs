@@ -192,6 +192,10 @@ builder.Services.AddRedisInfrastructure(builder.Configuration);
 builder.Services.AddSecurityInfrastructure(builder.Configuration);
 builder.Services.AddLLMProviderInfrastructure(builder.Configuration); // ADR-032: Circuit Breaker enabled
 
+// Add Idempotency Store (ADR-022)
+builder.Services.AddSingleton<LLMProxy.Infrastructure.Redis.Idempotency.IIdempotencyStore, 
+    LLMProxy.Infrastructure.Redis.Idempotency.RedisIdempotencyStore>();
+
 // Add Hash Service
 builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IHashService, LLMProxy.Infrastructure.Security.Sha256HashService>();
 builder.Services.AddSingleton<LLMProxy.Infrastructure.Security.IApiKeyExtractor, LLMProxy.Infrastructure.Security.HeaderApiKeyExtractor>();
@@ -238,6 +242,11 @@ app.UseMiddleware<QuotaEnforcementMiddleware>();
 
 // Standard middleware
 app.UseRouting();
+
+// Idempotency Middleware (ADR-022) - MUST be after UseRouting, BEFORE UseAuthentication
+// Prevents duplicate creation requests and quota double-counting
+app.UseMiddleware<IdempotencyMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
