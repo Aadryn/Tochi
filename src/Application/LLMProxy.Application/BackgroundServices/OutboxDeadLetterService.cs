@@ -96,18 +96,8 @@ public sealed class OutboxDeadLetterService : BackgroundService
 
         foreach (var message in failedMessages)
         {
-            // Créer une entrée dead letter
-            var deadLetter = new OutboxDeadLetter
-            {
-                Id = Guid.NewGuid(),
-                OriginalMessageId = message.Id,
-                Type = message.Type,
-                Content = message.Content,
-                Error = message.Error,
-                RetryCount = message.RetryCount,
-                CreatedAt = message.CreatedAt,
-                DeadLetteredAt = DateTimeOffset.UtcNow
-            };
+            // Créer une entrée dead letter à partir du message échoué
+            var deadLetter = new OutboxDeadLetter(message);
 
             context.Set<OutboxDeadLetter>().Add(deadLetter);
             context.Set<OutboxMessage>().Remove(message);

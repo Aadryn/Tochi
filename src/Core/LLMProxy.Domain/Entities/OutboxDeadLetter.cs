@@ -73,6 +73,28 @@ public sealed class OutboxDeadLetter
     public string? ResolutionNotes { get; private set; }
 
     /// <summary>
+    /// Initialise une nouvelle instance Dead Letter à partir d'un message Outbox échoué.
+    /// </summary>
+    /// <param name="failedMessage">Message Outbox qui a échoué définitivement.</param>
+    /// <exception cref="ArgumentNullException">Si <paramref name="failedMessage"/> est null.</exception>
+    public OutboxDeadLetter(OutboxMessage failedMessage)
+    {
+        ArgumentNullException.ThrowIfNull(failedMessage);
+
+        Id = Guid.NewGuid();
+        OriginalMessageId = failedMessage.Id;
+        Type = failedMessage.Type;
+        Content = failedMessage.Content;
+        Error = failedMessage.Error;
+        RetryCount = failedMessage.RetryCount;
+        CreatedAt = failedMessage.CreatedAt;
+        DeadLetteredAt = DateTimeOffset.UtcNow;
+        Resolved = false;
+        ResolvedAt = null;
+        ResolutionNotes = null;
+    }
+
+    /// <summary>
     /// Marque le message Dead Letter comme résolu.
     /// </summary>
     /// <param name="resolutionNotes">Notes décrivant la résolution.</param>
