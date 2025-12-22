@@ -19,8 +19,13 @@ public class GetAllTenantsQueryHandler : IRequestHandler<GetAllTenantsQuery, Res
 
     public async Task<Result<IEnumerable<TenantDto>>> Handle(GetAllTenantsQuery request, CancellationToken cancellationToken)
     {
-        var tenants = await _unitOfWork.Tenants.GetAllAsync(includeInactive: false, cancellationToken);
-        var dtos = tenants.Select(t => new TenantDto
+        var tenantsResult = await _unitOfWork.Tenants.GetAllAsync(includeInactive: false, cancellationToken);
+        if (tenantsResult.IsFailure)
+        {
+            return Result.Failure<IEnumerable<TenantDto>>(tenantsResult.Error);
+        }
+        
+        var dtos = tenantsResult.Value.Select(t => new TenantDto
         {
             Id = t.Id,
             Name = t.Name,

@@ -19,13 +19,13 @@ public class UpdateProviderCommandHandler : IRequestHandler<UpdateProviderComman
 
     public async Task<Result<LLMProviderDto>> Handle(UpdateProviderCommand request, CancellationToken cancellationToken)
     {
-        var provider = await _unitOfWork.Providers.GetByIdAsync(request.ProviderId, cancellationToken);
-        if (provider == null)
+        var providerResult = await _unitOfWork.Providers.GetByIdAsync(request.ProviderId, cancellationToken);
+        if (providerResult.IsFailure)
         {
-            return Result.Failure<LLMProviderDto>($"Provider with ID {request.ProviderId} not found");
+            return Result.Failure<LLMProviderDto>(providerResult.Error);
         }
 
-        // Update only provided properties
+        var provider = providerResult.Value;
         if (request.BaseUrl != null) provider.UpdateBaseUrl(request.BaseUrl);
         if (request.Priority.HasValue) provider.UpdatePriority(request.Priority.Value);
         if (request.CustomHeaders != null) provider.UpdateCustomHeaders(request.CustomHeaders);
@@ -37,7 +37,12 @@ public class UpdateProviderCommandHandler : IRequestHandler<UpdateProviderComman
             );
         }
 
-        await _unitOfWork.Providers.UpdateAsync(provider, cancellationToken);
+        var updateResult = await _unitOfWork.Providers.UpdateAsync(provider, cancellationToken);
+        if (updateResult.IsFailure)
+        {
+            return Result.Failure<LLMProviderDto>(updateResult.Error);
+        }
+        
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var dto = new LLMProviderDto

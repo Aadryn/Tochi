@@ -20,18 +20,23 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
 
     public async Task<Result<UserDto>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
-        if (user == null)
+        var userResult = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
+        if (userResult.IsFailure)
         {
-            return Result.Failure<UserDto>($"User with ID {request.UserId} not found");
+            return Result.Failure<UserDto>(userResult.Error);
         }
 
-        // Update user properties (you would add methods to User entity for this)
+        var user = userResult.Value;
         user.UpdateName(request.Name);
         var userRole = Enum.Parse<UserRole>(request.Role, true);
         user.UpdateRole(userRole);
 
-        await _unitOfWork.Users.UpdateAsync(user, cancellationToken);
+        var updateResult = await _unitOfWork.Users.UpdateAsync(user, cancellationToken);
+        if (updateResult.IsFailure)
+        {
+            return Result.Failure<UserDto>(updateResult.Error);
+        }
+        
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var dto = new UserDto

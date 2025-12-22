@@ -19,8 +19,13 @@ public class GetApiKeysByUserIdQueryHandler : IRequestHandler<GetApiKeysByUserId
 
     public async Task<Result<IEnumerable<ApiKeyDto>>> Handle(GetApiKeysByUserIdQuery request, CancellationToken cancellationToken)
     {
-        var apiKeys = await _unitOfWork.ApiKeys.GetByUserIdAsync(request.UserId, cancellationToken);
-        var dtos = apiKeys.Select(k => new ApiKeyDto
+        var apiKeysResult = await _unitOfWork.ApiKeys.GetByUserIdAsync(request.UserId, cancellationToken);
+        if (apiKeysResult.IsFailure)
+        {
+            return Result.Failure<IEnumerable<ApiKeyDto>>(apiKeysResult.Error);
+        }
+        
+        var dtos = apiKeysResult.Value.Select(k => new ApiKeyDto
         {
             Id = k.Id,
             UserId = k.UserId,

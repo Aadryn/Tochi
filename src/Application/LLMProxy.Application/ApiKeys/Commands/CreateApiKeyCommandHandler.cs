@@ -20,14 +20,12 @@ public class CreateApiKeyCommandHandler : IRequestHandler<CreateApiKeyCommand, R
 
     public async Task<Result<ApiKeyDto>> Handle(CreateApiKeyCommand request, CancellationToken cancellationToken)
     {
-        // Verify user exists
-        var user = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
-        if (user == null)
+        var userResult = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
+        if (userResult.IsFailure)
         {
-            return Result.Failure<ApiKeyDto>($"User with ID {request.UserId} not found");
+            return Result.Failure<ApiKeyDto>(userResult.Error);
         }
 
-        // Generate API key - use the overload that returns ApiKey directly
         var plainKey = ApiKey.GenerateKey();
         var apiKey = ApiKey.Create(
             request.UserId,
@@ -37,7 +35,12 @@ public class CreateApiKeyCommandHandler : IRequestHandler<CreateApiKeyCommand, R
             request.ExpiresAt
         );
 
-        await _unitOfWork.ApiKeys.AddAsync(apiKey, cancellationToken);
+        var addResult = await _unitOfWork.ApiKeys.AddAsync(apiKey, cancellationToken);
+        if (addResult.IsFailure)
+        {
+            return Result.Failure<ApiKeyDto>(addResult.Error);
+        }
+        
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var dto = new ApiKeyDto

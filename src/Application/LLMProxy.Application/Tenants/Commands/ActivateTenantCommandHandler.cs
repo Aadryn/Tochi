@@ -18,16 +18,22 @@ public class ActivateTenantCommandHandler : IRequestHandler<ActivateTenantComman
 
     public async Task<Result> Handle(ActivateTenantCommand request, CancellationToken cancellationToken)
     {
-        var tenant = await _unitOfWork.Tenants.GetByIdAsync(request.TenantId, cancellationToken);
-        if (tenant == null)
+        var tenantResult = await _unitOfWork.Tenants.GetByIdAsync(request.TenantId, cancellationToken);
+        if (tenantResult.IsFailure)
         {
-            return Result.Failure($"Tenant with ID {request.TenantId} not found");
+            return tenantResult.Error;
         }
 
+        var tenant = tenantResult.Value;
         tenant.Activate();
-        await _unitOfWork.Tenants.UpdateAsync(tenant, cancellationToken);
+        
+        var updateResult = await _unitOfWork.Tenants.UpdateAsync(tenant, cancellationToken);
+        if (updateResult.IsFailure)
+        {
+            return updateResult;
+        }
+        
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
         return Result.Success();
     }
 }

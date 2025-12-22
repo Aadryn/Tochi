@@ -19,8 +19,13 @@ public class GetUsersByTenantIdQueryHandler : IRequestHandler<GetUsersByTenantId
 
     public async Task<Result<IEnumerable<UserDto>>> Handle(GetUsersByTenantIdQuery request, CancellationToken cancellationToken)
     {
-        var users = await _unitOfWork.Users.GetByTenantIdAsync(request.TenantId, cancellationToken);
-        var dtos = users.Select(u => new UserDto
+        var usersResult = await _unitOfWork.Users.GetByTenantIdAsync(request.TenantId, cancellationToken);
+        if (usersResult.IsFailure)
+        {
+            return Result.Failure<IEnumerable<UserDto>>(usersResult.Error);
+        }
+        
+        var dtos = usersResult.Value.Select(u => new UserDto
         {
             Id = u.Id,
             TenantId = u.TenantId,
