@@ -4,6 +4,8 @@ using LLMProxy.Gateway.HealthChecks;
 using LLMProxy.Infrastructure.Redis;
 using LLMProxy.Infrastructure.Security;
 using LLMProxy.Infrastructure.LLMProviders;
+using LLMProxy.Infrastructure.Configuration.FeatureFlags;
+using LLMProxy.Domain.Interfaces;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Resources;
@@ -60,6 +62,17 @@ builder.Services.AddAuthorization();
 
 // API Versioning avec namespace convention (ADR-037)
 builder.Services.AddApiVersioningWithNamespaceConvention();
+
+// ═══════════════════════════════════════════════════════════════
+// FEATURE FLAGS (ADR-030)
+// ═══════════════════════════════════════════════════════════════
+
+builder.Services.AddSingleton<IFeatureFlags>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var logger = sp.GetRequiredService<ILogger<ConfigurationFeatureFlags>>();
+    return new ConfigurationFeatureFlags(configuration, logger);
+});
 
 // ═══════════════════════════════════════════════════════════════
 // HEALTH CHECKS (ADR-038)
