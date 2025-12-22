@@ -99,6 +99,39 @@ Based on **Hexagonal Architecture** (Ports & Adapters) following SOLID, DRY, KIS
 - Request/response logging with anonymization
 - Automatic log retention and purge
 
+### API Versioning (ADR-037)
+
+**Namespace-based versioning** with multiple access methods:
+
+| Method | Example | Use Case |
+|--------|---------|----------|
+| **URL** | `/api/v2025-12-22/tenants` | Recommended - cache-friendly, explicit |
+| **Header** | `X-Api-Version: 2025-12-22` | Client preference, stable URLs |
+| **Query** | `?api-version=2025-12-22` | Fallback, browser testing |
+
+**Formats supported:**
+- `V1` → `1.0` (major version)
+- `V2025` → `2025.0` (year-based)
+- `V20251222` → `2025-12-22` (date-based, recommended)
+
+**Key features:**
+- ✅ Multiple versions running simultaneously
+- ✅ Version auto-detected from namespace (no attributes needed)
+- ✅ Response headers include `api-supported-versions`, `api-deprecated-versions`
+- ✅ Default version fallback if unspecified
+
+**Example:**
+```bash
+# URL versioning (recommended)
+GET /api/v2025-12-22/tenants
+
+# Header versioning
+curl -H "X-Api-Version: 2025-12-22" /api/tenants
+
+# Auto-detect from namespace
+namespace LLMProxy.Admin.API.Controllers.V20251222;  # → v2025-12-22
+```
+
 ### Rate Limiting & Throttling (ADR-041)
 
 **Multi-Level Protection:**
