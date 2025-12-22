@@ -137,6 +137,56 @@ Based on **Hexagonal Architecture** (Ports & Adapters) following SOLID, DRY, KIS
 }
 ```
 
+### Idempotence (ADR-022)
+
+**Automatic duplicate request protection** for POST and PATCH operations.
+
+**How it works:**
+- **Middleware-based**: All POST/PATCH requests require an `Idempotency-Key` header
+- **Redis caching**: Responses cached for 24 hours per idempotency key
+- **Automatic replay**: Duplicate requests return the exact same cached response
+- **Quota protection**: Prevents double-counting tokens on network retries
+
+**API Usage:**
+
+```bash
+# POST with Idempotency-Key (UUID v4 required)
+curl -X POST https://api.example.com/tenants \
+  -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Acme Corp", "slug": "acme"}'
+
+# Retry with same key → Returns cached response (no duplicate creation)
+curl -X POST https://api.example.com/tenants \
+  -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Acme Corp", "slug": "acme"}'
+```
+
+**Error Response (missing header):**
+```json
+{
+  "error": "idempotency_key_required",
+  "message": "Header 'Idempotency-Key' is required for POST requests"
+}
+```
+
+**Benefits:**
+- ✅ Safe network retries (no duplicate creations)
+- ✅ Idempotent quota operations (tokens counted once)
+- ✅ Production-safe (prevents data corruption from retries)
+- ✅ Client-simple (just add UUID header)
+
+**Structured Logging:**
+- `[6001]` Idempotency-Key missing (Warning) → Returns 400 Bad Request
+- `[6002]` Idempotency replay (Information) → Cached response returned
+- `[6003]` Idempotency cached (Debug) → New response stored in Redis
+
+**Configuration:**
+- TTL: 24 hours (hardcoded in middleware)
+- Store: Redis (key prefix: `idempotency:`)
+- Methods: POST, PATCH (GET/PUT/DELETE naturally idempotent)
+
 ### Advanced Features
 - Response caching (configurable per endpoint/user)
 - Semantic cache support
