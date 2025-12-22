@@ -237,6 +237,147 @@ var tenant2 = NullTenant.Instance;
 // tenant1 == tenant2 (même instance)
 ```
 
+### Specification Pattern (ADR-028)
+
+**Centralisation des règles métier** avec spécifications réutilisables et composables.
+
+**Spécifications disponibles :**
+
+| Spécification | Usage | Règle métier |
+|---------------|-------|--------------|
+| `TenantIsEligibleSpecification` | Validation tenant | Tenant actif ET non désactivé |
+| `QuotaIsAvailableSpecification` | Validation quota | Usage + demande ≤ limite |
+
+**Avantages :**
+- ✅ **DRY** : Règles métier centralisées (plus de duplication dans 5+ handlers)
+- ✅ **Testabilité** : Chaque spécification testée isolément
+- ✅ **Composition** : Combiner avec AND, OR, NOT
+- ✅ **EF Core** : Support requêtes LINQ (`ToExpression()`)
+- ✅ **Lisibilité** : Code métier exprimé clairement
+
+**Exemple d'utilisation basique :**
+
+```csharp
+// Validation tenant éligible
+var spec = new TenantIsEligibleSpecification();
+if (!spec.IsSatisfiedBy(tenant))
+{
+    return Error.Validation("Tenant non éligible");
+}
+
+// Validation quota disponible
+var quotaSpec = new QuotaIsAvailableSpecification(requestedTokens: 500);
+if (!quotaSpec.IsSatisfiedBy(quota))
+{
+    return Error.QuotaExceeded("Quota insuffisant");
+}
+```
+
+**Composition avec opérateurs logiques :**
+
+```csharp
+// AND : Tenant éligible ET quota disponible
+var tenantSpec = new TenantIsEligibleSpecification();
+var quotaSpec = new QuotaIsAvailableSpecification(500);
+var combinedSpec = tenantSpec.And(quotaSpec);
+
+if (!combinedSpec.IsSatisfiedBy(context))
+{
+    return Error.Validation("Conditions non remplies");
+}
+
+// OR : Tenant premium OU quota disponible
+var premiumSpec = new TenantIsPremiumSpecification();
+var quotaSpec = new QuotaIsAvailableSpecification(500);
+var allowedSpec = premiumSpec.Or(quotaSpec);
+
+// NOT : Tenant NON suspendu
+var suspendedSpec = new TenantIsSuspendedSpecification();
+var activeSpec = suspendedSpec.Not();
+```
+
+**Utilisation avec EF Core (requêtes base de données) :**
+
+```csharp
+// Filtrer tenants éligibles directement en SQL
+var spec = new TenantIsEligibleSpecification();
+var eligibleTenants = await _context.Tenants
+    .Where(spec.ToExpression())  // Traduit en SQL : WHERE IsActive = 1 AND DeactivatedAt IS NULL
+    .ToListAsync();
+
+// Composition en requête
+var tenantSpec = new TenantIsEligibleSpecification();
+var quotaSpec = new QuotaIsAvailableSpecification(1000);
+var complexSpec = tenantSpec.And(quotaSpec);
+
+var results = await _context.SomeEntities
+    .Where(complexSpec.ToExpression())
+    .ToListAsync();
+```
+
+**Créer une spécification personnalisée :**
+
+```csharp
+public sealed class UserHasPermissionSpecification : CompositeSpecification<User>
+{
+    private readonly string _permission;
+
+    public UserHasPermissionSpecification(string permission)
+    {
+        _permission = permission ?? throw new ArgumentNullException(nameof(permission));
+    }
+
+    public override bool IsSatisfiedBy(User user)
+    {
+        if (user is null) return false;
+        return user.Permissions.Contains(_permission);
+    }
+
+    public override Expression<Func<User, bool>> ToExpression()
+    {
+        var permission = _permission; // Capture pour expression
+        return u => u.Permissions.Contains(permission);
+    }
+}
+```
+
+**Élimination de duplication (Avant/Après) :**
+
+```csharp
+// ❌ AVANT : Règle métier dupliquée dans 5+ handlers
+public async Task<Result> CreateUserCommandHandler(CreateUserCommand command)
+{
+    var tenant = await _tenantRepo.GetByIdAsync(command.TenantId);
+    if (!tenant.IsActive || tenant.DeactivatedAt != null)
+    {
+        return Error.Validation("Tenant non éligible");
+    }
+    // ...
+}
+
+public async Task<Result> ProcessRequestHandler(ProcessRequest request)
+{
+    var tenant = await _tenantRepo.GetByIdAsync(request.TenantId);
+    if (!tenant.IsActive || tenant.DeactivatedAt != null)  // ❌ DUPLICATION
+    {
+        return Error.Validation("Tenant non éligible");
+    }
+    // ...
+}
+
+// ✅ APRÈS : Règle centralisée dans spécification
+public async Task<Result> CreateUserCommandHandler(CreateUserCommand command)
+{
+    var tenant = await _tenantRepo.GetByIdAsync(command.TenantId);
+    var spec = new TenantIsEligibleSpecification();
+    if (!spec.IsSatisfiedBy(tenant))
+    {
+        return Error.Validation("Tenant non éligible");
+    }
+    // ...
+}
+```
+
 ### Health Checks (ADR-038)
 
 **Comprehensive health checks** for Kubernetes and monitoring.
