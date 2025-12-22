@@ -106,3 +106,27 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 - [Serilog ASP.NET Core](https://github.com/serilog/serilog-aspnetcore)
 - ADR-031 (Structured Logging)
 - ADR-054 (Request/Response Logging)
+
+
+## TRACKING
+Début: 2025-12-22T17:11:35.0407448Z
+
+
+Fin: 2025-12-22T17:20:41.1058444Z
+
+## STATUT:  COMPLÉTÉ
+
+### Fichiers créés
+- `src/Presentation/LLMProxy.Gateway/Extensions/SerilogExtensions.cs`
+- `src/Presentation/LLMProxy.Gateway/Logging/TenantIdEnricher.cs`
+- `src/Presentation/LLMProxy.Gateway/Logging/ApiKeyEnricher.cs`
+- `src/Presentation/LLMProxy.Gateway/Logging/LLMContextEnricher.cs`
+
+### Fichiers modifiés
+- `src/Presentation/LLMProxy.Gateway/LLMProxy.Gateway.csproj` (packages Serilog)
+- `src/Presentation/LLMProxy.Gateway/Program.cs` (intégration Serilog)
+- `src/Presentation/LLMProxy.Gateway/appsettings.json` (configuration Serilog)
+
+### Tests
+- Build :  0 erreurs
+- Gateway.Tests :  30 réussis
