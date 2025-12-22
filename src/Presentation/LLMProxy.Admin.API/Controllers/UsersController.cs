@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using LLMProxy.Application.Users.Commands;
 using LLMProxy.Application.Users.Queries;
 using MediatR;
@@ -7,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace LLMProxy.Admin.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Authorize(Policy = "TenantAdmin")]
 public class UsersController : ControllerBase
 {

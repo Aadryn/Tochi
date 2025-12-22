@@ -58,6 +58,9 @@ builder.Services.AddAuthentication()
 // Add Authorization
 builder.Services.AddAuthorization();
 
+// Add API Versioning (ADR-037)
+builder.Services.AddApiVersioningConfiguration();
+
 // ═══════════════════════════════════════════════════════════════
 // HEALTH CHECKS (ADR-038)
 // ═══════════════════════════════════════════════════════════════
