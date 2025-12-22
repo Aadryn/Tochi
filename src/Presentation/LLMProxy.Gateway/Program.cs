@@ -6,12 +6,10 @@ using LLMProxy.Infrastructure.Redis;
 using LLMProxy.Infrastructure.Security;
 using LLMProxy.Infrastructure.LLMProviders;
 using LLMProxy.Infrastructure.Configuration.FeatureFlags;
+using LLMProxy.Infrastructure.Telemetry.Extensions;
 using LLMProxy.Domain.Interfaces;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using OpenTelemetry.Metrics;
 using Serilog;
 using System.Threading.RateLimiting;
 
@@ -47,22 +45,10 @@ builder.ConfigureSerilog();
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
-// Add OpenTelemetry
-builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource
-        .AddService("LLMProxy.Gateway"))
-    .WithTracing(tracing => tracing
-        .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddSource("LLMProxy.*")
-        .AddConsoleExporter()
-        .AddOtlpExporter())
-    .WithMetrics(metrics => metrics
-        .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddMeter("LLMProxy.*")
-        .AddConsoleExporter()
-        .AddOtlpExporter());
+// ═══════════════════════════════════════════════════════════════
+// OPENTELEMETRY (ADR-031) - Traces distribuées et métriques LLM
+// ═══════════════════════════════════════════════════════════════
+builder.Services.AddLLMOpenTelemetry(builder.Configuration);
 
 // HttpContextAccessor - Required for Serilog enrichers
 builder.Services.AddHttpContextAccessor();

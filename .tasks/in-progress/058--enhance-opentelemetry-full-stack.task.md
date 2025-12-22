@@ -116,3 +116,8 @@ public static class LLMSemanticConventions
 - [OpenTelemetry Semantic Conventions GenAI](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
 - [OpenTelemetry .NET](https://opentelemetry.io/docs/languages/net/)
 - ADR existants OpenTelemetry
+
+
+## TRACKING
+Début: 2025-12-22T17:24:39.1307341Z
+
