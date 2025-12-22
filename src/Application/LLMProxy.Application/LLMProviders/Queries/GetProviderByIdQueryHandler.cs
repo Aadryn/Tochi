@@ -40,6 +40,6 @@ public class GetProviderByIdQueryHandler : IRequestHandler<GetProviderByIdQuery,
             UpdatedAt = provider.UpdatedAt ?? DateTime.MinValue
         };
 
-        return Result.Success(dto);
+        return dto;
     }
 }

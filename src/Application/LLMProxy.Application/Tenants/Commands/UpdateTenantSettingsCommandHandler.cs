@@ -80,6 +80,6 @@ public class UpdateTenantSettingsCommandHandler : IRequestHandler<UpdateTenantSe
             UpdatedAt = tenant.UpdatedAt ?? DateTime.MinValue
         };
 
-        return Result.Success(dto);
+        return dto;
     }
 }

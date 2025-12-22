@@ -22,7 +22,7 @@ public class GetProvidersByTenantIdQueryHandler : IRequestHandler<GetProvidersBy
         var providersResult = await _unitOfWork.Providers.GetByTenantIdAsync(request.TenantId, true, cancellationToken);
         if (providersResult.IsFailure)
         {
-            return Result.Failure<IEnumerable<LLMProviderDto>>(providersResult.Error);
+            return Result<IEnumerable<LLMProviderDto>>.Failure(providersResult.Error);
         }
         
         var dtos = providersResult.Value.Select(p => new LLMProviderDto
@@ -39,6 +39,6 @@ public class GetProvidersByTenantIdQueryHandler : IRequestHandler<GetProvidersBy
             UpdatedAt = p.UpdatedAt ?? DateTime.MinValue
         });
 
-        return Result.Success(dtos);
+        return Result<IEnumerable<LLMProviderDto>>.Success(dtos);
     }
 }

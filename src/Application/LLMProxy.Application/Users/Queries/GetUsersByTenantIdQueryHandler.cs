@@ -22,7 +22,7 @@ public class GetUsersByTenantIdQueryHandler : IRequestHandler<GetUsersByTenantId
         var usersResult = await _unitOfWork.Users.GetByTenantIdAsync(request.TenantId, cancellationToken);
         if (usersResult.IsFailure)
         {
-            return Result.Failure<IEnumerable<UserDto>>(usersResult.Error);
+            return Result<IEnumerable<UserDto>>.Failure(usersResult.Error);
         }
         
         var dtos = usersResult.Value.Select(u => new UserDto
@@ -37,6 +37,6 @@ public class GetUsersByTenantIdQueryHandler : IRequestHandler<GetUsersByTenantId
             UpdatedAt = u.UpdatedAt ?? DateTime.MinValue
         });
 
-        return Result.Success(dtos);
+        return Result<IEnumerable<UserDto>>.Success(dtos);
     }
 }

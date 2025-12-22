@@ -22,7 +22,7 @@ public class GetApiKeysByUserIdQueryHandler : IRequestHandler<GetApiKeysByUserId
         var apiKeysResult = await _unitOfWork.ApiKeys.GetByUserIdAsync(request.UserId, cancellationToken);
         if (apiKeysResult.IsFailure)
         {
-            return Result.Failure<IEnumerable<ApiKeyDto>>(apiKeysResult.Error);
+            return Result<IEnumerable<ApiKeyDto>>.Failure(apiKeysResult.Error);
         }
         
         var dtos = apiKeysResult.Value.Select(k => new ApiKeyDto
@@ -39,6 +39,6 @@ public class GetApiKeysByUserIdQueryHandler : IRequestHandler<GetApiKeysByUserId
             UpdatedAt = k.UpdatedAt ?? DateTime.MinValue
         });
 
-        return Result.Success(dtos);
+        return Result<IEnumerable<ApiKeyDto>>.Success(dtos);
     }
 }

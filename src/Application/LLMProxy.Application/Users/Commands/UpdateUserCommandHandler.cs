@@ -51,6 +51,6 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
             UpdatedAt = user.UpdatedAt ?? DateTime.MinValue
         };
 
-        return Result.Success(dto);
+        return dto;
     }
 }

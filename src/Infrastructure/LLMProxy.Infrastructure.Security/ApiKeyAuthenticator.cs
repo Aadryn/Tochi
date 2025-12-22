@@ -50,9 +50,9 @@ public class ApiKeyAuthenticator : IApiKeyAuthenticator
         {
             // Extract prefix to optimize lookup
             var prefix = rawApiKey.Length > 12 ? rawApiKey.Substring(0, 12) : rawApiKey;
-            var apiKeyEntity = await unitOfWork.ApiKeys.GetByKeyPrefixAsync(prefix);
+            var apiKeyEntityResult = await unitOfWork.ApiKeys.GetByKeyPrefixAsync(prefix);
 
-            if (apiKeyEntity == null)
+            if (apiKeyEntityResult.IsFailure)
             {
                 _logger.ApiKeyValidationFailed(
                     Guid.Empty,
@@ -60,11 +60,13 @@ public class ApiKeyAuthenticator : IApiKeyAuthenticator
                 return ApiKeyAuthenticationResult.Failure("Invalid API key");
             }
 
+            var apiKeyEntity = apiKeyEntityResult.Value;
+            
             // Verify full key hash
             var keyHash = _hashService.ComputeSha256Hash(rawApiKey);
-            var validKey = await unitOfWork.ApiKeys.GetByKeyHashAsync(keyHash);
+            var validKeyResult = await unitOfWork.ApiKeys.GetByKeyHashAsync(keyHash);
 
-            if (validKey == null || validKey.Id != apiKeyEntity.Id)
+            if (validKeyResult.IsFailure || validKeyResult.Value.Id != apiKeyEntity.Id)
             {
                 _logger.ApiKeyValidationFailed(
                     apiKeyEntity.TenantId,
@@ -72,15 +74,19 @@ public class ApiKeyAuthenticator : IApiKeyAuthenticator
                 return ApiKeyAuthenticationResult.Failure("Invalid API key");
             }
 
+            var validKey = validKeyResult.Value;
+            
             // Get user
-            var user = await unitOfWork.Users.GetByIdAsync(validKey.UserId);
-            if (user == null)
+            var userResult = await unitOfWork.Users.GetByIdAsync(validKey.UserId);
+            if (userResult.IsFailure)
             {
                 _logger.ApiKeyValidationFailed(
                     validKey.TenantId,
                     "User not found");
                 return ApiKeyAuthenticationResult.Failure("User not found");
             }
+
+            var user = userResult.Value;
 
             // Validate API key (revocation, expiration, user active)
             var validationResult = _apiKeyValidator.ValidateApiKey(validKey, user);

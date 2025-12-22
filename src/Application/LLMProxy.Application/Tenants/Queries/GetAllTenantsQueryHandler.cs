@@ -22,7 +22,7 @@ public class GetAllTenantsQueryHandler : IRequestHandler<GetAllTenantsQuery, Res
         var tenantsResult = await _unitOfWork.Tenants.GetAllAsync(includeInactive: false, cancellationToken);
         if (tenantsResult.IsFailure)
         {
-            return Result.Failure<IEnumerable<TenantDto>>(tenantsResult.Error);
+            return Result<IEnumerable<TenantDto>>.Failure(tenantsResult.Error);
         }
         
         var dtos = tenantsResult.Value.Select(t => new TenantDto
@@ -43,6 +43,6 @@ public class GetAllTenantsQueryHandler : IRequestHandler<GetAllTenantsQuery, Res
             UpdatedAt = t.UpdatedAt ?? DateTime.MinValue
         });
 
-        return Result.Success(dtos);
+        return Result<IEnumerable<TenantDto>>.Success(dtos);
     }
 }

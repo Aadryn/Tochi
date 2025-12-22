@@ -46,14 +46,18 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserD
                 return Result<UserDto>.Failure(tenantValidation.Error);
             }
 
-            if (await _unitOfWork.Users.EmailExistsAsync(request.TenantId, request.Email, cancellationToken))
+            var emailExistsResult = await _unitOfWork.Users.EmailExistsAsync(request.TenantId, request.Email, cancellationToken);
+            if (emailExistsResult.IsFailure)
+                return Result<UserDto>.Failure(emailExistsResult.Error);
+            
+            if (emailExistsResult.Value)
             {
                 _logger.UserCreationFailed(
                     new InvalidOperationException($"Email '{request.Email}' already exists in tenant '{request.TenantId}'"),
                     request.Email,
                     request.TenantId,
                     $"User with email '{request.Email}' already exists");
-                return Result.Failure<UserDto>($"User with email '{request.Email}' already exists.");
+                return Error.User.EmailAlreadyExists(request.Email);
             }
 
             var userResult = User.Create(request.TenantId, request.Email, request.Name, request.Role);
@@ -73,29 +77,30 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, UserD
 
             _logger.UserCreated(user.Id, user.Email, user.TenantId);
 
-            return Result.Success(MapToDto(user));
+            return MapToDto(user);
         }
         catch (Exception ex)
         {
             _logger.UserCreationFailed(ex, request.Email, request.TenantId, "An error occurred while creating the user");
-            return Result.Failure<UserDto>("An error occurred while creating the user.");
+            return new Error("User.CreationError", "An error occurred while creating the user.");
         }
     }
 
     private async Task<Domain.Common.Result> ValidateTenant(Guid tenantId, CancellationToken cancellationToken)
     {
-        var tenant = await _unitOfWork.Tenants.GetByIdAsync(tenantId, cancellationToken);
+        var tenantResult = await _unitOfWork.Tenants.GetByIdAsync(tenantId, cancellationToken);
         
-        if (tenant == null)
+        if (tenantResult.IsFailure)
         {
             _logger.LogWarning("Tenant {TenantId} not found", tenantId);
-            return Domain.Common.Result.Failure("Tenant not found.");
+            return tenantResult.Error;
         }
 
+        var tenant = tenantResult.Value;
         if (!tenant.IsActive)
         {
             _logger.LogWarning("Tenant {TenantId} is not active", tenantId);
-            return Domain.Common.Result.Failure("Cannot create user for inactive tenant.");
+            return Error.Tenant.Inactive(tenantId);
         }
 
         return Domain.Common.Result.Success();

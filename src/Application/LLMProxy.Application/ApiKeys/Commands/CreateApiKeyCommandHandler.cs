@@ -57,6 +57,6 @@ public class CreateApiKeyCommandHandler : IRequestHandler<CreateApiKeyCommand, R
             UpdatedAt = apiKey.UpdatedAt ?? DateTime.MinValue
         };
 
-        return Result.Success(dto);
+        return dto;
     }
 }

@@ -59,6 +59,6 @@ public class UpdateProviderCommandHandler : IRequestHandler<UpdateProviderComman
             UpdatedAt = provider.UpdatedAt ?? DateTime.MinValue
         };
 
-        return Result.Success(dto);
+        return dto;
     }
 }
