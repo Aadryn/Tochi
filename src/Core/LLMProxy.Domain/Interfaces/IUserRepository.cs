@@ -1,18 +1,25 @@
+using LLMProxy.Domain.Common;
 using LLMProxy.Domain.Entities;
 
 namespace LLMProxy.Domain.Interfaces;
 
 /// <summary>
-/// Repository interface for User aggregate (Port)
+/// Repository pour l'agrégat User (Port dans l'architecture hexagonale).
 /// </summary>
-public interface IUserRepository
+public interface IUserRepository : IRepository<User>
 {
-    Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<User?> GetByEmailAsync(Guid tenantId, string email, CancellationToken cancellationToken = default);
-    Task<IEnumerable<User>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default);
-    Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<bool> EmailExistsAsync(Guid tenantId, string email, CancellationToken cancellationToken = default);
-    Task AddAsync(User user, CancellationToken cancellationToken = default);
-    Task UpdateAsync(User user, CancellationToken cancellationToken = default);
-    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Récupère un utilisateur par son email dans un tenant spécifique.
+    /// </summary>
+    Task<Result<User>> GetByEmailAsync(Guid tenantId, string email, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Récupère tous les utilisateurs d'un tenant.
+    /// </summary>
+    Task<Result<IReadOnlyList<User>>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Vérifie si un email existe dans un tenant.
+    /// </summary>
+    Task<Result<bool>> EmailExistsAsync(Guid tenantId, string email, CancellationToken cancellationToken = default);
 }

@@ -1,18 +1,30 @@
+using LLMProxy.Domain.Common;
 using LLMProxy.Domain.Entities;
 
 namespace LLMProxy.Domain.Interfaces;
 
 /// <summary>
-/// Repository interface for ApiKey aggregate (Port)
+/// Repository pour l'agrégat ApiKey (Port dans l'architecture hexagonale).
 /// </summary>
-public interface IApiKeyRepository
+public interface IApiKeyRepository : IRepository<ApiKey>
 {
-    Task<ApiKey?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<ApiKey?> GetByKeyHashAsync(string keyHash, CancellationToken cancellationToken = default);
-    Task<ApiKey?> GetByKeyPrefixAsync(string keyPrefix, CancellationToken cancellationToken = default);
-    Task<IEnumerable<ApiKey>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
-    Task<IEnumerable<ApiKey>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default);
-    Task AddAsync(ApiKey apiKey, CancellationToken cancellationToken = default);
-    Task UpdateAsync(ApiKey apiKey, CancellationToken cancellationToken = default);
-    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Récupère une clé API par son hash.
+    /// </summary>
+    Task<Result<ApiKey>> GetByKeyHashAsync(string keyHash, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Récupère une clé API par son préfixe.
+    /// </summary>
+    Task<Result<ApiKey>> GetByKeyPrefixAsync(string keyPrefix, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Récupère toutes les clés API d'un utilisateur.
+    /// </summary>
+    Task<Result<IReadOnlyList<ApiKey>>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Récupère toutes les clés API d'un tenant.
+    /// </summary>
+    Task<Result<IReadOnlyList<ApiKey>>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default);
 }

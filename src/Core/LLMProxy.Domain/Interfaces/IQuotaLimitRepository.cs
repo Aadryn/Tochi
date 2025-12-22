@@ -1,16 +1,20 @@
+using LLMProxy.Domain.Common;
 using LLMProxy.Domain.Entities;
 
 namespace LLMProxy.Domain.Interfaces;
 
 /// <summary>
-/// Repository interface for QuotaLimit aggregate (Port)
+/// Repository pour l'agrégat QuotaLimit (Port dans l'architecture hexagonale).
 /// </summary>
-public interface IQuotaLimitRepository
+public interface IQuotaLimitRepository : IRepository<QuotaLimit>
 {
-    Task<QuotaLimit?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<QuotaLimit>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
-    Task<QuotaLimit?> GetByUserAndTypeAsync(Guid userId, QuotaType quotaType, QuotaPeriod period, CancellationToken cancellationToken = default);
-    Task AddAsync(QuotaLimit quotaLimit, CancellationToken cancellationToken = default);
-    Task UpdateAsync(QuotaLimit quotaLimit, CancellationToken cancellationToken = default);
-    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Récupère tous les quotas d'un utilisateur.
+    /// </summary>
+    Task<Result<IReadOnlyList<QuotaLimit>>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Récupère un quota par utilisateur, type et période.
+    /// </summary>
+    Task<Result<QuotaLimit>> GetByUserAndTypeAsync(Guid userId, QuotaType quotaType, QuotaPeriod period, CancellationToken cancellationToken = default);
 }

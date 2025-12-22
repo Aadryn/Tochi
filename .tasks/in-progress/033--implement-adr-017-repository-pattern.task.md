@@ -42,3 +42,20 @@ Implémenter le Repository Pattern pour uniformiser l'accès aux données et dé
 ## TRACKING
 Début: 2025-12-22T13:32:16.1328118Z
 
+
+## SUBDIVISION
+
+Cette tâche complexe a été subdivisée en sous-tâches logiques pour une migration systématique :
+
+- [ ] 033.1 - Infrastructure de base (IRepository<T>, RepositoryBase, Error.Database) -  COMPLÉTÉ
+- [ ] 033.2 - Migration interfaces repositories (6 interfaces : User, ApiKey, AuditLog, LLMProvider, QuotaLimit, TokenUsageMetric)
+- [ ] 033.3 - Migration implémentations repositories (6 classes correspondantes)
+- [ ] 033.4 - Migration Application layer (Command/Query Handlers - ~15 fichiers)
+- [ ] 033.5 - Documentation README.md complète
+
+**Raison de la subdivision :** 50+ erreurs de compilation détectées après migration de TenantRepository.
+Migration séquentielle par domaine nécessaire pour garantir cohérence et tests progressifs.
+
+## EN ATTENTE DE RÉPONSE
+
+Voulez-vous que je continue avec les sous-tâches ou préférez-vous une approche différente ?
