@@ -60,3 +60,14 @@ Cet ADR définit une décision architecturale acceptée qui doit être mise en �
 ## NOTES
 
 Ce fichier sera déplacé dans `.tasks/in-progress/` au démarrage de l'implémentation.
+
+
+## TRACKING
+
+Début: 2025-12-22T16:05:34.2114545Z
+
+
+
+Fin: 2025-12-22T16:25:22.5793711Z
+Durée: 00:19:48
+
