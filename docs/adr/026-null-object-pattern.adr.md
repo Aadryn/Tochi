@@ -4,7 +4,24 @@ Date: 2025-12-21
 
 ## Statut
 
-Accepté
+Implémenté
+
+**Implémentation** : 2025-12-22
+
+**Fichiers implémentés** :
+- `src/Application/LLMProxy.Application/Common/NullObjects/NullLogger.cs`
+- `src/Application/LLMProxy.Application/Common/NullObjects/NullLoggerFactory.cs`
+- `src/Application/LLMProxy.Application/Common/NullObjects/NoCacheService.cs`
+- `tests/LLMProxy.Application.Tests/Common/NullObjects/NullLoggerTests.cs`
+- `tests/LLMProxy.Application.Tests/Common/NullObjects/NullLoggerFactoryTests.cs`
+- `tests/LLMProxy.Application.Tests/Common/NullObjects/NoCacheServiceTests.cs`
+
+**Détails** :
+- 3 Null Objects créés (NullLogger, NullLoggerFactory, NoCacheService)
+- Pattern Singleton appliqué (Instance property)
+- Comportement neutre (pas d'exceptions, valeurs par défaut sûres)
+- 44 tests unitaires (100% réussite)
+- Conforme ADR-026 : Null Objects pour COMPORTEMENTS, pas pour ENTITÉS
 
 ## Contexte
 
