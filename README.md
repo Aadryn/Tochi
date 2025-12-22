@@ -187,6 +187,56 @@ curl -X POST https://api.example.com/tenants \
 - Store: Redis (key prefix: `idempotency:`)
 - Methods: POST, PATCH (GET/PUT/DELETE naturally idempotent)
 
+### Null Object Pattern (ADR-026)
+
+**Élimination des null checks** avec objets par défaut à comportement neutre.
+
+**Null Objects disponibles :**
+
+| Null Object | Usage | Comportement |
+|-------------|-------|--------------|
+| `NullTenant.Instance` | Tenant par défaut | Toujours inactif, empêche NullReferenceException |
+| `UnlimitedQuotaLimit.Instance` | Quota illimité | Accepte toujours toutes les requêtes (limit = long.MaxValue) |
+| `NullCache.Instance` | Cache désactivé | Retourne toujours cache miss (no-op operations) |
+
+**Avantages :**
+- ✅ Élimine NullReferenceException
+- ✅ Code plus propre (pas de `if (x == null)`)
+- ✅ Polymorphisme (Null Object hérite de la classe de base)
+- ✅ Comportement par défaut centralisé
+
+**Exemple d'utilisation :**
+
+```csharp
+// ❌ AVANT : Null check manuel
+var tenant = await _repository.GetByIdAsync(tenantId);
+if (tenant == null)
+{
+    return Error.NotFound();
+}
+return tenant.ProcessRequest();
+
+// ✅ APRÈS : Null Object Pattern
+var tenant = await _repository.GetByIdOrDefaultAsync(tenantId);
+return tenant.ProcessRequest();  // NullTenant retourne erreur automatiquement
+```
+
+**Configuration Redis dégradée :**
+
+Si Redis est indisponible, le système utilise automatiquement `NullCache.Instance` :
+- Aucune erreur levée
+- Application continue de fonctionner
+- Cache désactivé temporairement (mode dégradé)
+
+**Singleton Pattern :**
+
+Tous les Null Objects utilisent le pattern Singleton :
+```csharp
+var tenant1 = NullTenant.Instance;
+var tenant2 = NullTenant.Instance;
+// tenant1 == tenant2 (même instance)
+```
+
 ### Health Checks (ADR-038)
 
 **Comprehensive health checks** for Kubernetes and monitoring.
