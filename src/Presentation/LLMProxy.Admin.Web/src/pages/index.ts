@@ -1,0 +1,6 @@
+export { Dashboard } from './Dashboard'
+export { Providers } from './Providers'
+export { Tenants } from './Tenants'
+export { RoutesPage } from './RoutesPage'
+export { Monitoring } from './Monitoring'
+export { Settings } from './Settings'
