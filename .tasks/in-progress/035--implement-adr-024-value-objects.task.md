@@ -40,3 +40,20 @@ Implémenter Value Objects pour renforcer le Domain Model avec type safety et va
 **Exclusions** :
 - Money/Currency (pas dans le domaine actuel)
 - Address (pas dans le domaine actuel)
+
+
+## TRACKING
+Début: 2025-12-22T14:59:21.6075214Z
+
+## ÉTAT INITIAL
+
+**Value Objects existants:**
+-  Email (validation RFC basic, normalisation lowercase)
+-  Slug (validation format URL-safe, max 100 chars)
+-  ValueObject base class (equality, hashcode)
+
+**À créer:**
+1. Documentation README.md complète
+2. Tests unitaires pour Value Objects existants
+3. Value Objects additionnels si nécessaires selon analyse
+
