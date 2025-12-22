@@ -10,7 +10,7 @@ public class Tenant : Entity
 {
     public string Name { get; private set; }
     public string Slug { get; private set; } // URL-friendly identifier
-    public bool IsActive { get; private set; }
+    public virtual bool IsActive { get; private set; }
     public DateTime? DeactivatedAt { get; private set; }
     
     // Settings
@@ -29,6 +29,21 @@ public class Tenant : Entity
         Slug = string.Empty;
         Settings = null!;
     } // EF Core
+
+    /// <summary>
+    /// Constructeur protégé permettant l'héritage par <see cref="NullTenant"/>.
+    /// </summary>
+    /// <param name="id">Identifiant unique du tenant.</param>
+    /// <param name="name">Nom du tenant.</param>
+    /// <param name="slug">Slug URL-friendly du tenant.</param>
+    protected Tenant(Guid id, string name, string slug)
+    {
+        Id = id;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Slug = slug ?? throw new ArgumentNullException(nameof(slug));
+        Settings = TenantSettings.Default();
+        IsActive = true;
+    }
 
     private Tenant(string name, string slug, TenantSettings settings)
     {
