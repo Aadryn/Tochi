@@ -40,10 +40,10 @@ public class CreateTenantCommandHandler : ICommandHandler<CreateTenantCommand, T
             if (tenantResult.IsFailure)
             {
                 _logger.TenantCreationFailed(
-                    new InvalidOperationException(tenantResult.Error!),
+                    new InvalidOperationException(tenantResult.Error.Message),
                     request.Name,
-                    tenantResult.Error!);
-                return Result.Failure<TenantDto>(tenantResult.Error!);
+                    tenantResult.Error.Message);
+                return Result<TenantDto>.Failure(tenantResult.Error);
             }
 
             var tenant = tenantResult.Value;

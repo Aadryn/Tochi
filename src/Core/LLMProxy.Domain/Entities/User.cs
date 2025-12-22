@@ -74,7 +74,7 @@ public class User : Entity
 
         var apiKeyResult = ApiKey.Create(Id, TenantId, name, expiresAt);
         if (apiKeyResult.IsFailure)
-            return Result.Failure<ApiKey>(apiKeyResult.Error!);
+            return Result<ApiKey>.Failure(apiKeyResult.Error);
 
         _apiKeys.Add(apiKeyResult.Value);
         MarkAsModified();
