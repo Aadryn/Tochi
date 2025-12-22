@@ -1,0 +1,155 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llmproxy-gateway
+  labels:
+    app: llmproxy-gateway
+    component: gateway
+    tier: presentation
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: llmproxy-gateway
+  template:
+    metadata:
+      labels:
+        app: llmproxy-gateway
+        component: gateway
+        tier: presentation
+    spec:
+      containers:
+      - name: gateway
+        image: llmproxy-gateway:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        - name: https
+          containerPort: 443
+          protocol: TCP
+        
+        # ═══════════════════════════════════════════════════════════════
+        # LIVENESS PROBE - Redémarre le pod si échec
+        # ═══════════════════════════════════════════════════════════════
+        # Vérifie que le processus est vivant
+        # Kubernetes redémarre le pod après 3 échecs consécutifs
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 5       # Attendre 5s après démarrage
+          periodSeconds: 10             # Vérifier toutes les 10s
+          timeoutSeconds: 3             # Timeout après 3s
+          successThreshold: 1           # 1 succès = healthy
+          failureThreshold: 3           # 3 échecs = redémarrage
+        
+        # ═══════════════════════════════════════════════════════════════
+        # READINESS PROBE - Retire du load balancer si échec
+        # ═══════════════════════════════════════════════════════════════
+        # Vérifie que toutes les dépendances sont disponibles
+        # Kubernetes retire le pod du service après 2 échecs consécutifs
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 5       # Attendre 5s après démarrage
+          periodSeconds: 5              # Vérifier toutes les 5s
+          timeoutSeconds: 3             # Timeout après 3s
+          successThreshold: 1           # 1 succès = ready
+          failureThreshold: 2           # 2 échecs = not ready
+        
+        # ═══════════════════════════════════════════════════════════════
+        # STARTUP PROBE - Pour démarrage lent (migration DB)
+        # ═══════════════════════════════════════════════════════════════
+        # Tolère un démarrage lent sans déclencher liveness probe
+        # 30 tentatives × 5s = 150s max pour démarrer
+        startupProbe:
+          httpGet:
+            path: /health/live
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 0       # Commence immédiatement
+          periodSeconds: 5              # Vérifier toutes les 5s
+          timeoutSeconds: 3             # Timeout après 3s
+          successThreshold: 1           # 1 succès = started
+          failureThreshold: 30          # 30 échecs (150s) = échec démarrage
+        
+        # ═══════════════════════════════════════════════════════════════
+        # RESOURCE LIMITS - Conformité health checks Memory
+        # ═══════════════════════════════════════════════════════════════
+        resources:
+          requests:
+            memory: "256Mi"             # Minimum garanti
+            cpu: "100m"                 # 0.1 CPU garanti
+          limits:
+            memory: "2048Mi"            # 2GB max (aligné avec health check)
+            cpu: "1000m"                # 1 CPU max
+        
+        # ═══════════════════════════════════════════════════════════════
+        # ENVIRONMENT VARIABLES
+        # ═══════════════════════════════════════════════════════════════
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ASPNETCORE_URLS
+          value: "http://+:80"
+        
+        # Variables ConfigMap (connexions DB/Redis)
+        envFrom:
+        - configMapRef:
+            name: llmproxy-config
+        
+        # Variables Secrets (credentials)
+        - secretRef:
+            name: llmproxy-secrets
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llmproxy-gateway
+  labels:
+    app: llmproxy-gateway
+    component: gateway
+spec:
+  type: ClusterIP
+  selector:
+    app: llmproxy-gateway
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: https
+    protocol: TCP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llmproxy-config
+data:
+  ConnectionStrings__PostgreSQL: "Host=postgres-service;Port=5432;Database=llmproxy;Username=postgres;Password=postgres"
+  ConnectionStrings__Redis: "redis-service:6379"
+  Authentication__Authority: "https://auth.example.com"
+  Authentication__Audience: "llmproxy-api"
+  OpenTelemetry__ServiceName: "LLMProxy.Gateway"
+  OpenTelemetry__OtlpEndpoint: "http://otel-collector:4317"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: llmproxy-secrets
+type: Opaque
+stringData:
+  # Secrets à remplacer par valeurs réelles
+  PostgreSQL__Password: "change-me"
+  Redis__Password: ""
+  ApiKey__Secret: "change-me"
