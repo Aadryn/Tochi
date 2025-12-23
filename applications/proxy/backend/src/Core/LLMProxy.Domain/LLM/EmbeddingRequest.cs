@@ -40,19 +40,3 @@ public sealed record EmbeddingRequest
     /// </summary>
     public TimeSpan? Timeout { get; init; }
 }
-
-/// <summary>
-/// Format d'encodage des embeddings.
-/// </summary>
-public enum EmbeddingEncoding
-{
-    /// <summary>
-    /// Tableau de flottants (défaut).
-    /// </summary>
-    Float = 0,
-
-    /// <summary>
-    /// Base64 encodé.
-    /// </summary>
-    Base64 = 1
-}
