@@ -138,10 +138,13 @@ public class QuotaService : IQuotaService
         var usageTask = _db.StringGetAsync(key);
         var limitTask = _db.StringGetAsync(limitKey);
 
-        await Task.WhenAll(usageTask, limitTask);
+        var results = await Task.WhenAll(usageTask, limitTask);
 
-        var used = usageTask.Result.HasValue ? long.Parse(usageTask.Result!) : 0;
-        var limitData = limitTask.Result;
+        var usageValue = results[0];
+        var limitValue = results[1];
+
+        var used = usageValue.HasValue ? long.Parse(usageValue!) : 0;
+        var limitData = limitValue;
 
         if (limitData.IsNullOrEmpty)
         {
