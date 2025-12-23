@@ -291,7 +291,7 @@ public sealed class AWSBedrockProviderClient : LLMProviderClientBase
         {
             Model = request.Model,
             Embeddings = embeddings,
-            Usage = TokenUsage.FromValid(request.Inputs.Count * 100, 0) // Estimation
+            Usage = DomainTokenUsage.FromValid(request.Inputs.Count * 100, 0) // Estimation
         };
     }
 
@@ -406,7 +406,7 @@ public sealed class AWSBedrockProviderClient : LLMProviderClientBase
                 Model = requestModel,
                 Content = response.Content?.FirstOrDefault()?.Text ?? string.Empty,
                 FinishReason = MapAnthropicStopReason(response.StopReason),
-                Usage = TokenUsage.FromValid(
+                Usage = DomainTokenUsage.FromValid(
                     response.Usage?.InputTokens ?? 0,
                     response.Usage?.OutputTokens ?? 0),
                 CreatedAt = DateTimeOffset.UtcNow
@@ -423,7 +423,7 @@ public sealed class AWSBedrockProviderClient : LLMProviderClientBase
                 Model = requestModel,
                 Content = response!.Results?.FirstOrDefault()?.OutputText ?? string.Empty,
                 FinishReason = FinishReason.Stop,
-                Usage = TokenUsage.FromValid(
+                Usage = DomainTokenUsage.FromValid(
                     response.InputTextTokenCount ?? 0,
                     response.Results?.FirstOrDefault()?.TokenCount ?? 0),
                 CreatedAt = DateTimeOffset.UtcNow
@@ -440,7 +440,7 @@ public sealed class AWSBedrockProviderClient : LLMProviderClientBase
                 Model = requestModel,
                 Content = response!.Generation ?? string.Empty,
                 FinishReason = MapLlamaStopReason(response.StopReason),
-                Usage = TokenUsage.FromValid(
+                Usage = DomainTokenUsage.FromValid(
                     response.PromptTokenCount ?? 0,
                     response.GenerationTokenCount ?? 0),
                 CreatedAt = DateTimeOffset.UtcNow
