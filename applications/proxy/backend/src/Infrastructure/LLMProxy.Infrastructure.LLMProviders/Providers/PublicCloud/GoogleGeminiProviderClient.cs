@@ -136,8 +136,9 @@ public sealed class GoogleGeminiProviderClient : LLMProviderClientBase
             var response = await HttpClient.GetAsync(uri, cancellationToken);
             return response.IsSuccessStatusCode;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogWarning(ex, "Health check failed for provider {ProviderName}", Name);
             return false;
         }
     }

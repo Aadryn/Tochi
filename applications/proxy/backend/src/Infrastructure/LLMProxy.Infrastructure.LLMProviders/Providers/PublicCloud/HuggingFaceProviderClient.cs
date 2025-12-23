@@ -142,8 +142,9 @@ public sealed class HuggingFaceProviderClient : LLMProviderClientBase
                 "/status", cancellationToken);
             return response.IsSuccessStatusCode;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogWarning(ex, "Health check failed for provider {ProviderName}", Name);
             return false;
         }
     }

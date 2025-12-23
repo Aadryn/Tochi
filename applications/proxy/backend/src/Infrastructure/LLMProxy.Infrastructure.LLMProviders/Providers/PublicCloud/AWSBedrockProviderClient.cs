@@ -180,8 +180,9 @@ public sealed class AWSBedrockProviderClient : LLMProviderClientBase
             await _bedrockClient.InvokeModelAsync(request, cancellationToken);
             return true;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogWarning(ex, "Health check failed for provider {ProviderName}", Name);
             return false;
         }
     }

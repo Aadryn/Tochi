@@ -94,8 +94,9 @@ public class OpenAIProviderClient : LLMProviderClientBase
             var response = await HttpClient.GetAsync("/v1/models", cancellationToken);
             return response.IsSuccessStatusCode;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogWarning(ex, "Health check failed for provider {ProviderName}", Name);
             return false;
         }
     }

@@ -124,8 +124,9 @@ public sealed class AzureOpenAIProviderClient : LLMProviderClientBase
             var response = await HttpClient.PostAsJsonAsync(uri, request, JsonOptions, cancellationToken);
             return response.IsSuccessStatusCode;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogWarning(ex, "Health check failed for provider {ProviderName}", Name);
             return false;
         }
     }
