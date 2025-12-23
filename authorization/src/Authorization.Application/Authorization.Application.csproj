@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Authorization.Domain\Authorization.Domain.csproj" />
+    <ProjectReference Include="..\Authorization.Infrastructure.OpenFGA\Authorization.Infrastructure.OpenFGA.csproj" />
+    <ProjectReference Include="..\Authorization.Infrastructure.PostgreSQL\Authorization.Infrastructure.PostgreSQL.csproj" />
+    <ProjectReference Include="..\Authorization.Infrastructure.Redis\Authorization.Infrastructure.Redis.csproj" />
+  </ItemGroup>
+
+</Project>
