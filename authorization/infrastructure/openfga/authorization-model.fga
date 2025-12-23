@@ -1,0 +1,87 @@
+# LLMProxy Authorization Model for OpenFGA
+# 
+# Ce modèle définit le système d'autorisation style Azure RBAC.
+# OpenFGA est la source de vérité unique - pas de PostgreSQL.
+#
+# Référence : docs/adr/060-authorization-azure-rbac-style.adr.md
+
+model
+  schema 1.1
+
+# ==============================================================================
+# TYPE: user
+# ==============================================================================
+# Représente un utilisateur (ObjectId depuis IDP)
+# Format: user:{objectId}
+# Exemple: user:550e8400-e29b-41d4-a716-446655440000
+
+type user
+
+# ==============================================================================
+# TYPE: group
+# ==============================================================================
+# Représente un groupe (ObjectId depuis IDP)
+# Format: group:{objectId}
+# Exemple: group:661e9500-f30c-52e5-b827-557766551111
+
+type group
+  relations
+    define member: [user, group#member]
+
+# ==============================================================================
+# TYPE: serviceaccount
+# ==============================================================================
+# Représente un compte de service (applications)
+# Format: serviceaccount:{objectId}
+# Exemple: serviceaccount:772fa611-g41d-63f6-c938-668877662222
+
+type serviceaccount
+
+# ==============================================================================
+# TYPE: scope
+# ==============================================================================
+# Représente une ressource dans la hiérarchie URL REST.
+# Format: scope:{url-path}
+#
+# Exemples:
+#   scope:api.llmproxy.com
+#   scope:api.llmproxy.com/organizations/org-123
+#   scope:api.llmproxy.com/organizations/org-123/tenants/tenant-456
+#   scope:api.llmproxy.com/organizations/org-123/tenants/tenant-456/providers/openai-1
+
+type scope
+  relations
+    # Relation parent pour l'héritage hiérarchique
+    define parent: [scope]
+    
+    # Rôles avec héritage depuis le parent
+    define owner: [user, group#member, serviceaccount] or owner from parent
+    define contributor: [user, group#member, serviceaccount] or contributor from parent or owner
+    define reader: [user, group#member, serviceaccount] or reader from parent or contributor
+    
+    # Permissions calculées (pour les checks)
+    define can_read: reader
+    define can_write: contributor
+    define can_delete: owner
+    define can_manage: owner
+
+# ==============================================================================
+# EXEMPLES DE TUPLES
+# ==============================================================================
+#
+# 1. Créer la hiérarchie des scopes:
+#    { user: "scope:api.llmproxy.com/organizations/org-123", relation: "parent", object: "scope:api.llmproxy.com" }
+#    { user: "scope:api.llmproxy.com/organizations/org-123/tenants/tenant-456", relation: "parent", object: "scope:api.llmproxy.com/organizations/org-123" }
+#
+# 2. Ajouter un membre à un groupe:
+#    { user: "user:550e8400-e29b-41d4-a716-446655440000", relation: "member", object: "group:admin-group-id" }
+#
+# 3. Assigner un rôle à un utilisateur:
+#    { user: "user:550e8400-e29b-41d4-a716-446655440000", relation: "contributor", object: "scope:api.llmproxy.com/organizations/org-123" }
+#
+# 4. Assigner un rôle à un groupe:
+#    { user: "group:admin-group-id#member", relation: "owner", object: "scope:api.llmproxy.com" }
+#
+# 5. Vérifier une permission:
+#    Check: { user: "user:550e8400-...", relation: "can_write", object: "scope:api.llmproxy.com/organizations/org-123/tenants/tenant-456" }
+#    → true si le user a contributor ou owner sur ce scope ou un parent
