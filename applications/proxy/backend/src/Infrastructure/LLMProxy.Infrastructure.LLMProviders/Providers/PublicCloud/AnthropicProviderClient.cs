@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.LLM;
 using LLMProxy.Infrastructure.LLMProviders.Configuration;
+using LLMProxy.Infrastructure.LLMProviders.Providers.PublicCloud.Anthropic.Contracts;
 using Microsoft.Extensions.Logging;
 
 namespace LLMProxy.Infrastructure.LLMProviders.Providers.PublicCloud;
@@ -309,69 +310,4 @@ public sealed class AnthropicProviderClient : LLMProviderClientBase
 
     #endregion
 
-    #region DTOs Anthropic
-
-    private sealed record AnthropicMessagesRequest
-    {
-        public required string Model { get; init; }
-        public required int MaxTokens { get; init; }
-        public required List<AnthropicMessage> Messages { get; init; }
-        public string? System { get; init; }
-        public decimal? Temperature { get; init; }
-        public decimal? TopP { get; init; }
-        public List<string>? StopSequences { get; init; }
-        public AnthropicMetadata? Metadata { get; init; }
-        public bool Stream { get; init; }
-    }
-
-    private sealed record AnthropicMessage
-    {
-        public required string Role { get; init; }
-        public required string Content { get; init; }
-    }
-
-    private sealed record AnthropicMetadata
-    {
-        public string? UserId { get; init; }
-    }
-
-    private sealed record AnthropicMessagesResponse
-    {
-        public required string Id { get; init; }
-        public string? Model { get; init; }
-        public string? StopReason { get; init; }
-        public List<AnthropicContentBlock>? Content { get; init; }
-        public AnthropicUsage? Usage { get; init; }
-    }
-
-    private sealed record AnthropicContentBlock
-    {
-        public required string Type { get; init; }
-        public string? Text { get; init; }
-    }
-
-    private sealed record AnthropicUsage
-    {
-        public int InputTokens { get; init; }
-        public int OutputTokens { get; init; }
-    }
-
-    private sealed record AnthropicStreamEvent
-    {
-        public required string Type { get; init; }
-        public AnthropicStreamMessage? Message { get; init; }
-        public AnthropicStreamDelta? Delta { get; init; }
-    }
-
-    private sealed record AnthropicStreamMessage
-    {
-        public string? Id { get; init; }
-    }
-
-    private sealed record AnthropicStreamDelta
-    {
-        public string? Text { get; init; }
-    }
-
-    #endregion
 }
