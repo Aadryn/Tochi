@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>LLMProxy.Infrastructure.Authorization</RootNamespace>
+    <Description>Implémentation du service d'autorisation ReBAC avec OpenFGA</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenFga.Sdk" Version="0.7.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LLMProxy.Infrastructure.Authorization.Abstractions\LLMProxy.Infrastructure.Authorization.Abstractions.csproj" />
+    <ProjectReference Include="..\LLMProxy.Infrastructure.Telemetry\LLMProxy.Infrastructure.Telemetry.csproj" />
+  </ItemGroup>
+
+</Project>
