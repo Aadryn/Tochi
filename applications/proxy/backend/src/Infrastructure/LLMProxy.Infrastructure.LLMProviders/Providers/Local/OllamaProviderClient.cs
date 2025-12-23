@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.LLM;
 using LLMProxy.Infrastructure.LLMProviders.Configuration;
+using LLMProxy.Infrastructure.LLMProviders.Providers.Local.Ollama.Contracts;
 using Microsoft.Extensions.Logging;
 
 namespace LLMProxy.Infrastructure.LLMProviders.Providers.Local;
@@ -297,80 +298,4 @@ public sealed class OllamaProviderClient : LLMProviderClientBase
 
     #endregion
 
-    #region DTOs Ollama
-
-    private sealed record OllamaChatRequest
-    {
-        public required string Model { get; init; }
-        public required List<OllamaMessage> Messages { get; init; }
-        public OllamaOptions? Options { get; init; }
-        public bool Stream { get; init; }
-    }
-
-    private sealed record OllamaMessage
-    {
-        public required string Role { get; init; }
-        public required string Content { get; init; }
-        public List<string>? Images { get; init; }
-    }
-
-    private sealed record OllamaOptions
-    {
-        public decimal? Temperature { get; init; }
-        public decimal? TopP { get; init; }
-        public int? NumPredict { get; init; }
-        public List<string>? Stop { get; init; }
-        public int? Seed { get; init; }
-    }
-
-    private sealed record OllamaChatResponse
-    {
-        public string? Model { get; init; }
-        public OllamaMessage? Message { get; init; }
-        public bool Done { get; init; }
-        public int? PromptEvalCount { get; init; }
-        public int? EvalCount { get; init; }
-    }
-
-    private sealed record OllamaStreamChunk
-    {
-        public string? Model { get; init; }
-        public OllamaMessage? Message { get; init; }
-        public bool Done { get; init; }
-        public int? PromptEvalCount { get; init; }
-        public int? EvalCount { get; init; }
-    }
-
-    private sealed record OllamaModelsResponse
-    {
-        public List<OllamaModelInfo>? Models { get; init; }
-    }
-
-    private sealed record OllamaModelInfo
-    {
-        public required string Name { get; init; }
-        public long Size { get; init; }
-        public string? Digest { get; init; }
-        public DateTime? ModifiedAt { get; init; }
-        public OllamaModelDetails? Details { get; init; }
-    }
-
-    private sealed record OllamaModelDetails
-    {
-        public string? ParameterSize { get; init; }
-        public string? QuantizationLevel { get; init; }
-    }
-
-    private sealed record OllamaEmbeddingRequest
-    {
-        public required string Model { get; init; }
-        public required string Prompt { get; init; }
-    }
-
-    private sealed record OllamaEmbeddingResponse
-    {
-        public float[]? Embedding { get; init; }
-    }
-
-    #endregion
 }
