@@ -1,7 +1,7 @@
 ---
 description: CSS Utilities - Classes utilitaires, spacing, layout, text, visibility, responsive utilities
 name: CSS_Utilities
-applyTo: "**/frontend/**/*.css,**/frontend/**/*.scss,**/frontend/**/*.vue"
+applyTo: "**/*.css,**/*.scss,**/*.vue"
 ---
 
 # CSS Utilities

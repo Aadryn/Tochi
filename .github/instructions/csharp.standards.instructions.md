@@ -1,7 +1,7 @@
 ---
 description: C# coding standards - naming, formatting, best practices, and patterns
 name: CSharp_Coding_Standards
-applyTo: "**/backend/**/*.cs"
+applyTo: "**/*.cs"
 ---
 
 # Standards C# - Conventions et Bonnes Pratiques
@@ -80,17 +80,17 @@ Guide complet des standards de codage C# : nommage, formatage, patterns, et prin
 ### Classes et Interfaces
 
 ```csharp
-// ✅ BON - Noms clairs et descriptifs
+/ ✅ BON - Noms clairs et descriptifs
 public class UserAuthenticationService { }
 public interface IEmailNotificationService { }
 public record UserRegistrationRequest(string Email, string Password);
 public abstract class BaseRepository<TEntity> { }
 
-// ❌ MAUVAIS - Noms vagues ou abrégés
-public class UsrAuthSvc { }  // Abréviations
-public interface EmailService { }  // Manque le préfixe I
-public class Manager { }  // Trop générique
-public class Helper { }  // Trop vague
+/ ❌ MAUVAIS - Noms vagues ou abrégés
+public class UsrAuthSvc { }  / Abréviations
+public interface EmailService { }  / Manque le préfixe I
+public class Manager { }  / Trop générique
+public class Helper { }  / Trop vague
 ```
 
 **Règles de nommage des classes :**
@@ -108,18 +108,18 @@ public class Helper { }  // Trop vague
 ### Méthodes
 
 ```csharp
-// ✅ BON - Verbes d'action clairs
+/ ✅ BON - Verbes d'action clairs
 public async Task<User> GetUserByIdAsync(Guid userId) { }
 public bool ValidateEmail(string email) { }
 public void SendNotification(string recipient, string message) { }
 public IEnumerable<Product> FilterActiveProducts() { }
 public decimal CalculateTotalPrice(IEnumerable<OrderLine> lines) { }
 
-// ❌ MAUVAIS - Noms ambigus
-public async Task<User> User(Guid id) { }  // Pas de verbe
-public bool Check(string email) { }  // Trop vague
-public void Do() { }  // Aucune information
-public IEnumerable<Product> Products() { }  // Devrait être GetProducts ou similaire
+/ ❌ MAUVAIS - Noms ambigus
+public async Task<User> User(Guid id) { }  / Pas de verbe
+public bool Check(string email) { }  / Trop vague
+public void Do() { }  / Aucune information
+public IEnumerable<Product> Products() { }  / Devrait être GetProducts ou similaire
 ```
 
 **Conventions pour méthodes :**
@@ -143,47 +143,47 @@ public IEnumerable<Product> Products() { }  // Devrait être GetProducts ou simi
 
 - **Async methods** : Toujours suffixe `Async`
   ```csharp
-  // ✅ BON
+  / ✅ BON
   public async Task<User> GetUserAsync(Guid id) { }
   public async Task SendEmailAsync(string to, string subject) { }
   
-  // ❌ MAUVAIS
-  public async Task<User> GetUser(Guid id) { }  // Manque Async
+  / ❌ MAUVAIS
+  public async Task<User> GetUser(Guid id) { }  / Manque Async
   ```
 
 ### Propriétés et Champs
 
 ```csharp
-// ✅ BON - Champs privés avec underscore
+/ ✅ BON - Champs privés avec underscore
 public class UserService
 {
     private readonly IUserRepository _userRepository;
     private readonly ILogger<UserService> _logger;
     private readonly int _maxRetryCount = 3;
     
-    // Propriétés publiques PascalCase
+    / Propriétés publiques PascalCase
     public string ServiceName { get; init; }
     public int MaxConnections { get; set; }
     
-    // Propriétés calculées
+    / Propriétés calculées
     public bool IsActive => _status == ServiceStatus.Running;
     public int TotalUsers => _userRepository.Count();
 }
 
-// ❌ MAUVAIS
+/ ❌ MAUVAIS
 public class UserService
 {
-    private IUserRepository userRepository;  // Manque underscore
-    private readonly ILogger<UserService> m_logger;  // Notation hongroise obsolète
-    public string serviceName;  // Devrait être propriété
-    private string _PublicData;  // Private avec PascalCase incohérent
+    private IUserRepository userRepository;  / Manque underscore
+    private readonly ILogger<UserService> m_logger;  / Notation hongroise obsolète
+    public string serviceName;  / Devrait être propriété
+    private string _PublicData;  / Private avec PascalCase incohérent
 }
 ```
 
 ### Paramètres et Variables Locales
 
 ```csharp
-// ✅ BON - camelCase descriptif
+/ ✅ BON - camelCase descriptif
 public User CreateUser(string email, string firstName, string lastName, DateTime birthDate)
 {
     var normalizedEmail = email.ToLowerInvariant().Trim();
@@ -199,12 +199,12 @@ public User CreateUser(string email, string firstName, string lastName, DateTime
     return newUser;
 }
 
-// ❌ MAUVAIS
-public User CreateUser(string e, string fn, string ln, DateTime bd)  // Abréviations
+/ ❌ MAUVAIS
+public User CreateUser(string e, string fn, string ln, DateTime bd)  / Abréviations
 {
-    var temp = e.ToLowerInvariant().Trim();  // Nom vague
-    var x = _passwordHasher.Hash(temporaryPassword);  // Nom inutile
-    var u = new User { /* ... */ };  // Abréviation
+    var temp = e.ToLowerInvariant().Trim();  / Nom vague
+    var x = _passwordHasher.Hash(temporaryPassword);  / Nom inutile
+    var u = new User { /* ... */ };  / Abréviation
     
     return u;
 }
@@ -213,7 +213,7 @@ public User CreateUser(string e, string fn, string ln, DateTime bd)  // Abrévia
 ### Enums
 
 ```csharp
-// ✅ BON - Enum et membres PascalCase
+/ ✅ BON - Enum et membres PascalCase
 public enum OrderStatus
 {
     Pending = 0,
@@ -232,12 +232,12 @@ public enum UserRole
     SuperAdministrator = 4
 }
 
-// ❌ MAUVAIS
-public enum orderStatus  // Devrait être PascalCase
+/ ❌ MAUVAIS
+public enum orderStatus  / Devrait être PascalCase
 {
-    pending,  // Devrait être PascalCase
-    CONFIRMED,  // Devrait être PascalCase, pas UPPER_CASE
-    shipped_items  // Pas de underscore
+    pending,  / Devrait être PascalCase
+    CONFIRMED,  / Devrait être PascalCase, pas UPPER_CASE
+    shipped_items  / Pas de underscore
 }
 ```
 
@@ -248,7 +248,7 @@ public enum orderStatus  // Devrait être PascalCase
 - Utiliser `[Flags]` pour enums combinables (avec valeurs puissance de 2)
 
 ```csharp
-// ✅ BON - Enum avec flags
+/ ✅ BON - Enum avec flags
 [Flags]
 public enum FilePermissions
 {
@@ -271,13 +271,13 @@ public enum FilePermissions
 ```
 GroupeAdp.GenAi.Domain/
 ├── Entities/
-│   ├── User.cs              // 1 classe User
-│   └── Order.cs             // 1 classe Order
+│   ├── User.cs              / 1 classe User
+│   └── Order.cs             / 1 classe Order
 ├── ValueObjects/
-│   ├── Email.cs             // 1 record Email
-│   └── Address.cs           // 1 record Address
+│   ├── Email.cs             / 1 record Email
+│   └── Address.cs           / 1 record Address
 └── Services/
-    └── UserService.cs       // 1 classe UserService
+    └── UserService.cs       / 1 classe UserService
 ```
 
 **Ordre des membres dans une classe (strict) :**
@@ -285,59 +285,59 @@ GroupeAdp.GenAi.Domain/
 ```csharp
 public class ExampleClass
 {
-    // 1. CHAMPS CONSTANTS (const)
+    / 1. CHAMPS CONSTANTS (const)
     private const int MaxRetryCount = 3;
     public const string DefaultCulture = "fr-FR";
     
-    // 2. CHAMPS STATIQUES (static fields)
+    / 2. CHAMPS STATIQUES (static fields)
     private static readonly ILogger _staticLogger = LoggerFactory.Create();
     
-    // 3. CHAMPS D'INSTANCE (instance fields)
+    / 3. CHAMPS D'INSTANCE (instance fields)
     private readonly IUserRepository _userRepository;
     private readonly ILogger<ExampleClass> _logger;
     private int _retryCount;
     
-    // 4. CONSTRUCTEURS (constructors)
+    / 4. CONSTRUCTEURS (constructors)
     public ExampleClass(IUserRepository userRepository, ILogger<ExampleClass> logger)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
     
-    // 5. PROPRIÉTÉS (properties)
+    / 5. PROPRIÉTÉS (properties)
     public string Name { get; init; }
     public bool IsActive { get; private set; }
     public int Count => _items.Count;
     
-    // 6. MÉTHODES PUBLIQUES (public methods)
+    / 6. MÉTHODES PUBLIQUES (public methods)
     public async Task<User> GetUserAsync(Guid id)
     {
-        // ...
+        / ...
     }
     
     public bool ValidateUser(User user)
     {
-        // ...
+        / ...
     }
     
-    // 7. MÉTHODES PROTÉGÉES (protected methods)
+    / 7. MÉTHODES PROTÉGÉES (protected methods)
     protected virtual void OnUserValidated(User user)
     {
-        // ...
+        / ...
     }
     
-    // 8. MÉTHODES PRIVÉES (private methods)
+    / 8. MÉTHODES PRIVÉES (private methods)
     private bool IsValidEmail(string email)
     {
-        // ...
+        / ...
     }
     
     private async Task<bool> CheckDatabaseAsync()
     {
-        // ...
+        / ...
     }
     
-    // 9. CLASSES IMBRIQUÉES (nested classes) - à éviter sauf exceptions
+    / 9. CLASSES IMBRIQUÉES (nested classes) - à éviter sauf exceptions
     private class ValidationResult
     {
         public bool IsValid { get; set; }
@@ -349,7 +349,7 @@ public class ExampleClass
 ### Indentation et Espacement
 
 ```csharp
-// ✅ BON - Indentation 4 espaces, accolades sur nouvelle ligne
+/ ✅ BON - Indentation 4 espaces, accolades sur nouvelle ligne
 public class UserService
 {
     public async Task<User> GetUserAsync(Guid id)
@@ -370,14 +370,14 @@ public class UserService
     }
 }
 
-// ❌ MAUVAIS - Mélange de styles
-public class UserService {  // Accolade sur même ligne
-  public async Task<User> GetUserAsync(Guid id) {  // 2 espaces
-      if(id == Guid.Empty) {  // Pas d'espace avant parenthèse
-          throw new ArgumentException("ID cannot be empty",nameof(id));  // Pas d'espace après virgule
+/ ❌ MAUVAIS - Mélange de styles
+public class UserService {  / Accolade sur même ligne
+  public async Task<User> GetUserAsync(Guid id) {  / 2 espaces
+      if(id == Guid.Empty) {  / Pas d'espace avant parenthèse
+          throw new ArgumentException("ID cannot be empty",nameof(id));  / Pas d'espace après virgule
       }
-      var user=await _repository.FindByIdAsync(id);  // Pas d'espaces autour =
-      if(user is null) return null;  // If sur une ligne
+      var user=await _repository.FindByIdAsync(id);  / Pas d'espaces autour =
+      if(user is null) return null;  / If sur une ligne
       return user;
   }
 }
@@ -396,7 +396,7 @@ public class UserService {  // Accolade sur même ligne
 ### Longueur des Lignes et Méthodes
 
 ```csharp
-// ✅ BON - Ligne < 120 caractères, méthode courte
+/ ✅ BON - Ligne < 120 caractères, méthode courte
 public async Task<User> CreateUserAsync(string email, string password)
 {
     ValidateEmail(email);
@@ -414,11 +414,11 @@ public async Task<User> CreateUserAsync(string email, string password)
     return user;
 }
 
-// ❌ MAUVAIS - Ligne trop longue, méthode trop complexe
+/ ❌ MAUVAIS - Ligne trop longue, méthode trop complexe
 public async Task<User> CreateUserAsync(string email, string password, string firstName, string lastName, DateTime? birthDate, string phoneNumber, string address, string city, string postalCode, string country)
 {
-    // Méthode de 50+ lignes avec trop de responsabilités
-    // Validation + hachage + création + envoi email + logging + audit...
+    / Méthode de 50+ lignes avec trop de responsabilités
+    / Validation + hachage + création + envoi email + logging + audit...
 }
 ```
 
@@ -430,7 +430,7 @@ public async Task<User> CreateUserAsync(string email, string password, string fi
 
 **Si méthode trop longue, découper :**
 ```csharp
-// ✅ BON - Méthode complexe découpée
+/ ✅ BON - Méthode complexe découpée
 public async Task<User> CreateUserAsync(CreateUserRequest request)
 {
     ValidateRequest(request);
@@ -473,17 +473,17 @@ private async Task<User> CreateUserEntityAsync(CreateUserRequest request)
 **Une classe = une seule raison de changer**
 
 ```csharp
-// ❌ MAUVAIS - Trop de responsabilités
+/ ❌ MAUVAIS - Trop de responsabilités
 public class UserService
 {
     public void CreateUser(User user) { }
-    public void SendEmail(string to, string subject) { }  // Devrait être EmailService
-    public void LogActivity(string message) { }  // Devrait être ILogger
-    public void ValidateUser(User user) { }  // Devrait être UserValidator
-    public byte[] GeneratePdfReport(User user) { }  // Devrait être ReportGenerator
+    public void SendEmail(string to, string subject) { }  / Devrait être EmailService
+    public void LogActivity(string message) { }  / Devrait être ILogger
+    public void ValidateUser(User user) { }  / Devrait être UserValidator
+    public byte[] GeneratePdfReport(User user) { }  / Devrait être ReportGenerator
 }
 
-// ✅ BON - Responsabilités séparées
+/ ✅ BON - Responsabilités séparées
 public class UserService
 {
     private readonly IUserRepository _repository;
@@ -493,13 +493,13 @@ public class UserService
     
     public async Task<User> CreateUserAsync(CreateUserRequest request)
     {
-        _validator.Validate(request);  // Validation déléguée
+        _validator.Validate(request);  / Validation déléguée
         
         var user = new User { /* ... */ };
         await _repository.AddAsync(user);
         
-        _logger.LogInformation("User created: {UserId}", user.Id);  // Log délégué
-        await _emailService.SendWelcomeEmailAsync(user);  // Email délégué
+        _logger.LogInformation("User created: {UserId}", user.Id);  / Log délégué
+        await _emailService.SendWelcomeEmailAsync(user);  / Email délégué
         
         return user;
     }
@@ -509,7 +509,7 @@ public class UserValidator : IUserValidator
 {
     public void Validate(CreateUserRequest request)
     {
-        // Logique de validation uniquement
+        / Logique de validation uniquement
     }
 }
 
@@ -517,7 +517,7 @@ public class EmailService : IEmailService
 {
     public async Task SendWelcomeEmailAsync(User user)
     {
-        // Logique d'envoi email uniquement
+        / Logique d'envoi email uniquement
     }
 }
 ```
@@ -527,7 +527,7 @@ public class EmailService : IEmailService
 **Ouvert à l'extension, fermé à la modification**
 
 ```csharp
-// ❌ MAUVAIS - Modification nécessaire pour ajouter un type
+/ ❌ MAUVAIS - Modification nécessaire pour ajouter un type
 public class PriceCalculator
 {
     public decimal Calculate(Product product, string customerType)
@@ -543,7 +543,7 @@ public class PriceCalculator
     }
 }
 
-// ✅ BON - Extension sans modification
+/ ✅ BON - Extension sans modification
 public interface IPricingStrategy
 {
     decimal CalculatePrice(Product product);
@@ -578,7 +578,7 @@ public class PriceCalculator
 **Les sous-types doivent être substituables à leurs types de base**
 
 ```csharp
-// ❌ MAUVAIS - Viole LSP
+/ ❌ MAUVAIS - Viole LSP
 public class Bird
 {
     public virtual void Fly() { /* vole */ }
@@ -588,11 +588,11 @@ public class Penguin : Bird
 {
     public override void Fly()
     {
-        throw new NotSupportedException("Penguins cannot fly");  // ❌ Viole le contrat
+        throw new NotSupportedException("Penguins cannot fly");  / ❌ Viole le contrat
     }
 }
 
-// ✅ BON - Respecte LSP
+/ ✅ BON - Respecte LSP
 public abstract class Bird
 {
     public abstract void Move();
@@ -618,7 +618,7 @@ public class Penguin : Bird
 **Interfaces spécifiques plutôt qu'interface générale**
 
 ```csharp
-// ❌ MAUVAIS - Interface trop large
+/ ❌ MAUVAIS - Interface trop large
 public interface IUserService
 {
     Task CreateAsync(User user);
@@ -631,7 +631,7 @@ public interface IUserService
     Task ValidateAsync(User user);
 }
 
-// ✅ BON - Interfaces ségrégées
+/ ✅ BON - Interfaces ségrégées
 public interface IUserRepository
 {
     Task CreateAsync(User user);
@@ -662,25 +662,25 @@ public interface IUserValidator
 **Dépendre d'abstractions, pas d'implémentations**
 
 ```csharp
-// ❌ MAUVAIS - Dépend d'implémentation concrète
+/ ❌ MAUVAIS - Dépend d'implémentation concrète
 public class UserService
 {
-    private readonly SqlUserRepository _repository;  // ❌ Couplage fort
-    private readonly SmtpEmailSender _emailSender;   // ❌ Couplage fort
+    private readonly SqlUserRepository _repository;  / ❌ Couplage fort
+    private readonly SmtpEmailSender _emailSender;   / ❌ Couplage fort
     
     public UserService()
     {
-        _repository = new SqlUserRepository();  // ❌ Création directe
-        _emailSender = new SmtpEmailSender();   // ❌ Création directe
+        _repository = new SqlUserRepository();  / ❌ Création directe
+        _emailSender = new SmtpEmailSender();   / ❌ Création directe
     }
 }
 
-// ✅ BON - Dépend d'abstractions
+/ ✅ BON - Dépend d'abstractions
 public class UserService
 {
-    private readonly IUserRepository _repository;     // ✅ Interface
-    private readonly IEmailService _emailService;     // ✅ Interface
-    private readonly ILogger<UserService> _logger;    // ✅ Interface
+    private readonly IUserRepository _repository;     / ✅ Interface
+    private readonly IEmailService _emailService;     / ✅ Interface
+    private readonly ILogger<UserService> _logger;    / ✅ Interface
     
     public UserService(
         IUserRepository repository,
@@ -699,7 +699,7 @@ public class UserService
 ### Null Safety
 
 ```csharp
-// ✅ BON - Null safety avec nullable reference types
+/ ✅ BON - Null safety avec nullable reference types
 public class UserService
 {
     private readonly IUserRepository _repository;
@@ -730,7 +730,7 @@ public class UserService
     }
 }
 
-// ✅ BON - Pattern matching avec null
+/ ✅ BON - Pattern matching avec null
 public string GetDisplayName(User? user)
 {
     return user switch
@@ -743,7 +743,7 @@ public string GetDisplayName(User? user)
     };
 }
 
-// ✅ BON - Null coalescing
+/ ✅ BON - Null coalescing
 public string GetUserName(User? user)
 {
     return user?.FullName ?? user?.Email ?? "Unknown";
@@ -753,7 +753,7 @@ public string GetUserName(User? user)
 ### Exception Handling
 
 ```csharp
-// ✅ BON - Exceptions spécifiques et informatives
+/ ✅ BON - Exceptions spécifiques et informatives
 public async Task<User> GetUserAsync(Guid userId)
 {
     if (userId == Guid.Empty)
@@ -779,21 +779,21 @@ public async Task<User> GetUserAsync(Guid userId)
     }
 }
 
-// ❌ MAUVAIS - Mauvaise gestion des exceptions
+/ ❌ MAUVAIS - Mauvaise gestion des exceptions
 public async Task<User> GetUserAsync(Guid userId)
 {
     try
     {
         return await _repository.GetByIdAsync(userId);
     }
-    catch (Exception ex)  // ❌ Trop large
+    catch (Exception ex)  / ❌ Trop large
     {
-        Console.WriteLine(ex.Message);  // ❌ Console.WriteLine
-        return null;  // ❌ Masque l'erreur
+        Console.WriteLine(ex.Message);  / ❌ Console.WriteLine
+        return null;  / ❌ Masque l'erreur
     }
 }
 
-// ✅ BON - Custom exceptions
+/ ✅ BON - Custom exceptions
 public class UserNotFoundException : Exception
 {
     public Guid UserId { get; }
@@ -815,10 +815,10 @@ public class UserNotFoundException : Exception
 ### Async/Await
 
 ```csharp
-// ✅ BON - Async correctement utilisé
+/ ✅ BON - Async correctement utilisé
 public async Task<User> CreateUserAsync(CreateUserRequest request)
 {
-    ValidateRequest(request);  // Synchrone si validation rapide
+    ValidateRequest(request);  / Synchrone si validation rapide
     
     var hashedPassword = await _passwordHasher.HashAsync(request.Password);
     var user = new User
@@ -833,25 +833,25 @@ public async Task<User> CreateUserAsync(CreateUserRequest request)
     return user;
 }
 
-// ❌ MAUVAIS - Anti-patterns async
+/ ❌ MAUVAIS - Anti-patterns async
 public async Task<User> GetUserAsync(Guid id)
 {
-    return await _repository.GetByIdAsync(id).ConfigureAwait(false);  // ❌ Inutile dans app moderne
+    return await _repository.GetByIdAsync(id).ConfigureAwait(false);  / ❌ Inutile dans app moderne
 }
 
 public async Task<User> CreateUserAsync(User user)
 {
-    var result = _repository.AddAsync(user).Result;  // ❌ .Result bloque
+    var result = _repository.AddAsync(user).Result;  / ❌ .Result bloque
     return result;
 }
 
 public async Task<User> FindUserAsync(Guid id)
 {
-    await Task.Delay(0);  // ❌ Async inutile
+    await Task.Delay(0);  / ❌ Async inutile
     return _users.FirstOrDefault(u => u.Id == id);
 }
 
-// ✅ BON - Task.WhenAll pour parallélisme
+/ ✅ BON - Task.WhenAll pour parallélisme
 public async Task<UserDetails> GetUserDetailsAsync(Guid userId)
 {
     var userTask = _userRepository.GetByIdAsync(userId);
@@ -872,7 +872,7 @@ public async Task<UserDetails> GetUserDetailsAsync(Guid userId)
 ### LINQ et Collections
 
 ```csharp
-// ✅ BON - LINQ lisible et performant
+/ ✅ BON - LINQ lisible et performant
 public IEnumerable<Product> GetActiveExpensiveProducts(IEnumerable<Product> products)
 {
     return products
@@ -880,15 +880,15 @@ public IEnumerable<Product> GetActiveExpensiveProducts(IEnumerable<Product> prod
         .Where(p => p.Price > 100)
         .OrderByDescending(p => p.Price)
         .Take(10)
-        .ToList();  // Matérialiser si nécessaire
+        .ToList();  / Matérialiser si nécessaire
 }
 
-// ✅ BON - Préférer méthode LINQ à boucle si lisible
+/ ✅ BON - Préférer méthode LINQ à boucle si lisible
 var activeUsers = users.Where(u => u.IsActive).ToList();
 var userNames = users.Select(u => u.FullName).ToList();
 var hasAdmin = users.Any(u => u.Role == UserRole.Administrator);
 
-// ❌ MAUVAIS - Boucle moins lisible
+/ ❌ MAUVAIS - Boucle moins lisible
 var activeUsers = new List<User>();
 foreach (var user in users)
 {
@@ -896,45 +896,45 @@ foreach (var user in users)
         activeUsers.Add(user);
 }
 
-// ✅ BON - FirstOrDefault vs First
-var user = users.FirstOrDefault(u => u.Id == userId);  // Retourne null si absent
+/ ✅ BON - FirstOrDefault vs First
+var user = users.FirstOrDefault(u => u.Id == userId);  / Retourne null si absent
 if (user is not null)
 {
-    // Traiter
+    / Traiter
 }
 
-// ❌ MAUVAIS
+/ ❌ MAUVAIS
 try
 {
-    var user = users.First(u => u.Id == userId);  // Exception si absent
+    var user = users.First(u => u.Id == userId);  / Exception si absent
 }
 catch (InvalidOperationException)
 {
-    // Gestion d'erreur
+    / Gestion d'erreur
 }
 
-// ✅ BON - Éviter ToList() inutile
+/ ✅ BON - Éviter ToList() inutile
 public IEnumerable<User> GetActiveUsers()
 {
     return _context.Users
-        .Where(u => u.IsActive);  // Pas de ToList(), exécution différée
+        .Where(u => u.IsActive);  / Pas de ToList(), exécution différée
 }
 
-// ✅ BON - ToList() nécessaire si multiples itérations
+/ ✅ BON - ToList() nécessaire si multiples itérations
 public void ProcessUsers()
 {
     var users = _context.Users
         .Where(u => u.IsActive)
-        .ToList();  // Matérialiser une seule fois
+        .ToList();  / Matérialiser une seule fois
     
     foreach (var user in users)
     {
-        // Première itération
+        / Première itération
     }
     
     foreach (var user in users)
     {
-        // Seconde itération sans re-requête
+        / Seconde itération sans re-requête
     }
 }
 ```
@@ -942,7 +942,7 @@ public void ProcessUsers()
 ### Using et Dispose
 
 ```csharp
-// ✅ BON - Using declaration (C# 8+)
+/ ✅ BON - Using declaration (C# 8+)
 public async Task ProcessFileAsync(string filePath)
 {
     using var stream = File.OpenRead(filePath);
@@ -951,10 +951,10 @@ public async Task ProcessFileAsync(string filePath)
     var content = await reader.ReadToEndAsync();
     ProcessContent(content);
     
-    // Dispose automatique en fin de scope
+    / Dispose automatique en fin de scope
 }
 
-// ✅ BON - Using statement classique
+/ ✅ BON - Using statement classique
 public void ProcessFile(string filePath)
 {
     using (var stream = File.OpenRead(filePath))
@@ -965,34 +965,34 @@ public void ProcessFile(string filePath)
     }
 }
 
-// ✅ BON - IAsyncDisposable (C# 8+)
+/ ✅ BON - IAsyncDisposable (C# 8+)
 public async Task ProcessDatabaseAsync()
 {
     await using var connection = await _connectionFactory.CreateAsync();
     await using var command = connection.CreateCommand();
     
-    // Utilisation
+    / Utilisation
     
-    // DisposeAsync automatique
+    / DisposeAsync automatique
 }
 
-// ❌ MAUVAIS - Pas de using pour IDisposable
+/ ❌ MAUVAIS - Pas de using pour IDisposable
 public void ProcessFile(string filePath)
 {
-    var stream = File.OpenRead(filePath);  // ❌ Fuite de ressource
+    var stream = File.OpenRead(filePath);  / ❌ Fuite de ressource
     var reader = new StreamReader(stream);
     
     var content = reader.ReadToEnd();
     ProcessContent(content);
     
-    // stream et reader non disposés
+    / stream et reader non disposés
 }
 ```
 
 ### String Manipulation
 
 ```csharp
-// ✅ BON - StringBuilder pour concaténations multiples
+/ ✅ BON - StringBuilder pour concaténations multiples
 public string BuildReport(IEnumerable<Order> orders)
 {
     var sb = new StringBuilder();
@@ -1007,24 +1007,24 @@ public string BuildReport(IEnumerable<Order> orders)
     return sb.ToString();
 }
 
-// ❌ MAUVAIS - Concaténation en boucle
+/ ❌ MAUVAIS - Concaténation en boucle
 public string BuildReport(IEnumerable<Order> orders)
 {
     string report = "Order Report\n";
-    report += "=============\n";  // ❌ Nouvelle string à chaque +=
+    report += "=============\n";  / ❌ Nouvelle string à chaque +=
     
     foreach (var order in orders)
     {
-        report += $"Order {order.Id}: {order.TotalAmount:C}\n";  // ❌ Très inefficace
+        report += $"Order {order.Id}: {order.TotalAmount:C}\n";  / ❌ Très inefficace
     }
     
     return report;
 }
 
-// ✅ BON - String interpolation
+/ ✅ BON - String interpolation
 var message = $"User {user.Name} (ID: {user.Id}) logged in at {DateTime.Now:yyyy-MM-dd HH:mm}";
 
-// ✅ BON - Verbatim strings pour chemins
+/ ✅ BON - Verbatim strings pour chemins
 var path = @"C:\Users\Documents\file.txt";
 var sql = @"
     SELECT *
@@ -1032,7 +1032,7 @@ var sql = @"
     WHERE IsActive = 1
 ";
 
-// ✅ BON - Raw string literals (C# 11+)
+/ ✅ BON - Raw string literals (C# 11+)
 var json = """
     {
         "name": "John Doe",
@@ -1044,7 +1044,7 @@ var json = """
 ### Value Objects et Records
 
 ```csharp
-// ✅ BON - Record pour Value Objects
+/ ✅ BON - Record pour Value Objects
 public record Email
 {
     public string Value { get; init; }
@@ -1062,14 +1062,14 @@ public record Email
     
     private static bool IsValidEmail(string email)
     {
-        // Validation
+        / Validation
         return true;
     }
     
     public override string ToString() => Value;
 }
 
-// ✅ BON - Record positional (C# 9+)
+/ ✅ BON - Record positional (C# 9+)
 public record Money(decimal Amount, string Currency)
 {
     public Money Add(Money other)
@@ -1081,7 +1081,7 @@ public record Money(decimal Amount, string Currency)
     }
 }
 
-// ✅ BON - Record inheritance
+/ ✅ BON - Record inheritance
 public record Person(string FirstName, string LastName);
 public record Employee(string FirstName, string LastName, string EmployeeId) : Person(FirstName, LastName);
 ```
@@ -1091,18 +1091,18 @@ public record Employee(string FirstName, string LastName, string EmployeeId) : P
 ### Magic Numbers et Strings
 
 ```csharp
-// ❌ MAUVAIS - Magic numbers
+/ ❌ MAUVAIS - Magic numbers
 public bool CanWithdraw(decimal amount)
 {
-    return amount <= 1000 && _balance >= amount;  // Qu'est-ce que 1000 ?
+    return amount <= 1000 && _balance >= amount;  / Qu'est-ce que 1000 ?
 }
 
-if (user.Status == 2)  // Qu'est-ce que 2 ?
+if (user.Status == 2)  / Qu'est-ce que 2 ?
 {
-    // ...
+    / ...
 }
 
-// ✅ BON - Constantes nommées
+/ ✅ BON - Constantes nommées
 private const decimal MaxWithdrawalAmount = 1000m;
 
 public bool CanWithdraw(decimal amount)
@@ -1120,14 +1120,14 @@ public enum UserStatus
 
 if (user.Status == UserStatus.Suspended)
 {
-    // ...
+    / ...
 }
 ```
 
 ### God Classes
 
 ```csharp
-// ❌ MAUVAIS - Classe qui fait tout
+/ ❌ MAUVAIS - Classe qui fait tout
 public class ApplicationManager
 {
     public void CreateUser() { }
@@ -1138,10 +1138,10 @@ public class ApplicationManager
     public void ProcessPayment() { }
     public void ValidateData() { }
     public void LogActivity() { }
-    // ... 50 autres méthodes
+    / ... 50 autres méthodes
 }
 
-// ✅ BON - Responsabilités séparées
+/ ✅ BON - Responsabilités séparées
 public class UserService { /* gestion utilisateurs */ }
 public class EmailService { /* envoi emails */ }
 public class ReportService { /* génération rapports */ }
@@ -1152,20 +1152,20 @@ public class ValidationService { /* validation données */ }
 ### Primitive Obsession
 
 ```csharp
-// ❌ MAUVAIS - Primitives partout
+/ ❌ MAUVAIS - Primitives partout
 public class User
 {
-    public string Email { get; set; }  // Juste string, pas de validation
+    public string Email { get; set; }  / Juste string, pas de validation
     public string PhoneNumber { get; set; }
-    public decimal Salary { get; set; }  // Quelle devise ?
+    public decimal Salary { get; set; }  / Quelle devise ?
 }
 
 public void SendEmail(string to, string subject, string body)
 {
-    // Aucune garantie que 'to' est un email valide
+    / Aucune garantie que 'to' est un email valide
 }
 
-// ✅ BON - Value objects
+/ ✅ BON - Value objects
 public class User
 {
     public Email Email { get; init; }
@@ -1175,14 +1175,14 @@ public class User
 
 public void SendEmail(Email to, EmailSubject subject, EmailBody body)
 {
-    // Types garantissent la validité
+    / Types garantissent la validité
 }
 ```
 
 ### Anemic Domain Model
 
 ```csharp
-// ❌ MAUVAIS - Modèle anémique (seulement des getters/setters)
+/ ❌ MAUVAIS - Modèle anémique (seulement des getters/setters)
 public class Order
 {
     public Guid Id { get; set; }
@@ -1208,7 +1208,7 @@ public class OrderService
     }
 }
 
-// ✅ BON - Rich domain model
+/ ✅ BON - Rich domain model
 public class Order
 {
     public Guid Id { get; init; }
@@ -1285,9 +1285,9 @@ Avant de commiter du code, VÉRIFIER :
 ## 📚 Ressources
 
 ### Documentation Officielle
-- [C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
-- [.NET Framework Design Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)
-- [C# Programming Guide](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/)
+- [C# Coding Conventions](https:/learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
+- [.NET Framework Design Guidelines](https:/learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)
+- [C# Programming Guide](https:/learn.microsoft.com/en-us/dotnet/csharp/programming-guide/)
 
 ### Livres Recommandés
 - **Clean Code** - Robert C. Martin

@@ -221,7 +221,7 @@ ansible-playbook -f $(nproc) playbook.yml
   tasks:
     - name: Download large file
       get_url:
-        url: https://example.com/large-file.tar.gz
+        url: https:/example.com/large-file.tar.gz
         dest: /tmp/
     
     - name: Extract archive
@@ -497,7 +497,7 @@ control_path = /tmp/ansible-ssh-%%h-%%p-%%r
     # Exécuter une seule fois pour tout le groupe
     - name: Download shared artifact
       get_url:
-        url: https://example.com/artifact.tar.gz
+        url: https:/example.com/artifact.tar.gz
         dest: /tmp/artifact.tar.gz
       run_once: true
       delegate_to: localhost
@@ -576,7 +576,7 @@ callback_whitelist = profile_tasks, timer, profile_roles
 
 **Sortie avec profile_tasks :**
 ```
-PLAY RECAP *****************************************************
+PLAY RECAP **/**/**/**/**/**/**/**/**/
 web01 : ok=10 changed=3 unreachable=0 failed=0
 
 Monday 27 November 2025  14:23:45 +0100 (0:00:02.134)
@@ -642,7 +642,7 @@ echo "Average execution time: ${avg_time}s"
 pip install mitogen
 
 # Télécharger le plugin
-wget https://github.com/mitogen-hq/mitogen/archive/refs/heads/master.zip
+wget https:/github.com/mitogen-hq/mitogen/archive/refs/heads/master.zip
 unzip master.zip
 ```
 

@@ -340,7 +340,7 @@ echo "[7/8] ✓ Functional verification..."
 # Exemple: vérifier que le service répond
 if command -v curl &> /dev/null; then
   echo "Checking service health..."
-  # curl -f http://localhost:8080/health || exit 1
+  # curl -f http:/localhost:8080/health || exit 1
 fi
 echo "✅ PASSED: Functional tests passed"
 
@@ -596,7 +596,7 @@ scenario:
     
     - name: Verify application endpoint responds
       uri:
-        url: http://localhost:8080/
+        url: http:/localhost:8080/
         status_code: 200
         timeout: 5
       register: http_check
@@ -915,7 +915,7 @@ molecule-test:
   services:
     - docker:dind
   variables:
-    DOCKER_HOST: tcp://docker:2375
+    DOCKER_HOST: tcp:/docker:2375
     DOCKER_TLS_CERTDIR: ""
   before_script:
     - pip install molecule molecule-plugins[docker] ansible
@@ -958,7 +958,7 @@ deploy-staging:
     - develop
   environment:
     name: staging
-    url: https://staging.example.com
+    url: https:/staging.example.com
 
 deploy-production:
   stage: deploy
@@ -993,7 +993,7 @@ deploy-production:
   when: manual
   environment:
     name: production
-    url: https://production.example.com
+    url: https:/production.example.com
 ```
 
 ## Tests Unitaires avec Pytest

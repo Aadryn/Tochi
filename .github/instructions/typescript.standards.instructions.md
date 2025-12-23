@@ -1,7 +1,7 @@
 ---
 description: TypeScript Standards - Naming conventions, code style, ESLint, Prettier, best practices
 name: TypeScript_Standards
-applyTo: "**/frontend/**/*.ts"
+applyTo: "**/*.ts"
 ---
 
 # TypeScript - Standards et Conventions
@@ -33,7 +33,7 @@ Guide des conventions de codage et standards TypeScript.
 ### Variables et Fonctions
 
 ```typescript
-// ✅ BON : camelCase pour variables et fonctions
+/ ✅ BON : camelCase pour variables et fonctions
 const userName = 'John'
 const isAuthenticated = true
 const userCount = 42
@@ -42,17 +42,17 @@ function fetchUserById(id: string): Promise<User> { }
 function calculateTotalPrice(items: Item[]): number { }
 const handleSubmit = async (data: FormData): Promise<void> => { }
 
-// ❌ MAUVAIS : Autres conventions
-const user_name = 'John'      // snake_case
-const UserName = 'John'       // PascalCase
-const ISACTIVE = true         // UPPERCASE
-const usr = 'John'            // Abréviation
+/ ❌ MAUVAIS : Autres conventions
+const user_name = 'John'      / snake_case
+const UserName = 'John'       / PascalCase
+const ISACTIVE = true         / UPPERCASE
+const usr = 'John'            / Abréviation
 ```
 
 ### Classes et Interfaces
 
 ```typescript
-// ✅ BON : PascalCase pour classes, interfaces, types, enums
+/ ✅ BON : PascalCase pour classes, interfaces, types, enums
 class UserService { }
 class AuthenticationManager { }
 
@@ -68,21 +68,21 @@ enum UserRole {
   Guest = 'GUEST'
 }
 
-// ❌ MAUVAIS : Préfixes/suffixes non nécessaires
-interface IUser { }           // Préfixe I
-type TUserId = string         // Préfixe T
-class UserServiceClass { }    // Suffixe Class
+/ ❌ MAUVAIS : Préfixes/suffixes non nécessaires
+interface IUser { }           / Préfixe I
+type TUserId = string         / Préfixe T
+class UserServiceClass { }    / Suffixe Class
 ```
 
 ### Constantes
 
 ```typescript
-// ✅ BON : UPPER_SNAKE_CASE pour les vraies constantes
+/ ✅ BON : UPPER_SNAKE_CASE pour les vraies constantes
 const MAX_RETRY_COUNT = 3
-const API_BASE_URL = 'https://api.example.com'
+const API_BASE_URL = 'https:/api.example.com'
 const DEFAULT_PAGE_SIZE = 20
 
-// Constantes d'énumération ou configuration
+/ Constantes d'énumération ou configuration
 const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
@@ -90,7 +90,7 @@ const HTTP_STATUS = {
   NOT_FOUND: 404
 } as const
 
-// ✅ BON : camelCase pour les constantes de référence
+/ ✅ BON : camelCase pour les constantes de référence
 const defaultUser = { name: 'Guest', role: 'guest' } as const
 const emptyArray: readonly string[] = []
 ```
@@ -98,39 +98,39 @@ const emptyArray: readonly string[] = []
 ### Fichiers et Dossiers
 
 ```typescript
-// ✅ BON : kebab-case pour les noms de fichiers
-// user-service.ts
-// api-client.ts
-// use-auth.ts
-// user.types.ts
+/ ✅ BON : kebab-case pour les noms de fichiers
+/ user-service.ts
+/ api-client.ts
+/ use-auth.ts
+/ user.types.ts
 
-// ✅ BON : PascalCase pour les composants Vue/React
-// UserCard.vue
-// AuthProvider.tsx
-// NavigationMenu.vue
+/ ✅ BON : PascalCase pour les composants Vue/React
+/ UserCard.vue
+/ AuthProvider.tsx
+/ NavigationMenu.vue
 
-// ✅ BON : Structure cohérente
+/ ✅ BON : Structure cohérente
 src/
 ├── services/
-│   ├── user.service.ts        // kebab-case
+│   ├── user.service.ts        / kebab-case
 │   └── auth.service.ts
 ├── composables/
-│   ├── useAuth.ts             // camelCase avec "use"
+│   ├── useAuth.ts             / camelCase avec "use"
 │   └── useFetch.ts
 ├── components/
-│   ├── UserCard.vue           // PascalCase
+│   ├── UserCard.vue           / PascalCase
 │   └── LoginForm.vue
 ├── types/
-│   ├── user.types.ts          // kebab-case.types.ts
+│   ├── user.types.ts          / kebab-case.types.ts
 │   └── api.types.ts
 └── utils/
-    ├── formatters.ts          // kebab-case
+    ├── formatters.ts          / kebab-case
     └── validators.ts
 
-// ❌ MAUVAIS
-// UserService.ts              // PascalCase pour service
-// user_service.ts             // snake_case
-// userService.ts              // camelCase pour fichier
+/ ❌ MAUVAIS
+/ UserService.ts              / PascalCase pour service
+/ user_service.ts             / snake_case
+/ userService.ts              / camelCase pour fichier
 ```
 
 ## 📐 Structure de Code
@@ -138,48 +138,48 @@ src/
 ### Organisation d'un Fichier
 
 ```typescript
-// ✅ BON : Ordre d'organisation standardisé
+/ ✅ BON : Ordre d'organisation standardisé
 
-// 1. Imports (groupés par catégorie)
-// Imports tiers
+/ 1. Imports (groupés par catégorie)
+/ Imports tiers
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 
-// Imports internes (avec alias @/)
+/ Imports internes (avec alias @/)
 import { useAuth } from '@/composables/useAuth'
 import { UserService } from '@/services/user.service'
 
-// Imports de types (avec 'type')
+/ Imports de types (avec 'type')
 import type { User, CreateUserDto } from '@/types'
 
-// 2. Constantes
+/ 2. Constantes
 const API_TIMEOUT = 5000
 const MAX_ITEMS = 100
 
-// 3. Types locaux (si non exportés)
+/ 3. Types locaux (si non exportés)
 interface LocalState {
   loading: boolean
   error: Error | null
 }
 
-// 4. Fonctions utilitaires privées
+/ 4. Fonctions utilitaires privées
 function validateInput(input: string): boolean {
   return input.length > 0
 }
 
-// 5. Export principal (fonction, classe, composant)
+/ 5. Export principal (fonction, classe, composant)
 export function useUsers() {
-  // ...
+  / ...
 }
 
-// 6. Exports secondaires
+/ 6. Exports secondaires
 export { validateInput }
 ```
 
 ### Longueur et Complexité
 
 ```typescript
-// ✅ BON : Fonctions courtes et focalisées
+/ ✅ BON : Fonctions courtes et focalisées
 function calculateDiscount(price: number, discountPercent: number): number {
   if (discountPercent < 0 || discountPercent > 100) {
     throw new Error('Discount must be between 0 and 100')
@@ -187,7 +187,7 @@ function calculateDiscount(price: number, discountPercent: number): number {
   return price * (1 - discountPercent / 100)
 }
 
-// ✅ BON : Extraire la logique complexe
+/ ✅ BON : Extraire la logique complexe
 function processOrder(order: Order): ProcessedOrder {
   const validatedOrder = validateOrder(order)
   const pricedOrder = calculatePrices(validatedOrder)
@@ -195,9 +195,9 @@ function processOrder(order: Order): ProcessedOrder {
   return finalizeOrder(discountedOrder)
 }
 
-// ❌ MAUVAIS : Fonction trop longue
+/ ❌ MAUVAIS : Fonction trop longue
 function doEverything(data: unknown): unknown {
-  // 200 lignes de code...
+  / 200 lignes de code...
 }
 ```
 
@@ -228,7 +228,7 @@ module.exports = {
   },
   plugins: ['@typescript-eslint'],
   rules: {
-    // TypeScript strict
+    / TypeScript strict
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/explicit-function-return-type': 'error',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
@@ -237,7 +237,7 @@ module.exports = {
     '@typescript-eslint/await-thenable': 'error',
     '@typescript-eslint/no-misused-promises': 'error',
     
-    // Naming conventions
+    / Naming conventions
     '@typescript-eslint/naming-convention': [
       'error',
       { selector: 'default', format: ['camelCase'] },
@@ -248,7 +248,7 @@ module.exports = {
       { selector: 'property', format: ['camelCase', 'UPPER_CASE'] }
     ],
     
-    // Best practices
+    / Best practices
     'no-console': 'warn',
     'no-debugger': 'error',
     'prefer-const': 'error',
@@ -314,7 +314,7 @@ export class UserService {
    * ```
    */
   async getById(id: string): Promise<User | null> {
-    // ...
+    / ...
   }
   
   /**
@@ -326,7 +326,7 @@ export class UserService {
    * @throws {ConflictError} Si l'email existe déjà
    */
   async create(data: CreateUserDto): Promise<User> {
-    // ...
+    / ...
   }
 }
 
@@ -346,7 +346,7 @@ export function calculateFinalPrice(
   basePrice: number,
   discountPercent: number
 ): number {
-  // ...
+  / ...
 }
 ```
 
@@ -355,7 +355,7 @@ export function calculateFinalPrice(
 ### Early Return
 
 ```typescript
-// ✅ BON : Early return pour réduire l'imbrication
+/ ✅ BON : Early return pour réduire l'imbrication
 function processUser(user: User | null): string {
   if (!user) {
     return 'No user'
@@ -372,7 +372,7 @@ function processUser(user: User | null): string {
   return `Admin: ${user.name}`
 }
 
-// ❌ MAUVAIS : Imbrication profonde
+/ ❌ MAUVAIS : Imbrication profonde
 function processUser(user: User | null): string {
   if (user) {
     if (user.isActive) {
@@ -393,20 +393,20 @@ function processUser(user: User | null): string {
 ### Destructuring
 
 ```typescript
-// ✅ BON : Destructuring pour la clarté
+/ ✅ BON : Destructuring pour la clarté
 function displayUser({ name, email, role }: User): void {
   console.log(`${name} (${role}): ${email}`)
 }
 
-// ✅ BON : Avec renommage
+/ ✅ BON : Avec renommage
 const { id: userId, name: userName } = user
 
-// ✅ BON : Avec valeurs par défaut
+/ ✅ BON : Avec valeurs par défaut
 function createConfig({ timeout = 5000, retries = 3 }: Partial<Config>): Config {
   return { timeout, retries }
 }
 
-// ❌ MAUVAIS : Accès répétitif aux propriétés
+/ ❌ MAUVAIS : Accès répétitif aux propriétés
 function displayUser(user: User): void {
   console.log(`${user.name} (${user.role}): ${user.email}`)
 }
@@ -415,16 +415,16 @@ function displayUser(user: User): void {
 ### Null Coalescing et Optional Chaining
 
 ```typescript
-// ✅ BON : Optional chaining
+/ ✅ BON : Optional chaining
 const userName = user?.profile?.name
 
-// ✅ BON : Nullish coalescing
+/ ✅ BON : Nullish coalescing
 const displayName = user?.name ?? 'Anonymous'
 
-// ✅ BON : Combinaison
+/ ✅ BON : Combinaison
 const city = user?.address?.city ?? 'Unknown'
 
-// ❌ MAUVAIS : Vérifications manuelles
+/ ❌ MAUVAIS : Vérifications manuelles
 const userName = user && user.profile && user.profile.name
 const displayName = user && user.name ? user.name : 'Anonymous'
 ```
@@ -432,21 +432,21 @@ const displayName = user && user.name ? user.name : 'Anonymous'
 ## 🚫 Code à Éviter
 
 ```typescript
-// ❌ MAUVAIS : Magic numbers
+/ ❌ MAUVAIS : Magic numbers
 if (status === 200) { }
 const timeout = 5000
 
-// ✅ BON : Constantes nommées
+/ ✅ BON : Constantes nommées
 const HTTP_OK = 200
 const DEFAULT_TIMEOUT_MS = 5000
 
 if (status === HTTP_OK) { }
 const timeout = DEFAULT_TIMEOUT_MS
 
-// ❌ MAUVAIS : Conditions complexes
+/ ❌ MAUVAIS : Conditions complexes
 if (user.age >= 18 && user.country === 'FR' && user.hasAcceptedTerms && !user.isBanned) { }
 
-// ✅ BON : Fonctions prédicat
+/ ✅ BON : Fonctions prédicat
 function canAccessService(user: User): boolean {
   return user.age >= 18 && 
          user.country === 'FR' && 
@@ -456,11 +456,11 @@ function canAccessService(user: User): boolean {
 
 if (canAccessService(user)) { }
 
-// ❌ MAUVAIS : Type assertions dangereuses
+/ ❌ MAUVAIS : Type assertions dangereuses
 const data = response.data as User
 
-// ✅ BON : Type guard
+/ ✅ BON : Type guard
 if (isUser(response.data)) {
-  const data = response.data // Typé automatiquement
+  const data = response.data / Typé automatiquement
 }
 ```

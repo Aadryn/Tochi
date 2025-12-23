@@ -1,7 +1,7 @@
 ---
 description: SCSS Functions - Fonctions mathématiques, couleurs, strings, lists, maps, custom functions
 name: SCSS_Functions
-applyTo: "**/frontend/assets/scss/**/_*.scss,**/frontend/assets/scss/abstracts/**/*.scss"
+applyTo: "**/assets/scss/**/_*.scss,**/assets/scss/abstracts/**/*.scss"
 ---
 
 # SCSS Functions
@@ -31,76 +31,76 @@ Guide complet pour les fonctions SCSS built-in et custom.
 ```scss
 @use 'sass:math';
 
-// Division (/ est déprécié)
+/ Division (/ est déprécié)
 .element {
   width: math.div(100%, 3);
   height: math.div(500px, 2);
 }
 
-// Arrondis
+/ Arrondis
 .rounded {
-  border-radius: math.round(4.7px);   // 5px
-  padding: math.ceil(15.2px);          // 16px
-  margin: math.floor(15.8px);          // 15px
+  border-radius: math.round(4.7px);   / 5px
+  padding: math.ceil(15.2px);          / 16px
+  margin: math.floor(15.8px);          / 15px
 }
 
-// Min/Max
+/ Min/Max
 .constrained {
   width: math.min(100%, 500px);
   height: math.max(200px, 50vh);
 }
 
-// Clamp
+/ Clamp
 .clamped {
   font-size: math.clamp(14px, 1rem + 0.5vw, 24px);
 }
 
-// Puissance
+/ Puissance
 .scale {
-  transform: scale(math.pow(1.2, 3)); // 1.728
+  transform: scale(math.pow(1.2, 3)); / 1.728
 }
 
-// Racine carrée
+/ Racine carrée
 .diagonal {
   --diagonal: #{math.sqrt(2)};
 }
 
-// Valeur absolue
+/ Valeur absolue
 .spacing {
-  gap: math.abs(-16px); // 16px
+  gap: math.abs(-16px); / 16px
 }
 
-// Unités
+/ Unités
 .conversion {
-  // Vérifier si a une unité
+  / Vérifier si a une unité
   @if math.is-unitless(16) {
     font-size: 16px;
   }
   
-  // Supprimer l'unité
-  --value: #{math.div(16px, 1px)}; // 16 (sans unité)
+  / Supprimer l'unité
+  --value: #{math.div(16px, 1px)}; / 16 (sans unité)
   
-  // Obtenir l'unité
-  --unit: #{math.unit(16px)}; // 'px'
+  / Obtenir l'unité
+  --unit: #{math.unit(16px)}; / 'px'
   
-  // Compatible
+  / Compatible
   @if math.compatible(16px, 2em) {
-    // false - unités incompatibles
+    / false - unités incompatibles
   }
 }
 
-// Pourcentage
+/ Pourcentage
 .progress {
-  width: math.percentage(math.div(3, 4)); // 75%
+  width: math.percentage(math.div(3, 4)); / 75%
 }
 
-// Random
+/ Random
 .random {
   --rotation: #{math.random() * 360}deg;
-  --index: #{math.random(100)}; // entier entre 1 et 100
+  --index: #{math.random(100)}; / entier entre 1 et 100
 }
 
-// Trigonométrie
+/ Trigonométrie
 .trig {
   --sin: #{math.sin(45deg)};
   --cos: #{math.cos(45deg)};
@@ -111,13 +111,13 @@ Guide complet pour les fonctions SCSS built-in et custom.
   --atan2: #{math.atan2(1, 1)};
 }
 
-// Logarithmes
+/ Logarithmes
 .log {
   --log: #{math.log(10)};
-  --log-base: #{math.log(8, 2)}; // 3
+  --log-base: #{math.log(8, 2)}; / 3
 }
 
-// Constantes
+/ Constantes
 .constants {
   --pi: #{math.$pi};
   --e: #{math.$e};
@@ -131,26 +131,26 @@ Guide complet pour les fonctions SCSS built-in et custom.
 
 $primary: #3b82f6;
 
-// Ajuster les composants (moderne)
+/ Ajuster les composants (moderne)
 .adjusted {
-  // Luminosité
+  / Luminosité
   background: color.scale($primary, $lightness: 20%);
   border-color: color.scale($primary, $lightness: -20%);
   
-  // Saturation
+  / Saturation
   color: color.scale($primary, $saturation: -50%);
   
-  // Alpha
+  / Alpha
   box-shadow: 0 4px 6px color.scale($primary, $alpha: -60%);
 }
 
-// Mixer des couleurs
+/ Mixer des couleurs
 .mixed {
   background: color.mix($primary, white, 80%);
   border-color: color.mix($primary, black, 90%);
 }
 
-// Extraire des composants
+/ Extraire des composants
 .components {
   --hue: #{color.hue($primary)};
   --saturation: #{color.saturation($primary)};
@@ -161,45 +161,45 @@ $primary: #3b82f6;
   --alpha: #{color.alpha($primary)};
 }
 
-// Changer des composants
+/ Changer des composants
 .changed {
-  // Changer la teinte
+  / Changer la teinte
   background: color.change($primary, $hue: 120deg);
   
-  // Changer la saturation
+  / Changer la saturation
   color: color.change($primary, $saturation: 50%);
   
-  // Changer l'alpha
+  / Changer l'alpha
   border-color: color.change($primary, $alpha: 0.5);
 }
 
-// Ajuster relativement
+/ Ajuster relativement
 .relative {
-  // Augmenter la luminosité de 10%
+  / Augmenter la luminosité de 10%
   background: color.adjust($primary, $lightness: 10%);
   
-  // Diminuer la saturation de 20%
+  / Diminuer la saturation de 20%
   color: color.adjust($primary, $saturation: -20%);
   
-  // Décaler la teinte
+  / Décaler la teinte
   border-color: color.adjust($primary, $hue: 30deg);
 }
 
-// Complément et inversion
+/ Complément et inversion
 .complement {
   background: color.complement($primary);
   color: color.invert($primary);
   border-color: color.grayscale($primary);
 }
 
-// Conversion d'espace colorimétrique
+/ Conversion d'espace colorimétrique
 .spaces {
-  // HSL
+  / HSL
   --hsl: #{color.hwb($primary)};
   
-  // Vérifier si opaque
+  / Vérifier si opaque
   @if color.alpha($primary) == 1 {
-    // Couleur opaque
+    / Couleur opaque
   }
 }
 ```
@@ -211,52 +211,52 @@ $primary: #3b82f6;
 
 $class-name: 'button-primary';
 
-// Longueur
+/ Longueur
 .info {
-  --length: #{string.length($class-name)}; // 14
+  --length: #{string.length($class-name)}; / 14
 }
 
-// Quotes
+/ Quotes
 .quoted {
-  content: string.quote(hello); // "hello"
-  --unquoted: #{string.unquote("hello")}; // hello
+  content: string.quote(hello); / "hello"
+  --unquoted: #{string.unquote("hello")}; / hello
 }
 
-// Recherche
+/ Recherche
 .search {
-  // Index (1-based)
-  --index: #{string.index($class-name, '-')}; // 7
+  / Index (1-based)
+  --index: #{string.index($class-name, '-')}; / 7
   
-  // Contient
+  / Contient
   @if string.index($class-name, 'primary') {
-    // Contient 'primary'
+    / Contient 'primary'
   }
 }
 
-// Extraction
+/ Extraction
 .extract {
-  // Slice (1-based, inclusive)
-  --slice: #{string.slice($class-name, 8)}; // "primary"
-  --slice-range: #{string.slice($class-name, 1, 6)}; // "button"
+  / Slice (1-based, inclusive)
+  --slice: #{string.slice($class-name, 8)}; / "primary"
+  --slice-range: #{string.slice($class-name, 1, 6)}; / "button"
 }
 
-// Case
+/ Case
 .case {
   --upper: #{string.to-upper-case($class-name)};
   --lower: #{string.to-lower-case($class-name)};
 }
 
-// Insert
+/ Insert
 .insert {
-  --inserted: #{string.insert($class-name, '-new', 7)}; // "button-new-primary"
+  --inserted: #{string.insert($class-name, '-new', 7)}; / "button-new-primary"
 }
 
-// Unique ID
+/ Unique ID
 .unique {
-  --id: #{string.unique-id()}; // u8f3a2c1
+  --id: #{string.unique-id()}; / u8f3a2c1
 }
 
-// Split (custom function needed)
+/ Split (custom function needed)
 @function str-split($string, $separator) {
   $list: ();
   $index: string.index($string, $separator);
@@ -279,72 +279,72 @@ $class-name: 'button-primary';
 $colors: red, green, blue, yellow;
 $sizes: 'sm', 'md', 'lg', 'xl';
 
-// Longueur
+/ Longueur
 .info {
-  --count: #{list.length($colors)}; // 4
+  --count: #{list.length($colors)}; / 4
 }
 
-// Accès
+/ Accès
 .access {
-  --first: #{list.nth($colors, 1)}; // red
-  --last: #{list.nth($colors, -1)}; // yellow
+  --first: #{list.nth($colors, 1)}; / red
+  --last: #{list.nth($colors, -1)}; / yellow
 }
 
-// Modification
+/ Modification
 .modify {
-  // Append
+  / Append
   $extended: list.append($colors, purple);
-  // (red, green, blue, yellow, purple)
+  / (red, green, blue, yellow, purple)
   
-  // Prepend (via join)
+  / Prepend (via join)
   $prepended: list.join(orange, $colors);
-  // (orange, red, green, blue, yellow)
+  / (orange, red, green, blue, yellow)
   
-  // Set
+  / Set
   $modified: list.set-nth($colors, 2, cyan);
-  // (red, cyan, blue, yellow)
+  / (red, cyan, blue, yellow)
 }
 
-// Recherche
+/ Recherche
 .search {
-  --index: #{list.index($colors, blue)}; // 3
+  --index: #{list.index($colors, blue)}; / 3
   
   @if list.index($colors, purple) == null {
-    // purple n'est pas dans la liste
+    / purple n'est pas dans la liste
   }
 }
 
-// Jointure
+/ Jointure
 .join {
   $combined: list.join($colors, $sizes);
-  // (red, green, blue, yellow, 'sm', 'md', 'lg', 'xl')
+  / (red, green, blue, yellow, 'sm', 'md', 'lg', 'xl')
   
   $comma-separated: list.join($colors, $sizes, comma);
   $space-separated: list.join($colors, $sizes, space);
 }
 
-// Zip
+/ Zip
 $widths: 100px, 200px, 300px;
 $heights: 50px, 100px, 150px;
 
 .zip {
   $pairs: list.zip($widths, $heights);
-  // ((100px, 50px), (200px, 100px), (300px, 150px))
+  / ((100px, 50px), (200px, 100px), (300px, 150px))
 }
 
-// Slash séparateur
+/ Slash séparateur
 .slash {
   $ratio: list.slash(16, 9);
-  aspect-ratio: $ratio; // 16 / 9
+  aspect-ratio: $ratio; / 16 / 9
 }
 
-// Séparateur
+/ Séparateur
 .separator {
-  --sep: #{list.separator($colors)}; // comma
-  --is-bracketed: #{list.is-bracketed($colors)}; // false
+  --sep: #{list.separator($colors)}; / comma
+  --is-bracketed: #{list.is-bracketed($colors)}; / false
 }
 
-// Itération avec @each (pas une fonction mais lié)
+/ Itération avec @each (pas une fonction mais lié)
 @each $color in $colors {
   .text-#{$color} {
     color: $color;
@@ -377,11 +377,11 @@ $breakpoints: (
   'xl': 1280px,
 );
 
-// Accès
+/ Accès
 .access {
   color: map.get($theme, 'primary');
   
-  // Accès profond
+  / Accès profond
   $nested: (
     'colors': (
       'brand': (
@@ -394,46 +394,46 @@ $breakpoints: (
   background: map.get($nested, 'colors', 'brand', 'primary');
 }
 
-// Vérification
+/ Vérification
 .check {
   @if map.has-key($theme, 'primary') {
-    // La clé existe
+    / La clé existe
   }
   
   @if not map.has-key($theme, 'warning') {
-    // La clé n'existe pas
+    / La clé n'existe pas
   }
 }
 
-// Clés et valeurs
+/ Clés et valeurs
 .keys-values {
-  $keys: map.keys($theme); // ('primary', 'secondary', 'success', 'error')
-  $values: map.values($theme); // (#3b82f6, #64748b, #22c55e, #ef4444)
+  $keys: map.keys($theme); / ('primary', 'secondary', 'success', 'error')
+  $values: map.values($theme); / (#3b82f6, #64748b, #22c55e, #ef4444)
 }
 
-// Modification
+/ Modification
 .modify {
-  // Set
+  / Set
   $updated: map.set($theme, 'warning', #f59e0b);
   
-  // Remove
+  / Remove
   $reduced: map.remove($theme, 'error');
   
-  // Merge
+  / Merge
   $extended: map.merge($theme, (
     'warning': #f59e0b,
     'info': #06b6d4,
   ));
   
-  // Deep merge
+  / Deep merge
   $deep: map.deep-merge(
     ('a': ('b': 1)),
     ('a': ('c': 2))
   );
-  // ('a': ('b': 1, 'c': 2))
+  / ('a': ('b': 1, 'c': 2))
 }
 
-// Itération
+/ Itération
 @each $name, $color in $theme {
   .bg-#{$name} {
     background-color: $color;
@@ -450,57 +450,57 @@ $breakpoints: (
 ```scss
 @use 'sass:meta';
 
-// Inspection de type
+/ Inspection de type
 $value: 16px;
 
 .type-check {
   @if meta.type-of($value) == 'number' {
-    // C'est un nombre
+    / C'est un nombre
   }
   
-  // Types possibles: number, string, color, list, map, bool, null, function
+  / Types possibles: number, string, color, list, map, bool, null, function
 }
 
-// Variables globales
+/ Variables globales
 .global {
   @if meta.global-variable-exists('primary-color') {
     color: $primary-color;
   }
 }
 
-// Variables locales
+/ Variables locales
 @mixin check-var($name) {
   @if meta.variable-exists($name) {
-    // La variable existe
+    / La variable existe
   }
 }
 
-// Fonctions
+/ Fonctions
 .function-check {
   @if meta.function-exists('darken') {
-    // La fonction existe
+    / La fonction existe
   }
 }
 
-// Mixins
+/ Mixins
 .mixin-check {
   @if meta.mixin-exists('responsive') {
     @include responsive;
   }
 }
 
-// Obtenir une fonction
+/ Obtenir une fonction
 $my-function: meta.get-function('rgba');
 .call {
   color: meta.call($my-function, blue, 0.5);
 }
 
-// Charger CSS
-// @include meta.load-css('other-module');
+/ Charger CSS
+/ @include meta.load-css('other-module');
 
-// Inspection de modules
-// $module: meta.module-functions('sass:color');
-// $variables: meta.module-variables('sass:math');
+/ Inspection de modules
+/ $module: meta.module-functions('sass:color');
+/ $variables: meta.module-variables('sass:math');
 ```
 
 ### Module sass:selector
@@ -508,58 +508,58 @@ $my-function: meta.get-function('rgba');
 ```scss
 @use 'sass:selector';
 
-// Nest
+/ Nest
 .nested {
   $result: selector.nest('.parent', '.child');
-  // .parent .child
+  / .parent .child
   
   $complex: selector.nest('.a', '&.b', '.c');
-  // .a.b .c
+  / .a.b .c
 }
 
-// Append
+/ Append
 .appended {
   $result: selector.append('.btn', '-primary', ':hover');
-  // .btn-primary:hover
+  / .btn-primary:hover
 }
 
-// Extend
+/ Extend
 .extended {
   $result: selector.extend('.a .b', '.b', '.c .d');
-  // .a .b, .a .c .d, .c .a .d
+  / .a .b, .a .c .d, .c .a .d
 }
 
-// Replace
+/ Replace
 .replaced {
   $result: selector.replace('.a .b.c', '.b', '.d');
-  // .a .d.c
+  / .a .d.c
 }
 
-// Unify
+/ Unify
 .unified {
   $result: selector.unify('.a.b', '.b.c');
-  // .a.b.c
+  / .a.b.c
   
   $impossible: selector.unify('.a', '.b');
-  // null (ne peuvent pas coexister)
+  / null (ne peuvent pas coexister)
 }
 
-// Simple selectors
+/ Simple selectors
 .simple {
   $selectors: selector.simple-selectors('.btn.primary:hover');
-  // (.btn, .primary, :hover)
+  / (.btn, .primary, :hover)
 }
 
-// Parse
+/ Parse
 .parsed {
   $parsed: selector.parse('.a, .b > .c');
-  // (('.a',), ('.b', '>', '.c'))
+  / (('.a',), ('.b', '>', '.c'))
 }
 
-// Is superselector
+/ Is superselector
 .super {
   $is-super: selector.is-superselector('.parent', '.parent .child');
-  // true
+  / true
 }
 ```
 
@@ -570,10 +570,10 @@ $my-function: meta.get-function('rgba');
 ```scss
 @use 'sass:math';
 
-/// Convertit des pixels en rem
-/// @param {Number} $pixels - Valeur en pixels
-/// @param {Number} $base [16px] - Taille de base
-/// @return {Number} - Valeur en rem
+// Convertit des pixels en rem
+// @param {Number} $pixels - Valeur en pixels
+// @param {Number} $base [16px] - Taille de base
+// @return {Number} - Valeur en rem
 @function px-to-rem($pixels, $base: 16px) {
   @if math.is-unitless($pixels) {
     $pixels: $pixels * 1px;
@@ -586,10 +586,10 @@ $my-function: meta.get-function('rgba');
   @return math.div($pixels, $base) * 1rem;
 }
 
-/// Convertit des pixels en em
-/// @param {Number} $pixels - Valeur en pixels
-/// @param {Number} $context [16px] - Contexte en pixels
-/// @return {Number} - Valeur en em
+// Convertit des pixels en em
+// @param {Number} $pixels - Valeur en pixels
+// @param {Number} $context [16px] - Contexte en pixels
+// @return {Number} - Valeur en em
 @function px-to-em($pixels, $context: 16px) {
   @if math.is-unitless($pixels) {
     $pixels: $pixels * 1px;
@@ -598,19 +598,19 @@ $my-function: meta.get-function('rgba');
   @return math.div($pixels, $context) * 1em;
 }
 
-/// Convertit rem en pixels
-/// @param {Number} $rem - Valeur en rem
-/// @param {Number} $base [16px] - Taille de base
-/// @return {Number} - Valeur en pixels
+// Convertit rem en pixels
+// @param {Number} $rem - Valeur en rem
+// @param {Number} $base [16px] - Taille de base
+// @return {Number} - Valeur en pixels
 @function rem-to-px($rem, $base: 16px) {
   @return math.div($rem, 1rem) * $base;
 }
 
-// Usage
+/ Usage
 .element {
-  font-size: px-to-rem(18); // 1.125rem
-  padding: px-to-rem(24);   // 1.5rem
-  margin: px-to-em(32, 18px); // 1.778em
+  font-size: px-to-rem(18); / 1.125rem
+  padding: px-to-rem(24);   / 1.5rem
+  margin: px-to-em(32, 18px); / 1.778em
 }
 ```
 
@@ -621,9 +621,9 @@ $my-function: meta.get-function('rgba');
 @use 'sass:math';
 @use 'sass:map';
 
-/// Génère une palette de couleurs
-/// @param {Color} $base - Couleur de base
-/// @return {Map} - Palette avec nuances
+// Génère une palette de couleurs
+// @param {Color} $base - Couleur de base
+// @return {Map} - Palette avec nuances
 @function generate-palette($base) {
   @return (
     50: color.scale($base, $lightness: 95%),
@@ -639,9 +639,9 @@ $my-function: meta.get-function('rgba');
   );
 }
 
-/// Obtient une couleur contrastée (noir ou blanc)
-/// @param {Color} $background - Couleur de fond
-/// @return {Color} - Noir ou blanc selon le contraste
+// Obtient une couleur contrastée (noir ou blanc)
+// @param {Color} $background - Couleur de fond
+// @return {Color} - Noir ou blanc selon le contraste
 @function contrast-color($background) {
   $luminance: color.lightness($background);
   
@@ -652,31 +652,31 @@ $my-function: meta.get-function('rgba');
   }
 }
 
-/// Génère une couleur avec alpha
-/// @param {Color} $color - Couleur de base
-/// @param {Number} $opacity - Opacité (0-1)
-/// @return {Color} - Couleur avec alpha
+// Génère une couleur avec alpha
+// @param {Color} $color - Couleur de base
+// @param {Number} $opacity - Opacité (0-1)
+// @return {Color} - Couleur avec alpha
 @function alpha($color, $opacity) {
   @return color.change($color, $alpha: $opacity);
 }
 
-/// Mélange une couleur avec du blanc (tint)
-/// @param {Color} $color - Couleur de base
-/// @param {Number} $percentage - Pourcentage de blanc
-/// @return {Color} - Couleur éclaircie
+// Mélange une couleur avec du blanc (tint)
+// @param {Color} $color - Couleur de base
+// @param {Number} $percentage - Pourcentage de blanc
+// @return {Color} - Couleur éclaircie
 @function tint($color, $percentage) {
   @return color.mix(white, $color, $percentage);
 }
 
-/// Mélange une couleur avec du noir (shade)
-/// @param {Color} $color - Couleur de base
-/// @param {Number} $percentage - Pourcentage de noir
-/// @return {Color} - Couleur assombrie
+// Mélange une couleur avec du noir (shade)
+// @param {Color} $color - Couleur de base
+// @param {Number} $percentage - Pourcentage de noir
+// @return {Color} - Couleur assombrie
 @function shade($color, $percentage) {
   @return color.mix(black, $color, $percentage);
 }
 
-// Usage
+/ Usage
 $primary: #3b82f6;
 $palette: generate-palette($primary);
 
@@ -700,36 +700,36 @@ $palette: generate-palette($primary);
 @use 'sass:math';
 @use 'sass:map';
 
-/// Base spacing unit
+// Base spacing unit
 $spacing-unit: 4px !default;
 
-/// Génère un spacing multiplié
-/// @param {Number} $multiplier - Multiplicateur
-/// @return {Number} - Spacing calculé
+// Génère un spacing multiplié
+// @param {Number} $multiplier - Multiplicateur
+// @return {Number} - Spacing calculé
 @function spacing($multiplier) {
   @return $spacing-unit * $multiplier;
 }
 
-/// Spacing map pour lookup rapide
+// Spacing map pour lookup rapide
 $spacing-scale: (
   0: 0,
-  1: spacing(1),   // 4px
-  2: spacing(2),   // 8px
-  3: spacing(3),   // 12px
-  4: spacing(4),   // 16px
-  5: spacing(5),   // 20px
-  6: spacing(6),   // 24px
-  8: spacing(8),   // 32px
-  10: spacing(10), // 40px
-  12: spacing(12), // 48px
-  16: spacing(16), // 64px
-  20: spacing(20), // 80px
-  24: spacing(24), // 96px
+  1: spacing(1),   / 4px
+  2: spacing(2),   / 8px
+  3: spacing(3),   / 12px
+  4: spacing(4),   / 16px
+  5: spacing(5),   / 20px
+  6: spacing(6),   / 24px
+  8: spacing(8),   / 32px
+  10: spacing(10), / 40px
+  12: spacing(12), / 48px
+  16: spacing(16), / 64px
+  20: spacing(20), / 80px
+  24: spacing(24), / 96px
 );
 
-/// Obtient un spacing depuis l'échelle
-/// @param {Number} $key - Clé du spacing
-/// @return {Number} - Valeur du spacing
+// Obtient un spacing depuis l'échelle
+// @param {Number} $key - Clé du spacing
+// @return {Number} - Valeur du spacing
 @function space($key) {
   @if not map.has-key($spacing-scale, $key) {
     @error "Invalid spacing key: #{$key}. Available: #{map.keys($spacing-scale)}";
@@ -738,12 +738,12 @@ $spacing-scale: (
   @return map.get($spacing-scale, $key);
 }
 
-/// Calcule un ratio fluide entre deux valeurs
-/// @param {Number} $min - Valeur minimum
-/// @param {Number} $max - Valeur maximum
-/// @param {Number} $min-vw [320px] - Viewport minimum
-/// @param {Number} $max-vw [1200px] - Viewport maximum
-/// @return {String} - Valeur clamp()
+// Calcule un ratio fluide entre deux valeurs
+// @param {Number} $min - Valeur minimum
+// @param {Number} $max - Valeur maximum
+// @param {Number} $min-vw [320px] - Viewport minimum
+// @param {Number} $max-vw [1200px] - Viewport maximum
+// @return {String} - Valeur clamp()
 @function fluid($min, $max, $min-vw: 320px, $max-vw: 1200px) {
   $slope: math.div($max - $min, $max-vw - $min-vw);
   $y-intercept: $min - $slope * $min-vw;
@@ -753,7 +753,7 @@ $spacing-scale: (
   @return clamp(#{$min}, #{$preferred}, #{$max});
 }
 
-// Usage
+/ Usage
 .card {
   padding: space(4) space(6);
   margin-bottom: space(8);
@@ -767,35 +767,35 @@ $spacing-scale: (
 @use 'sass:math';
 @use 'sass:map';
 
-/// Type scale ratio
-$type-ratio: 1.25 !default; // Major Third
+// Type scale ratio
+$type-ratio: 1.25 !default; / Major Third
 
-/// Base font size
+// Base font size
 $base-font-size: 16px !default;
 
-/// Génère une taille de font basée sur l'échelle
-/// @param {Number} $step - Étape dans l'échelle
-/// @return {Number} - Taille calculée
+// Génère une taille de font basée sur l'échelle
+// @param {Number} $step - Étape dans l'échelle
+// @return {Number} - Taille calculée
 @function type-scale($step) {
   @return $base-font-size * math.pow($type-ratio, $step);
 }
 
-/// Type scale map
+// Type scale map
 $type-sizes: (
-  'xs': type-scale(-2),    // ~10px
-  'sm': type-scale(-1),    // ~13px
-  'base': type-scale(0),   // 16px
-  'lg': type-scale(1),     // 20px
-  'xl': type-scale(2),     // 25px
-  '2xl': type-scale(3),    // 31px
-  '3xl': type-scale(4),    // 39px
-  '4xl': type-scale(5),    // 49px
-  '5xl': type-scale(6),    // 61px
+  'xs': type-scale(-2),    / ~10px
+  'sm': type-scale(-1),    / ~13px
+  'base': type-scale(0),   / 16px
+  'lg': type-scale(1),     / 20px
+  'xl': type-scale(2),     / 25px
+  '2xl': type-scale(3),    / 31px
+  '3xl': type-scale(4),    / 39px
+  '4xl': type-scale(5),    / 49px
+  '5xl': type-scale(6),    / 61px
 );
 
-/// Obtient une taille de font
-/// @param {String} $size - Nom de la taille
-/// @return {Number} - Valeur de la taille
+// Obtient une taille de font
+// @param {String} $size - Nom de la taille
+// @return {Number} - Valeur de la taille
 @function font-size($size) {
   @if not map.has-key($type-sizes, $size) {
     @error "Invalid font size: #{$size}";
@@ -804,11 +804,11 @@ $type-sizes: (
   @return map.get($type-sizes, $size);
 }
 
-/// Calcule une line-height idéale
-/// @param {Number} $font-size - Taille de font
-/// @return {Number} - Line-height calculée
+// Calcule une line-height idéale
+// @param {Number} $font-size - Taille de font
+// @return {Number} - Line-height calculée
 @function ideal-line-height($font-size) {
-  // Plus la font est grande, moins la line-height doit être grande
+  / Plus la font est grande, moins la line-height doit être grande
   @if $font-size > 40px {
     @return 1.2;
   } @else if $font-size > 24px {
@@ -820,7 +820,7 @@ $type-sizes: (
   }
 }
 
-// Usage
+/ Usage
 .heading-1 {
   font-size: font-size('4xl');
   line-height: ideal-line-height(font-size('4xl'));
@@ -837,7 +837,7 @@ $type-sizes: (
 ```scss
 @use 'sass:map';
 
-/// Breakpoints configuration
+// Breakpoints configuration
 $breakpoints: (
   'sm': 640px,
   'md': 768px,
@@ -846,9 +846,9 @@ $breakpoints: (
   '2xl': 1536px,
 ) !default;
 
-/// Obtient une valeur de breakpoint
-/// @param {String} $name - Nom du breakpoint
-/// @return {Number} - Valeur en pixels
+// Obtient une valeur de breakpoint
+// @param {String} $name - Nom du breakpoint
+// @return {Number} - Valeur en pixels
 @function breakpoint($name) {
   @if not map.has-key($breakpoints, $name) {
     @error "Invalid breakpoint: #{$name}. Available: #{map.keys($breakpoints)}";
@@ -857,9 +857,9 @@ $breakpoints: (
   @return map.get($breakpoints, $name);
 }
 
-/// Obtient le breakpoint suivant
-/// @param {String} $name - Nom du breakpoint actuel
-/// @return {Number|null} - Valeur du breakpoint suivant
+// Obtient le breakpoint suivant
+// @param {String} $name - Nom du breakpoint actuel
+// @return {Number|null} - Valeur du breakpoint suivant
 @function breakpoint-next($name) {
   $keys: map.keys($breakpoints);
   $index: index($keys, $name);
@@ -875,14 +875,14 @@ $breakpoints: (
   @return map.get($breakpoints, nth($keys, $index + 1));
 }
 
-/// Vérifie si c'est un breakpoint mobile
-/// @param {String} $name - Nom du breakpoint
-/// @return {Boolean} - True si mobile
+// Vérifie si c'est un breakpoint mobile
+// @param {String} $name - Nom du breakpoint
+// @return {Boolean} - True si mobile
 @function is-mobile($name) {
   @return breakpoint($name) < 768px;
 }
 
-// Mixins utilisant ces fonctions
+/ Mixins utilisant ces fonctions
 @mixin media-up($name) {
   @media (min-width: breakpoint($name)) {
     @content;
@@ -922,7 +922,7 @@ $breakpoints: (
 ```scss
 @use 'sass:map';
 
-/// Z-index scale
+// Z-index scale
 $z-layers: (
   'base': 0,
   'dropdown': 100,
@@ -935,10 +935,10 @@ $z-layers: (
   'toast': 800,
 ) !default;
 
-/// Obtient un z-index
-/// @param {String} $layer - Nom de la couche
-/// @param {Number} $offset [0] - Décalage optionnel
-/// @return {Number} - Z-index calculé
+// Obtient un z-index
+// @param {String} $layer - Nom de la couche
+// @param {Number} $offset [0] - Décalage optionnel
+// @return {Number} - Z-index calculé
 @function z($layer, $offset: 0) {
   @if not map.has-key($z-layers, $layer) {
     @error "Invalid z-layer: #{$layer}. Available: #{map.keys($z-layers)}";
@@ -947,7 +947,7 @@ $z-layers: (
   @return map.get($z-layers, $layer) + $offset;
 }
 
-// Usage
+/ Usage
 .dropdown {
   z-index: z('dropdown');
 }
@@ -960,7 +960,7 @@ $z-layers: (
   z-index: z('tooltip');
 }
 
-// Avec offset pour empiler
+/ Avec offset pour empiler
 .notification-1 {
   z-index: z('toast');
 }
@@ -976,10 +976,10 @@ $z-layers: (
 @use 'sass:meta';
 @use 'sass:list';
 
-/// Vérifie le type d'une valeur
-/// @param {*} $value - Valeur à vérifier
-/// @param {String} $type - Type attendu
-/// @param {String} $name - Nom du paramètre (pour le message d'erreur)
+// Vérifie le type d'une valeur
+// @param {*} $value - Valeur à vérifier
+// @param {String} $type - Type attendu
+// @param {String} $name - Nom du paramètre (pour le message d'erreur)
 @function assert-type($value, $type, $name: 'value') {
   @if meta.type-of($value) != $type {
     @error "#{$name} must be a #{$type}, got #{meta.type-of($value)}";
@@ -988,10 +988,10 @@ $z-layers: (
   @return $value;
 }
 
-/// Vérifie qu'une valeur est dans une liste
-/// @param {*} $value - Valeur à vérifier
-/// @param {List} $allowed - Valeurs autorisées
-/// @param {String} $name - Nom du paramètre
+// Vérifie qu'une valeur est dans une liste
+// @param {*} $value - Valeur à vérifier
+// @param {List} $allowed - Valeurs autorisées
+// @param {String} $name - Nom du paramètre
 @function assert-one-of($value, $allowed, $name: 'value') {
   @if not list.index($allowed, $value) {
     @error "#{$name} must be one of #{$allowed}, got #{$value}";
@@ -1000,11 +1000,11 @@ $z-layers: (
   @return $value;
 }
 
-/// Vérifie qu'un nombre est dans une range
-/// @param {Number} $value - Valeur à vérifier
-/// @param {Number} $min - Valeur minimum
-/// @param {Number} $max - Valeur maximum
-/// @param {String} $name - Nom du paramètre
+// Vérifie qu'un nombre est dans une range
+// @param {Number} $value - Valeur à vérifier
+// @param {Number} $min - Valeur minimum
+// @param {Number} $max - Valeur maximum
+// @param {String} $name - Nom du paramètre
 @function assert-range($value, $min, $max, $name: 'value') {
   @if $value < $min or $value > $max {
     @error "#{$name} must be between #{$min} and #{$max}, got #{$value}";
@@ -1013,7 +1013,7 @@ $z-layers: (
   @return $value;
 }
 
-// Usage dans une fonction
+/ Usage dans une fonction
 @function opacity-class($level) {
   $level: assert-type($level, 'number', '$level');
   $level: assert-range($level, 0, 100, '$level');
@@ -1025,7 +1025,7 @@ $z-layers: (
 ## 📦 Organisation des Fonctions
 
 ```scss
-// functions/_index.scss
+/ functions/_index.scss
 @forward 'units';
 @forward 'colors';
 @forward 'spacing';
@@ -1034,14 +1034,14 @@ $z-layers: (
 @forward 'z-index';
 @forward 'validation';
 
-// functions/_units.scss
+/ functions/_units.scss
 @use 'sass:math';
 
 @function px-to-rem($pixels, $base: 16px) { /* ... */ }
 @function px-to-em($pixels, $context: 16px) { /* ... */ }
 @function rem-to-px($rem, $base: 16px) { /* ... */ }
 
-// functions/_colors.scss
+/ functions/_colors.scss
 @use 'sass:color';
 
 @function generate-palette($base) { /* ... */ }
@@ -1050,8 +1050,8 @@ $z-layers: (
 @function tint($color, $percentage) { /* ... */ }
 @function shade($color, $percentage) { /* ... */ }
 
-// Utilisation
-// styles/main.scss
+/ Utilisation
+/ styles/main.scss
 @use '../functions' as fn;
 
 .element {

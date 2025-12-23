@@ -1,7 +1,7 @@
 ---
 description: Standards WebApi ASP.NET Core - Routing, Binding, Documentation, Gestion des erreurs
 name: WebApi_Standards
-applyTo: "**/backend/*Controller.cs,**/backend/*Endpoint.cs"
+applyTo: "**/Controller.cs,**/Endpoint.cs"
 ---
 
 # Instructions - Standards WebApi ASP.NET Core
@@ -75,17 +75,17 @@ applyTo: "**/backend/*Controller.cs,**/backend/*Endpoint.cs"
 - Actions sur ressources spécifiques
 
 ```csharp
-// ✅ BON : Identifiants dans la route
+/ ✅ BON : Identifiants dans la route
 [HttpGet("{collectionId:guid}")]
 public async Task<ActionResult<CollectionResponse>> GetCollection(
     [FromRoute] Guid userId,
     [FromRoute] Guid collectionId)
 
-// ❌ MAUVAIS : Identifiant en query string
+/ ❌ MAUVAIS : Identifiant en query string
 [HttpGet]
 public async Task<ActionResult<CollectionResponse>> GetCollection(
     [FromRoute] Guid userId,
-    [FromQuery] Guid collectionId)  // Crée conflit de route
+    [FromQuery] Guid collectionId)  / Crée conflit de route
 ```
 
 #### 2. `[FromBody]` - Deuxième Choix
@@ -102,19 +102,19 @@ public async Task<ActionResult<CollectionResponse>> GetCollection(
 - Données sensibles (non loggées dans les URLs)
 
 ```csharp
-// ✅ BON : Payload complexe
+/ ✅ BON : Payload complexe
 [HttpPost]
 public async Task<ActionResult<CollectionResponse>> CreateCollection(
     [FromRoute] Guid userId,
-    [FromBody] CreateCollectionRequest request)  // Objet complet
+    [FromBody] CreateCollectionRequest request)  / Objet complet
 
-// ❌ MAUVAIS : Multiples paramètres query pour données complexes
+/ ❌ MAUVAIS : Multiples paramètres query pour données complexes
 [HttpPost]
 public async Task<ActionResult<CollectionResponse>> CreateCollection(
     [FromRoute] Guid userId,
     [FromQuery] string name,
     [FromQuery] string? description,
-    [FromQuery] bool isPublic)  // Difficile à maintenir
+    [FromQuery] bool isPublic)  / Difficile à maintenir
 ```
 
 #### 3. `[FromHeader]` - Troisième Choix
@@ -132,18 +132,18 @@ public async Task<ActionResult<CollectionResponse>> CreateCollection(
 - Préférences client (`Accept-Language`, `Accept`)
 
 ```csharp
-// ✅ BON : Token dans header
+/ ✅ BON : Token dans header
 [HttpGet]
 public async Task<ActionResult> GetSecureResource(
     [FromRoute] Guid resourceId,
     [FromHeader(Name = "Authorization")] string authorization,
     [FromHeader(Name = "X-Correlation-Id")] string? correlationId = null)
 
-// ❌ MAUVAIS : Token en query string (exposition dans logs)
+/ ❌ MAUVAIS : Token en query string (exposition dans logs)
 [HttpGet]
 public async Task<ActionResult> GetSecureResource(
     [FromRoute] Guid resourceId,
-    [FromQuery] string token)  // Sécurité compromise
+    [FromQuery] string token)  / Sécurité compromise
 ```
 
 #### 4. `[FromForm]` - Quatrième Choix
@@ -159,18 +159,18 @@ public async Task<ActionResult> GetSecureResource(
 - Applications hybrides (non-SPA)
 
 ```csharp
-// ✅ BON : Upload de fichier
+/ ✅ BON : Upload de fichier
 [HttpPost]
 public async Task<ActionResult> UploadDocument(
     [FromRoute] Guid userId,
     [FromForm] IFormFile file,
     [FromForm] string? description = null)
 
-// ❌ MAUVAIS : Fichier en base64 dans body JSON
+/ ❌ MAUVAIS : Fichier en base64 dans body JSON
 [HttpPost]
 public async Task<ActionResult> UploadDocument(
     [FromRoute] Guid userId,
-    [FromBody] FileUploadRequest request)  // Base64 inefficace
+    [FromBody] FileUploadRequest request)  / Base64 inefficace
 ```
 
 #### 5. `[FromQuery]` - Cinquième Choix
@@ -188,19 +188,19 @@ public async Task<ActionResult> UploadDocument(
 - Options d'affichage (`includeDeleted`, `expand`)
 
 ```csharp
-// ✅ BON : Filtres optionnels
+/ ✅ BON : Filtres optionnels
 [HttpGet]
 public async Task<ActionResult<IEnumerable<CollectionResponse>>> GetCollections(
     [FromRoute] Guid userId,
-    [FromQuery] string? searchTerm = null,      // Filtre optionnel
-    [FromQuery] int page = 1,                   // Pagination
+    [FromQuery] string? searchTerm = null,      / Filtre optionnel
+    [FromQuery] int page = 1,                   / Pagination
     [FromQuery] int pageSize = 20)
 
-// ❌ MAUVAIS : Identifiant obligatoire en query
+/ ❌ MAUVAIS : Identifiant obligatoire en query
 [HttpGet]
 public async Task<ActionResult<CollectionResponse>> GetCollection(
     [FromRoute] Guid userId,
-    [FromQuery] Guid collectionId)  // Devrait être [FromRoute]
+    [FromQuery] Guid collectionId)  / Devrait être [FromRoute]
 ```
 
 ---
@@ -250,14 +250,14 @@ public async Task<ActionResult<CollectionResponse>> GetCollection(
 **TOUJOURS** utiliser des contraintes de type pour les identifiants :
 
 ```csharp
-// ✅ BON : Contraintes explicites
+/ ✅ BON : Contraintes explicites
 [HttpGet("{userId:guid}/collections/{collectionId:guid}")]
 public async Task<ActionResult> GetCollection(
     [FromRoute] Guid userId,
     [FromRoute] Guid collectionId)
 
-// ❌ MAUVAIS : Pas de contraintes
-[HttpGet("{userId}/collections/{collectionId}")]  // Accepte n'importe quoi
+/ ❌ MAUVAIS : Pas de contraintes
+[HttpGet("{userId}/collections/{collectionId}")]  / Accepte n'importe quoi
 ```
 
 **Contraintes disponibles :**
@@ -276,18 +276,18 @@ public async Task<ActionResult> GetCollection(
 **TOUJOURS** donner un nom unique à chaque route et spécifier l'ordre :
 
 ```csharp
-// ✅ BON : Noms uniques et ordre explicite
+/ ✅ BON : Noms uniques et ordre explicite
 [HttpGet(Name = "collections-controller-get-collections-for-user", Order = 1)]
 public async Task<ActionResult> GetCollections(...)
 
 [HttpGet("{collectionId:guid}", Name = "collections-controller-get-collection-by-id", Order = 2)]
 public async Task<ActionResult> GetCollection(...)
 
-// ❌ MAUVAIS : Pas de noms/ordre
+/ ❌ MAUVAIS : Pas de noms/ordre
 [HttpGet]
 public async Task<ActionResult> GetCollections(...)
 
-[HttpGet("{collectionId:guid}")]  // Peut créer des conflits
+[HttpGet("{collectionId:guid}")]  / Peut créer des conflits
 public async Task<ActionResult> GetCollection(...)
 ```
 
@@ -310,25 +310,25 @@ Exemples :
 **TOUJOURS** documenter chaque paramètre avec sa source de binding :
 
 ```csharp
-/// <summary>
-/// Récupère une collection spécifique pour un utilisateur donné.
-/// </summary>
-/// <remarks>
-/// Architecture flow: HttpGet → GetCollectionByIdQuery → CollectionQueryHandler → CollectionService → DbContext
-///
-/// Exemple d'utilisation :
-/// GET /v1/users/{userId}/collections/{collectionId}
-/// </remarks>
-/// <param name="userId">Identifiant unique de l'utilisateur (route). Ne peut être vide.</param>
-/// <param name="collectionId">Identifiant unique de la collection (route). Ne peut être vide.</param>
-/// <param name="cancellationToken">Token d'annulation pour les opérations asynchrones.</param>
-/// <returns>
-/// - 200 OK : Collection trouvée avec ses détails
-/// - 400 Bad Request : Identifiants invalides
-/// - 404 Not Found : Collection non trouvée
-/// - 401 Unauthorized : Non authentifié
-/// - 403 Forbidden : Accès interdit
-/// </returns>
+// <summary>
+// Récupère une collection spécifique pour un utilisateur donné.
+// </summary>
+// <remarks>
+// Architecture flow: HttpGet → GetCollectionByIdQuery → CollectionQueryHandler → CollectionService → DbContext
+//
+// Exemple d'utilisation :
+// GET /v1/users/{userId}/collections/{collectionId}
+// </remarks>
+// <param name="userId">Identifiant unique de l'utilisateur (route). Ne peut être vide.</param>
+// <param name="collectionId">Identifiant unique de la collection (route). Ne peut être vide.</param>
+// <param name="cancellationToken">Token d'annulation pour les opérations asynchrones.</param>
+// <returns>
+// - 200 OK : Collection trouvée avec ses détails
+// - 400 Bad Request : Identifiants invalides
+// - 404 Not Found : Collection non trouvée
+// - 401 Unauthorized : Non authentifié
+// - 403 Forbidden : Accès interdit
+// </returns>
 [HttpGet("{collectionId:guid}", Name = "collections-controller-get-collection-by-id", Order = 2)]
 public async Task<ActionResult<CollectionResponse>> GetCollection(
     [FromRoute] Guid userId,
@@ -351,7 +351,7 @@ public async Task<ActionResult<CollectionResponse>> GetCollection(
 **TOUJOURS** valider les identifiants avant utilisation :
 
 ```csharp
-// ✅ BON : Validation explicite
+/ ✅ BON : Validation explicite
 [HttpGet("{collectionId:guid}")]
 public async Task<ActionResult<CollectionResponse>> GetCollection(
     [FromRoute] Guid userId,
@@ -367,16 +367,16 @@ public async Task<ActionResult<CollectionResponse>> GetCollection(
         return BadRequest("L'identifiant de la collection ne peut pas être vide");
     }
     
-    // Logique métier...
+    / Logique métier...
 }
 
-// ❌ MAUVAIS : Pas de validation
+/ ❌ MAUVAIS : Pas de validation
 [HttpGet("{collectionId:guid}")]
 public async Task<ActionResult<CollectionResponse>> GetCollection(
     [FromRoute] Guid userId,
     [FromRoute] Guid collectionId)
 {
-    // Utilisation directe sans validation
+    / Utilisation directe sans validation
     var result = await _service.GetCollection(userId, collectionId);
 }
 ```
@@ -386,7 +386,7 @@ public async Task<ActionResult<CollectionResponse>> GetCollection(
 **TOUJOURS** utiliser `[Required]` et Data Annotations :
 
 ```csharp
-// ✅ BON : Validation via Data Annotations
+/ ✅ BON : Validation via Data Annotations
 public class CreateCollectionRequest
 {
     [Required(ErrorMessage = "Le nom est obligatoire")]
@@ -405,14 +405,14 @@ public async Task<ActionResult<CollectionResponse>> CreateCollection(
     [FromRoute] Guid userId,
     [FromBody] CreateCollectionRequest request)
 {
-    // ModelState est automatiquement validé par [ApiController]
-    // Pas besoin de if (!ModelState.IsValid)
+    / ModelState est automatiquement validé par [ApiController]
+    / Pas besoin de if (!ModelState.IsValid)
 }
 
-// ❌ MAUVAIS : Pas de validation
+/ ❌ MAUVAIS : Pas de validation
 public class CreateCollectionRequest
 {
-    public string Name { get; set; }  // Peut être null
+    public string Name { get; set; }  / Peut être null
     public string Description { get; set; }
 }
 ```
@@ -424,27 +424,27 @@ public class CreateCollectionRequest
 ### Exemple 1 : GET avec Identifiants Route
 
 ```csharp
-/// <summary>
-/// Récupère une collection spécifique pour un utilisateur donné.
-/// </summary>
-/// <remarks>
-/// Endpoint RESTful utilisant des identifiants dans la route pour une découvrabilité optimale.
-///
-/// Architecture flow: HttpGet → GetCollectionByIdQuery → CollectionQueryHandler → CollectionService → DbContext
-///
-/// Exemple d'utilisation :
-/// GET /v1/users/123e4567-e89b-12d3-a456-426614174000/collections/987fcdeb-51a2-43f1-b3c4-123456789abc
-/// </remarks>
-/// <param name="userId">Identifiant unique de l'utilisateur (route). Ne peut être vide.</param>
-/// <param name="collectionId">Identifiant unique de la collection (route). Ne peut être vide.</param>
-/// <param name="cancellationToken">Token d'annulation pour les opérations asynchrones.</param>
-/// <returns>
-/// - 200 OK : Collection trouvée avec ses détails
-/// - 400 Bad Request : Identifiants invalides (GUID vides)
-/// - 404 Not Found : Collection non trouvée
-/// - 401 Unauthorized : Non authentifié
-/// - 403 Forbidden : Accès interdit
-/// </returns>
+// <summary>
+// Récupère une collection spécifique pour un utilisateur donné.
+// </summary>
+// <remarks>
+// Endpoint RESTful utilisant des identifiants dans la route pour une découvrabilité optimale.
+//
+// Architecture flow: HttpGet → GetCollectionByIdQuery → CollectionQueryHandler → CollectionService → DbContext
+//
+// Exemple d'utilisation :
+// GET /v1/users/123e4567-e89b-12d3-a456-426614174000/collections/987fcdeb-51a2-43f1-b3c4-123456789abc
+// </remarks>
+// <param name="userId">Identifiant unique de l'utilisateur (route). Ne peut être vide.</param>
+// <param name="collectionId">Identifiant unique de la collection (route). Ne peut être vide.</param>
+// <param name="cancellationToken">Token d'annulation pour les opérations asynchrones.</param>
+// <returns>
+// - 200 OK : Collection trouvée avec ses détails
+// - 400 Bad Request : Identifiants invalides (GUID vides)
+// - 404 Not Found : Collection non trouvée
+// - 401 Unauthorized : Non authentifié
+// - 403 Forbidden : Accès interdit
+// </returns>
 [HttpGet("{collectionId:guid}", Name = "collections-controller-get-collection-by-id-for-user", Order = 2)]
 [Tags("User Collections")]
 [Consumes("application/json")]
@@ -459,7 +459,7 @@ public async Task<ActionResult<CollectionResponse>> GetCollection(
     [Required] [FromRoute] Guid collectionId,
     CancellationToken cancellationToken = default)
 {
-    // Validation des identifiants
+    / Validation des identifiants
     if (userId == Guid.Empty)
     {
         return BadRequest("L'identifiant de l'utilisateur ne peut pas être vide");
@@ -470,11 +470,11 @@ public async Task<ActionResult<CollectionResponse>> GetCollection(
         return BadRequest("L'identifiant de la collection ne peut pas être vide");
     }
     
-    // Exécution de la requête
+    / Exécution de la requête
     var query = new GetCollectionByIdQuery(userId) { Id = collectionId };
     var result = await _mediatorAdapter.Send(query, cancellationToken);
     
-    // Gestion des résultats
+    / Gestion des résultats
     if (result == null || !result.Success)
     {
         return result == null ? NotFound() : BadRequest(result.ErrorMessage);
@@ -492,32 +492,32 @@ public async Task<ActionResult<CollectionResponse>> GetCollection(
 ### Exemple 2 : GET avec Filtres Query
 
 ```csharp
-/// <summary>
-/// Récupère une liste paginée de collections pour un utilisateur avec filtres optionnels.
-/// </summary>
-/// <remarks>
-/// Endpoint de liste avec support de recherche, pagination et tri.
-///
-/// Architecture flow: HttpGet → GetCollectionsQuery → CollectionQueryHandler → CollectionService → DbContext
-///
-/// Exemples d'utilisation :
-/// - GET /v1/users/{userId}/collections
-/// - GET /v1/users/{userId}/collections?searchTerm=ai&page=2&pageSize=10
-/// - GET /v1/users/{userId}/collections?sortBy=name&sortOrder=desc
-/// </remarks>
-/// <param name="userId">Identifiant unique de l'utilisateur (route). Ne peut être vide.</param>
-/// <param name="searchTerm">Terme de recherche optionnel (query). Filtre sur nom et description.</param>
-/// <param name="page">Numéro de page (query). Valeur par défaut : 1.</param>
-/// <param name="pageSize">Nombre d'éléments par page (query). Valeur par défaut : 20. Maximum : 100.</param>
-/// <param name="sortBy">Champ de tri optionnel (query). Valeurs : "name", "createdAt", "updatedAt".</param>
-/// <param name="sortOrder">Ordre de tri (query). Valeurs : "asc", "desc". Valeur par défaut : "asc".</param>
-/// <param name="cancellationToken">Token d'annulation pour les opérations asynchrones.</param>
-/// <returns>
-/// - 200 OK : Liste de collections (peut être vide)
-/// - 400 Bad Request : Paramètres de pagination invalides
-/// - 401 Unauthorized : Non authentifié
-/// - 403 Forbidden : Accès interdit
-/// </returns>
+// <summary>
+// Récupère une liste paginée de collections pour un utilisateur avec filtres optionnels.
+// </summary>
+// <remarks>
+// Endpoint de liste avec support de recherche, pagination et tri.
+//
+// Architecture flow: HttpGet → GetCollectionsQuery → CollectionQueryHandler → CollectionService → DbContext
+//
+// Exemples d'utilisation :
+// - GET /v1/users/{userId}/collections
+// - GET /v1/users/{userId}/collections?searchTerm=ai&page=2&pageSize=10
+// - GET /v1/users/{userId}/collections?sortBy=name&sortOrder=desc
+// </remarks>
+// <param name="userId">Identifiant unique de l'utilisateur (route). Ne peut être vide.</param>
+// <param name="searchTerm">Terme de recherche optionnel (query). Filtre sur nom et description.</param>
+// <param name="page">Numéro de page (query). Valeur par défaut : 1.</param>
+// <param name="pageSize">Nombre d'éléments par page (query). Valeur par défaut : 20. Maximum : 100.</param>
+// <param name="sortBy">Champ de tri optionnel (query). Valeurs : "name", "createdAt", "updatedAt".</param>
+// <param name="sortOrder">Ordre de tri (query). Valeurs : "asc", "desc". Valeur par défaut : "asc".</param>
+// <param name="cancellationToken">Token d'annulation pour les opérations asynchrones.</param>
+// <returns>
+// - 200 OK : Liste de collections (peut être vide)
+// - 400 Bad Request : Paramètres de pagination invalides
+// - 401 Unauthorized : Non authentifié
+// - 403 Forbidden : Accès interdit
+// </returns>
 [HttpGet(Name = "collections-controller-get-collections-for-user", Order = 1)]
 [Tags("User Collections")]
 [Consumes("application/json")]
@@ -535,19 +535,19 @@ public async Task<ActionResult<PaginatedResponse<CollectionResponse>>> GetCollec
     [FromQuery] string sortOrder = "asc",
     CancellationToken cancellationToken = default)
 {
-    // Validation de l'identifiant utilisateur
+    / Validation de l'identifiant utilisateur
     if (userId == Guid.Empty)
     {
         return BadRequest("L'identifiant de l'utilisateur ne peut pas être vide");
     }
     
-    // Validation du tri
+    / Validation du tri
     if (sortOrder != "asc" && sortOrder != "desc")
     {
         return BadRequest("L'ordre de tri doit être 'asc' ou 'desc'");
     }
     
-    // Construction de la requête
+    / Construction de la requête
     var query = new GetCollectionsQuery
     {
         UserId = userId,
@@ -558,10 +558,10 @@ public async Task<ActionResult<PaginatedResponse<CollectionResponse>>> GetCollec
         SortOrder = sortOrder
     };
     
-    // Exécution
+    / Exécution
     var result = await _mediatorAdapter.Send(query, cancellationToken);
     
-    // Mapping des résultats
+    / Mapping des résultats
     var response = new PaginatedResponse<CollectionResponse>
     {
         Items = result.Collections.Select(MapToResponse).ToList(),
@@ -577,33 +577,33 @@ public async Task<ActionResult<PaginatedResponse<CollectionResponse>>> GetCollec
 ### Exemple 3 : POST avec Body
 
 ```csharp
-/// <summary>
-/// Crée une nouvelle collection pour un utilisateur.
-/// </summary>
-/// <remarks>
-/// Endpoint de création utilisant un payload JSON structuré.
-///
-/// Architecture flow: HttpPost → CreateCollectionCommand → CollectionCommandHandler → CollectionService → DbContext
-///
-/// Exemple de requête :
-/// POST /v1/users/{userId}/collections
-/// {
-///   "name": "Collections IA",
-///   "description": "Prompts liés à l'intelligence artificielle",
-///   "displayOrder": 1,
-///   "isPublic": false
-/// }
-/// </remarks>
-/// <param name="userId">Identifiant unique de l'utilisateur (route). Ne peut être vide.</param>
-/// <param name="request">Données de création de la collection (body). Validées automatiquement.</param>
-/// <param name="cancellationToken">Token d'annulation pour les opérations asynchrones.</param>
-/// <returns>
-/// - 201 Created : Collection créée avec succès. Header Location contient l'URL de la ressource.
-/// - 400 Bad Request : Données invalides (validation échouée)
-/// - 401 Unauthorized : Non authentifié
-/// - 403 Forbidden : Accès interdit
-/// - 409 Conflict : Collection avec ce nom existe déjà
-/// </returns>
+// <summary>
+// Crée une nouvelle collection pour un utilisateur.
+// </summary>
+// <remarks>
+// Endpoint de création utilisant un payload JSON structuré.
+//
+// Architecture flow: HttpPost → CreateCollectionCommand → CollectionCommandHandler → CollectionService → DbContext
+//
+// Exemple de requête :
+// POST /v1/users/{userId}/collections
+// {
+//   "name": "Collections IA",
+//   "description": "Prompts liés à l'intelligence artificielle",
+//   "displayOrder": 1,
+//   "isPublic": false
+// }
+// </remarks>
+// <param name="userId">Identifiant unique de l'utilisateur (route). Ne peut être vide.</param>
+// <param name="request">Données de création de la collection (body). Validées automatiquement.</param>
+// <param name="cancellationToken">Token d'annulation pour les opérations asynchrones.</param>
+// <returns>
+// - 201 Created : Collection créée avec succès. Header Location contient l'URL de la ressource.
+// - 400 Bad Request : Données invalides (validation échouée)
+// - 401 Unauthorized : Non authentifié
+// - 403 Forbidden : Accès interdit
+// - 409 Conflict : Collection avec ce nom existe déjà
+// </returns>
 [HttpPost(Name = "collections-controller-create-collection-for-user", Order = 3)]
 [Tags("User Collections")]
 [Consumes("application/json")]
@@ -618,16 +618,16 @@ public async Task<ActionResult<CollectionResponse>> CreateCollection(
     [Required] [FromBody] CreateCollectionRequest request,
     CancellationToken cancellationToken = default)
 {
-    // Validation de l'identifiant utilisateur
+    / Validation de l'identifiant utilisateur
     if (userId == Guid.Empty)
     {
         return BadRequest("L'identifiant de l'utilisateur ne peut pas être vide");
     }
     
-    // ModelState est automatiquement validé par [ApiController]
-    // Les Data Annotations sur CreateCollectionRequest sont appliquées
+    / ModelState est automatiquement validé par [ApiController]
+    / Les Data Annotations sur CreateCollectionRequest sont appliquées
     
-    // Construction de la commande
+    / Construction de la commande
     var command = new CreateCollectionCommand
     {
         UserId = userId,
@@ -637,16 +637,16 @@ public async Task<ActionResult<CollectionResponse>> CreateCollection(
         IsPublic = request.IsPublic
     };
     
-    // Exécution
+    / Exécution
     var result = await _mediatorAdapter.Send(command, cancellationToken);
     
-    // Gestion des conflits
+    / Gestion des conflits
     if (result.ErrorCode == "COLLECTION_ALREADY_EXISTS")
     {
         return Conflict("Une collection avec ce nom existe déjà");
     }
     
-    // Succès : retour 201 Created avec Location header
+    / Succès : retour 201 Created avec Location header
     var response = MapToResponse(result.Collection);
     return CreatedAtRoute(
         "collections-controller-get-collection-by-id-for-user",
@@ -658,34 +658,34 @@ public async Task<ActionResult<CollectionResponse>> CreateCollection(
 ### Modèle de Requête Body
 
 ```csharp
-/// <summary>
-/// Requête de création d'une collection.
-/// </summary>
+// <summary>
+// Requête de création d'une collection.
+// </summary>
 public class CreateCollectionRequest
 {
-    /// <summary>
-    /// Nom de la collection (obligatoire, max 100 caractères).
-    /// </summary>
+    // <summary>
+    // Nom de la collection (obligatoire, max 100 caractères).
+    // </summary>
     [Required(ErrorMessage = "Le nom est obligatoire")]
     [MaxLength(100, ErrorMessage = "Le nom ne peut dépasser 100 caractères")]
     [MinLength(1, ErrorMessage = "Le nom ne peut être vide")]
     public string Name { get; set; } = string.Empty;
     
-    /// <summary>
-    /// Description optionnelle de la collection (max 500 caractères).
-    /// </summary>
+    // <summary>
+    // Description optionnelle de la collection (max 500 caractères).
+    // </summary>
     [MaxLength(500, ErrorMessage = "La description ne peut dépasser 500 caractères")]
     public string? Description { get; set; }
     
-    /// <summary>
-    /// Ordre d'affichage (doit être positif ou nul).
-    /// </summary>
+    // <summary>
+    // Ordre d'affichage (doit être positif ou nul).
+    // </summary>
     [Range(0, int.MaxValue, ErrorMessage = "L'ordre d'affichage doit être positif ou nul")]
     public int DisplayOrder { get; set; }
     
-    /// <summary>
-    /// Indique si la collection est publique.
-    /// </summary>
+    // <summary>
+    // Indique si la collection est publique.
+    // </summary>
     public bool IsPublic { get; set; }
 }
 ```
@@ -736,13 +736,13 @@ Avant de commiter du code de contrôleur WebApi, vérifier :
 ### ❌ Anti-Pattern 1 : Identifiants en Query String
 
 ```csharp
-// ❌ MAUVAIS
+/ ❌ MAUVAIS
 [HttpGet]
 public async Task<ActionResult> GetCollection(
     [FromRoute] Guid userId,
-    [FromQuery] Guid collectionId)  // Devrait être dans la route
+    [FromQuery] Guid collectionId)  / Devrait être dans la route
 
-// ✅ BON
+/ ✅ BON
 [HttpGet("{collectionId:guid}")]
 public async Task<ActionResult> GetCollection(
     [FromRoute] Guid userId,
@@ -757,7 +757,7 @@ public async Task<ActionResult> GetCollection(
 ### ❌ Anti-Pattern 2 : Paramètres Multiples en Query pour Création
 
 ```csharp
-// ❌ MAUVAIS
+/ ❌ MAUVAIS
 [HttpPost]
 public async Task<ActionResult> CreateCollection(
     [FromRoute] Guid userId,
@@ -765,7 +765,7 @@ public async Task<ActionResult> CreateCollection(
     [FromQuery] string? description,
     [FromQuery] bool isPublic)
 
-// ✅ BON
+/ ✅ BON
 [HttpPost]
 public async Task<ActionResult> CreateCollection(
     [FromRoute] Guid userId,
@@ -780,13 +780,13 @@ public async Task<ActionResult> CreateCollection(
 ### ❌ Anti-Pattern 3 : Routes Sans Contraintes
 
 ```csharp
-// ❌ MAUVAIS
+/ ❌ MAUVAIS
 [HttpGet("{userId}/collections/{collectionId}")]
 public async Task<ActionResult> GetCollection(
     [FromRoute] Guid userId,
     [FromRoute] Guid collectionId)
 
-// ✅ BON
+/ ✅ BON
 [HttpGet("{userId:guid}/collections/{collectionId:guid}")]
 public async Task<ActionResult> GetCollection(
     [FromRoute] Guid userId,
@@ -801,17 +801,17 @@ public async Task<ActionResult> GetCollection(
 ### ❌ Anti-Pattern 4 : Pas de Validation des GUID Vides
 
 ```csharp
-// ❌ MAUVAIS
+/ ❌ MAUVAIS
 [HttpGet("{collectionId:guid}")]
 public async Task<ActionResult> GetCollection(
     [FromRoute] Guid userId,
     [FromRoute] Guid collectionId)
 {
-    // Utilisation directe sans validation
+    / Utilisation directe sans validation
     var result = await _service.GetCollection(userId, collectionId);
 }
 
-// ✅ BON
+/ ✅ BON
 [HttpGet("{collectionId:guid}")]
 public async Task<ActionResult> GetCollection(
     [FromRoute] Guid userId,
@@ -839,10 +839,10 @@ public async Task<ActionResult> GetCollection(
 
 ## 📚 RÉFÉRENCES
 
-- [Microsoft Docs - Routing in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/routing)
-- [Microsoft Docs - Model Binding](https://learn.microsoft.com/en-us/aspnet/core/mvc/models/model-binding)
-- [RESTful API Guidelines](https://restfulapi.net/)
-- [OpenAPI Specification](https://swagger.io/specification/)
+- [Microsoft Docs - Routing in ASP.NET Core](https:/learn.microsoft.com/en-us/aspnet/core/mvc/controllers/routing)
+- [Microsoft Docs - Model Binding](https:/learn.microsoft.com/en-us/aspnet/core/mvc/models/model-binding)
+- [RESTful API Guidelines](https:/restfulapi.net/)
+- [OpenAPI Specification](https:/swagger.io/specification/)
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 description: TypeScript Utilities - Utility types, helper functions, type guards, branded types
 name: TypeScript_Utilities
-applyTo: "**/frontend/utils/**/*.ts,**/frontend/helpers/**/*.ts,**/frontend/test-utils/**/*.ts"
+applyTo: "**/utils/**/*.ts,**/helpers/**/*.ts,**/test-utils/**/*.ts"
 ---
 
 # TypeScript Utilities
@@ -37,30 +37,30 @@ interface User {
   isAdmin: boolean;
 }
 
-// Partial<T> - Toutes les propriétés optionnelles
+/ Partial<T> - Toutes les propriétés optionnelles
 type PartialUser = Partial<User>;
-// { id?: string; name?: string; email?: string; age?: number; isAdmin?: boolean; }
+/ { id?: string; name?: string; email?: string; age?: number; isAdmin?: boolean; }
 
-// Required<T> - Toutes les propriétés requises
+/ Required<T> - Toutes les propriétés requises
 interface Config {
   apiUrl?: string;
   timeout?: number;
 }
 type RequiredConfig = Required<Config>;
-// { apiUrl: string; timeout: number; }
+/ { apiUrl: string; timeout: number; }
 
-// Readonly<T> - Toutes les propriétés en lecture seule
+/ Readonly<T> - Toutes les propriétés en lecture seule
 type ReadonlyUser = Readonly<User>;
 
-// Pick<T, K> - Sélectionner certaines propriétés
+/ Pick<T, K> - Sélectionner certaines propriétés
 type UserCredentials = Pick<User, 'email' | 'name'>;
-// { email: string; name: string; }
+/ { email: string; name: string; }
 
-// Omit<T, K> - Exclure certaines propriétés
+/ Omit<T, K> - Exclure certaines propriétés
 type PublicUser = Omit<User, 'isAdmin' | 'email'>;
-// { id: string; name: string; age: number; }
+/ { id: string; name: string; age: number; }
 
-// Record<K, V> - Créer un objet avec des clés K et valeurs V
+/ Record<K, V> - Créer un objet avec des clés K et valeurs V
 type UserRoles = Record<string, 'admin' | 'user' | 'guest'>;
 
 const roles: UserRoles = {
@@ -72,75 +72,75 @@ const roles: UserRoles = {
 ### Manipulation de Types
 
 ```typescript
-// Exclude<T, U> - Exclure U de T (union types)
+/ Exclude<T, U> - Exclure U de T (union types)
 type Status = 'pending' | 'approved' | 'rejected' | 'cancelled';
 type ActiveStatus = Exclude<Status, 'cancelled'>;
-// 'pending' | 'approved' | 'rejected'
+/ 'pending' | 'approved' | 'rejected'
 
-// Extract<T, U> - Extraire U de T (union types)
+/ Extract<T, U> - Extraire U de T (union types)
 type SuccessStatus = Extract<Status, 'approved' | 'pending'>;
-// 'approved' | 'pending'
+/ 'approved' | 'pending'
 
-// NonNullable<T> - Exclure null et undefined
+/ NonNullable<T> - Exclure null et undefined
 type MaybeString = string | null | undefined;
 type DefiniteString = NonNullable<MaybeString>;
-// string
+/ string
 
-// ReturnType<T> - Type de retour d'une fonction
+/ ReturnType<T> - Type de retour d'une fonction
 function createUser(name: string): User {
   return { id: '1', name, email: '', age: 0, isAdmin: false };
 }
 type CreateUserReturn = ReturnType<typeof createUser>;
-// User
+/ User
 
-// Parameters<T> - Types des paramètres d'une fonction
+/ Parameters<T> - Types des paramètres d'une fonction
 function greet(name: string, age: number): string {
   return `Hello ${name}, ${age}`;
 }
 type GreetParams = Parameters<typeof greet>;
-// [name: string, age: number]
+/ [name: string, age: number]
 
-// ConstructorParameters<T> - Paramètres d'un constructeur
+/ ConstructorParameters<T> - Paramètres d'un constructeur
 class UserClass {
   constructor(public name: string, public age: number) {}
 }
 type UserConstructorParams = ConstructorParameters<typeof UserClass>;
-// [name: string, age: number]
+/ [name: string, age: number]
 
-// InstanceType<T> - Type de l'instance d'une classe
+/ InstanceType<T> - Type de l'instance d'une classe
 type UserInstance = InstanceType<typeof UserClass>;
-// UserClass
+/ UserClass
 
-// ThisParameterType<T> - Type du paramètre this
+/ ThisParameterType<T> - Type du paramètre this
 function getUserName(this: User): string {
   return this.name;
 }
 type UserThis = ThisParameterType<typeof getUserName>;
-// User
+/ User
 
-// OmitThisParameter<T> - Fonction sans le paramètre this
+/ OmitThisParameter<T> - Fonction sans le paramètre this
 type GetUserNameFn = OmitThisParameter<typeof getUserName>;
-// () => string
+/ () => string
 ```
 
 ### Manipulation de Strings (Template Literal Types)
 
 ```typescript
-// Uppercase<T>
+/ Uppercase<T>
 type UpperStatus = Uppercase<'pending' | 'approved'>;
-// 'PENDING' | 'APPROVED'
+/ 'PENDING' | 'APPROVED'
 
-// Lowercase<T>
+/ Lowercase<T>
 type LowerStatus = Lowercase<'PENDING' | 'APPROVED'>;
-// 'pending' | 'approved'
+/ 'pending' | 'approved'
 
-// Capitalize<T>
+/ Capitalize<T>
 type CapStatus = Capitalize<'pending' | 'approved'>;
-// 'Pending' | 'Approved'
+/ 'Pending' | 'Approved'
 
-// Uncapitalize<T>
+/ Uncapitalize<T>
 type UncapStatus = Uncapitalize<'Pending' | 'Approved'>;
-// 'pending' | 'approved'
+/ 'pending' | 'approved'
 ```
 
 ## 🛠️ Utility Types Custom
@@ -162,7 +162,7 @@ type DeepRequired<T> = T extends object
   ? { [P in keyof T]-?: DeepRequired<T[P]> }
   : T;
 
-// Usage
+/ Usage
 interface NestedConfig {
   api: {
     baseUrl: string;
@@ -179,12 +179,12 @@ interface NestedConfig {
 }
 
 type PartialConfig = DeepPartial<NestedConfig>;
-// Toutes les propriétés sont optionnelles, y compris les nested
+/ Toutes les propriétés sont optionnelles, y compris les nested
 
 const config: PartialConfig = {
   api: {
-    baseUrl: 'https://api.example.com',
-    // timeout et headers sont optionnels
+    baseUrl: 'https:/api.example.com',
+    / timeout et headers sont optionnels
   },
 };
 ```
@@ -203,7 +203,7 @@ type DeepReadonly<T> = T extends (infer R)[]
       ? { readonly [P in keyof T]: DeepReadonly<T[P]> }
       : T;
 
-// Usage
+/ Usage
 interface State {
   user: {
     name: string;
@@ -219,10 +219,10 @@ const state: ImmutableState = {
   items: [{ id: '1', value: 10 }],
 };
 
-// ❌ Erreur de compilation
-// state.user.name = 'Bob';
-// state.items.push({ id: '2', value: 20 });
-// state.items[0].value = 15;
+/ ❌ Erreur de compilation
+/ state.user.name = 'Bob';
+/ state.items.push({ id: '2', value: 20 });
+/ state.items[0].value = 15;
 ```
 
 ### Nullable et NonNullableDeep
@@ -240,7 +240,7 @@ type NonNullableDeep<T> = T extends object
   ? { [P in keyof T]: NonNullableDeep<NonNullable<T[P]>> }
   : NonNullable<T>;
 
-// Usage
+/ Usage
 interface ApiResponse {
   data: {
     user: {
@@ -251,7 +251,7 @@ interface ApiResponse {
 }
 
 type CleanResponse = NonNullableDeep<ApiResponse>;
-// { data: { user: { name: string; email: string; } } }
+/ { data: { user: { name: string; email: string; } } }
 ```
 
 ### Mutable
@@ -271,7 +271,7 @@ type DeepMutable<T> = T extends object
   ? { -readonly [P in keyof T]: DeepMutable<T[P]> }
   : T;
 
-// Usage
+/ Usage
 interface ImmutableUser {
   readonly id: string;
   readonly name: string;
@@ -281,7 +281,7 @@ interface ImmutableUser {
 }
 
 type MutableUser = DeepMutable<ImmutableUser>;
-// { id: string; name: string; settings: { theme: string; } }
+/ { id: string; name: string; settings: { theme: string; } }
 ```
 
 ### PickByType et OmitByType
@@ -301,7 +301,7 @@ type OmitByType<T, V> = {
   [P in keyof T as T[P] extends V ? never : P]: T[P];
 };
 
-// Usage
+/ Usage
 interface Mixed {
   id: string;
   name: string;
@@ -311,10 +311,10 @@ interface Mixed {
 }
 
 type StringProps = PickByType<Mixed, string>;
-// { id: string; name: string; }
+/ { id: string; name: string; }
 
 type NonStringProps = OmitByType<Mixed, string>;
-// { age: number; isActive: boolean; score: number; }
+/ { age: number; isActive: boolean; score: number; }
 ```
 
 ### RequiredKeys et OptionalKeys
@@ -334,7 +334,7 @@ type OptionalKeys<T> = {
   [K in keyof T]-?: {} extends Pick<T, K> ? K : never;
 }[keyof T];
 
-// Usage
+/ Usage
 interface Form {
   required: string;
   alsoRequired: number;
@@ -343,10 +343,10 @@ interface Form {
 }
 
 type FormRequired = RequiredKeys<Form>;
-// 'required' | 'alsoRequired'
+/ 'required' | 'alsoRequired'
 
 type FormOptional = OptionalKeys<Form>;
-// 'optional' | 'maybeOptional'
+/ 'optional' | 'maybeOptional'
 ```
 
 ### FunctionKeys et NonFunctionKeys
@@ -366,7 +366,7 @@ type NonFunctionKeys<T> = {
   [K in keyof T]: T[K] extends Function ? never : K;
 }[keyof T];
 
-// Usage
+/ Usage
 interface UserService {
   id: string;
   name: string;
@@ -375,10 +375,10 @@ interface UserService {
 }
 
 type Methods = FunctionKeys<UserService>;
-// 'greet' | 'update'
+/ 'greet' | 'update'
 
 type Properties = NonFunctionKeys<UserService>;
-// 'id' | 'name'
+/ 'id' | 'name'
 ```
 
 ## 🏷️ Branded Types
@@ -390,14 +390,14 @@ type Properties = NonFunctionKeys<UserService>;
 declare const __brand: unique symbol;
 type Brand<T, B> = T & { readonly [__brand]: B };
 
-// Types branded pour IDs
+/ Types branded pour IDs
 type UserId = Brand<string, 'UserId'>;
 type PostId = Brand<string, 'PostId'>;
 type OrderId = Brand<string, 'OrderId'>;
 
-// Fonctions de création (runtime validation optionnelle)
+/ Fonctions de création (runtime validation optionnelle)
 function createUserId(id: string): UserId {
-  // Validation optionnelle
+  / Validation optionnelle
   if (!id.startsWith('usr_')) {
     throw new Error('Invalid user ID format');
   }
@@ -408,23 +408,23 @@ function createPostId(id: string): PostId {
   return id as PostId;
 }
 
-// Usage sécurisé - impossible de mélanger les types
+/ Usage sécurisé - impossible de mélanger les types
 function getUser(id: UserId): User {
-  // ...
+  / ...
 }
 
 function getPost(id: PostId): Post {
-  // ...
+  / ...
 }
 
 const userId = createUserId('usr_123');
 const postId = createPostId('post_456');
 
-getUser(userId); // ✅ OK
-// getUser(postId); // ❌ Erreur : PostId n'est pas assignable à UserId
-// getUser('usr_789'); // ❌ Erreur : string n'est pas assignable à UserId
+getUser(userId); / ✅ OK
+/ getUser(postId); / ❌ Erreur : PostId n'est pas assignable à UserId
+/ getUser('usr_789'); / ❌ Erreur : string n'est pas assignable à UserId
 
-// Types branded pour valeurs validées
+/ Types branded pour valeurs validées
 type Email = Brand<string, 'Email'>;
 type PhoneNumber = Brand<string, 'PhoneNumber'>;
 type PositiveNumber = Brand<number, 'PositiveNumber'>;
@@ -481,12 +481,12 @@ function isArray<T>(value: unknown, guard?: (item: unknown) => item is T): value
   return true;
 }
 
-// Usage
+/ Usage
 const values: unknown[] = [1, 'hello', null, { key: 'value' }];
 
-values.filter(isDefined); // (string | number | { key: string })[]
-values.filter(isString);  // string[]
-values.filter(isNumber);  // number[]
+values.filter(isDefined); / (string | number | { key: string })[]
+values.filter(isString);  / string[]
+values.filter(isNumber);  / number[]
 ```
 
 ### Type Guards pour Objets
@@ -545,7 +545,7 @@ function isAdmin(value: unknown): value is Admin {
   );
 }
 
-// Usage
+/ Usage
 function handleUser(data: unknown): void {
   if (isAdmin(data)) {
     console.log('Admin permissions:', data.permissions);
@@ -578,7 +578,7 @@ function isError<T, E>(result: Result<T, E>): result is { success: false; error:
   return result.success === false;
 }
 
-// Événements discriminés
+/ Événements discriminés
 type AppEvent =
   | { type: 'user.created'; payload: { userId: string; name: string } }
   | { type: 'user.deleted'; payload: { userId: string } }
@@ -594,7 +594,7 @@ function isEventType<T extends AppEvent['type']>(
   return event.type === type;
 }
 
-// Usage
+/ Usage
 function handleEvent(event: AppEvent): void {
   if (isEventType(event, 'user.created')) {
     console.log('New user:', event.payload.name);
@@ -975,7 +975,7 @@ function throttle<T extends (...args: unknown[]) => unknown>(
 ## 📦 Organisation des Utils
 
 ```typescript
-// utils/index.ts (barrel file)
+/ utils/index.ts (barrel file)
 export * from './array';
 export * from './object';
 export * from './string';
@@ -983,7 +983,7 @@ export * from './async';
 export * from './guards';
 export * from './types';
 
-// utils/types.ts
+/ utils/types.ts
 export type {
   DeepPartial,
   DeepRequired,
@@ -994,7 +994,7 @@ export type {
   OmitByType,
 } from './utility-types';
 
-// utils/guards.ts
+/ utils/guards.ts
 export {
   isDefined,
   isString,
@@ -1005,7 +1005,7 @@ export {
   hasProperties,
 } from './type-guards';
 
-// utils/array.ts
+/ utils/array.ts
 export {
   compact,
   unique,
@@ -1018,7 +1018,7 @@ export {
   last,
 } from './array-helpers';
 
-// utils/object.ts
+/ utils/object.ts
 export {
   pick,
   omit,
@@ -1027,7 +1027,7 @@ export {
   deepEqual,
 } from './object-helpers';
 
-// utils/string.ts
+/ utils/string.ts
 export {
   capitalize,
   toKebabCase,
@@ -1036,7 +1036,7 @@ export {
   slugify,
 } from './string-helpers';
 
-// utils/async.ts
+/ utils/async.ts
 export {
   delay,
   retry,
@@ -1049,7 +1049,7 @@ export {
 ## 🧪 Tests pour Utility Types
 
 ```typescript
-// utils/__tests__/types.test.ts
+/ utils/__tests__/types.test.ts
 import { describe, it, expectTypeOf } from 'vitest';
 import type { DeepPartial, DeepReadonly, Brand } from '../types';
 
@@ -1066,7 +1066,7 @@ describe('Utility Types', () => {
 
       type Result = DeepPartial<Nested>;
 
-      // Test de type
+      / Test de type
       const valid: Result = {};
       const alsoValid: Result = { a: {} };
       const complete: Result = { a: { b: { c: 'test' } } };
@@ -1085,11 +1085,11 @@ describe('Utility Types', () => {
       const userId = 'user_1' as UserId;
       const postId = 'post_1' as PostId;
 
-      // Ces lignes devraient causer des erreurs TypeScript
-      // @ts-expect-error - PostId n'est pas assignable à UserId
+      / Ces lignes devraient causer des erreurs TypeScript
+      / @ts-expect-error - PostId n'est pas assignable à UserId
       const _badAssignment: UserId = postId;
 
-      // @ts-expect-error - string n'est pas assignable à UserId
+      / @ts-expect-error - string n'est pas assignable à UserId
       const _badAssignment2: UserId = 'raw_string';
     });
   });

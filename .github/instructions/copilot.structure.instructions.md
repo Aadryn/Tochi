@@ -400,8 +400,8 @@ Avant de créer/modifier un fichier d'instructions :
 ## Ressources
 
 ### Documentation Officielle Microsoft
-- [Custom Instructions - VS Code](https://code.visualstudio.com/docs/copilot/customization/custom-instructions)
-- [Instructions File Format](https://code.visualstudio.com/docs/copilot/customization/custom-instructions#_instructions-file-format)
+- [Custom Instructions - VS Code](https:/code.visualstudio.com/docs/copilot/customization/custom-instructions)
+- [Instructions File Format](https:/code.visualstudio.com/docs/copilot/customization/custom-instructions#_instructions-file-format)
 
 ### Configuration VS Code
 - Setting : `github.copilot.chat.codeGeneration.useInstructionFiles`

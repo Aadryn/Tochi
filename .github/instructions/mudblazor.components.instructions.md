@@ -1,7 +1,7 @@
 ---
 description: Composants MudBlazor - AppBar, Navigation, Cards, Boutons, Tables, Formulaires, Alerts
 name: MudBlazor_Components_Patterns
-applyTo: "**/backend/Presentation/**/*.razor"
+applyTo: "**Presentation/**/*.razor"
 ---
 
 # MudBlazor - Patterns de Composants
@@ -413,7 +413,7 @@ applyTo: "**/backend/Presentation/**/*.razor"
 ### Snackbar (Code-behind)
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 [Inject] private ISnackbar Snackbar { get; set; }
 [Inject] private IStringLocalizer<SharedResources> Localizer { get; set; }
 
@@ -527,10 +527,10 @@ private void ShowError(string message)
 ## 📚 Ressources
 
 ### Documentation Officielle
-- [MudBlazor Components](https://mudblazor.com/components)
-- [MudAppBar](https://mudblazor.com/components/appbar)
-- [MudDrawer](https://mudblazor.com/components/drawer)
-- [MudButton](https://mudblazor.com/components/button)
-- [MudTable](https://mudblazor.com/components/table)
-- [MudDataGrid](https://mudblazor.com/components/datagrid)
-- [MudForm](https://mudblazor.com/components/form)
+- [MudBlazor Components](https:/mudblazor.com/components)
+- [MudAppBar](https:/mudblazor.com/components/appbar)
+- [MudDrawer](https:/mudblazor.com/components/drawer)
+- [MudButton](https:/mudblazor.com/components/button)
+- [MudTable](https:/mudblazor.com/components/table)
+- [MudDataGrid](https:/mudblazor.com/components/datagrid)
+- [MudForm](https:/mudblazor.com/components/form)

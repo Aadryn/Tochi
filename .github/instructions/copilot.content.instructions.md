@@ -184,7 +184,7 @@ wrong_example: "bad"
 **Langage typé :**
 
 ```typescript
-// ✅ Bon - Types explicites et documentation
+/ ✅ Bon - Types explicites et documentation
 function calculateTotal(price: number, quantity: number): number {
     /**
      * Calculate total price for items.
@@ -195,7 +195,7 @@ function calculateTotal(price: number, quantity: number): number {
     return price * quantity;
 }
 
-// ❌ Mauvais - Pas de types, pas de documentation
+/ ❌ Mauvais - Pas de types, pas de documentation
 function calculateTotal(price, quantity) {
     return price * quantity;
 }
@@ -462,14 +462,14 @@ Avant de considérer le travail terminé :
 ## Ressources et Références
 
 ### Documentation Officielle
-- [Lien 1 - Titre descriptif](https://example.com/doc1)
-- [Lien 2 - Titre descriptif](https://example.com/doc2)
+- [Lien 1 - Titre descriptif](https:/example.com/doc1)
+- [Lien 2 - Titre descriptif](https:/example.com/doc2)
 
 ### Standards et Conventions
-- [Standard XYZ](https://example.com/standard)
+- [Standard XYZ](https:/example.com/standard)
 
 ### Outils
-- [Outil de validation](https://example.com/tool)
+- [Outil de validation](https:/example.com/tool)
 ```
 
 ## Contexte et Justification
@@ -657,9 +657,9 @@ test-idempotence  # Vérifie automatiquement
 ## Ressources
 
 ### Documentation Officielle
-- [Markdown Guide](https://www.markdownguide.org/)
-- [GitHub Flavored Markdown](https://github.github.com/gfm/)
+- [Markdown Guide](https:/www.markdownguide.org/)
+- [GitHub Flavored Markdown](https:/github.github.com/gfm/)
 
 ### Style Guides
-- [Microsoft Writing Style Guide](https://learn.microsoft.com/en-us/style-guide/welcome/)
-- [Google Developer Documentation Style Guide](https://developers.google.com/style)
+- [Microsoft Writing Style Guide](https:/learn.microsoft.com/en-us/style-guide/welcome/)
+- [Google Developer Documentation Style Guide](https:/developers.google.com/style)

@@ -1,7 +1,7 @@
 ---
 description: Architecture de composants MudBlazor - Découpage, responsabilité unique, state management, performance
 name: MudBlazor_Architecture
-applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.cs"
+applyTo: "**Presentation/**/*.razor,**Presentation/**/*.razor.cs"
 ---
 
 # MudBlazor - Architecture et Découpage des Composants
@@ -176,7 +176,7 @@ Chip de statistique avec icône et valeur numérique.
 ```
 
 ```csharp
-// StatChip.razor.cs
+/ StatChip.razor.cs
 namespace GroupeAdp.GenAi.Components.Foundation;
 
 public partial class StatChip
@@ -209,7 +209,7 @@ public partial class StatChip
 ```
 
 ```csharp
-// Code-behind
+/ Code-behind
 [Inject] private IStringLocalizer<SharedResources> Localizer { get; set; }
 
 private MudForm form;
@@ -220,7 +220,7 @@ private async Task SubmitAsync()
   await form.Validate();
   if (!isValid) return;
   
-  // Traitement
+  / Traitement
   await SaveAsync();
 }
 ```
@@ -228,13 +228,13 @@ private async Task SubmitAsync()
 ### EventCallback pour Communication
 
 ```csharp
-// ✅ TOUJOURS utiliser EventCallback au lieu de Action/Func
+/ ✅ TOUJOURS utiliser EventCallback au lieu de Action/Func
 [Parameter] public EventCallback<string> OnSearchChanged { get; set; }
 [Parameter] public EventCallback<PromptDto> OnItemSelected { get; set; }
 
 private async Task HandleSearchAsync(string searchTerm)
 {
-  // InvokeAsync pour contexte Blazor synchrone
+  / InvokeAsync pour contexte Blazor synchrone
   await OnSearchChanged.InvokeAsync(searchTerm);
 }
 
@@ -253,7 +253,7 @@ private async Task HandleItemClickAsync(PromptDto item)
 @code {
   private async Task HandleSearchAsync(string searchTerm)
   {
-    // Traiter la recherche
+    / Traiter la recherche
     await LoadItemsAsync(searchTerm);
   }
 }
@@ -262,7 +262,7 @@ private async Task HandleItemClickAsync(PromptDto item)
 ### ViewModels pour États Complexes
 
 ```csharp
-// Services/ViewModels/PromptListViewModel.cs
+/ Services/ViewModels/PromptListViewModel.cs
 public class PromptListViewModel
 {
   public string SearchTerm { get; set; } = string.Empty;
@@ -275,12 +275,12 @@ public class PromptListViewModel
 ```
 
 ```csharp
-// Composant - Injection scoped
+/ Composant - Injection scoped
 [Inject] private PromptListViewModel ViewModel { get; set; }
 
 protected override void OnInitialized()
 {
-  // Le ViewModel persiste entre navigations dans la même portée
+  / Le ViewModel persiste entre navigations dans la même portée
   searchTerm = ViewModel.SearchTerm;
   currentPage = ViewModel.CurrentPage;
 }
@@ -288,7 +288,7 @@ protected override void OnInitialized()
 private async Task HandleSearchAsync(string term)
 {
   ViewModel.SearchTerm = term;
-  ViewModel.CurrentPage = 1; // Reset pagination
+  ViewModel.CurrentPage = 1; / Reset pagination
   await LoadItemsAsync();
 }
 ```
@@ -317,7 +317,7 @@ private async Task HandleSearchAsync(string term)
 ```
 
 ```csharp
-// Code-behind
+/ Code-behind
 private async Task<GridData<PromptDto>> LoadDataAsync(GridState<PromptDto> state)
 {
   var items = await _service.GetPagedAsync(
@@ -338,16 +338,16 @@ private async Task<GridData<PromptDto>> LoadDataAsync(GridState<PromptDto> state
 ### Contrôle des Re-renders
 
 ```csharp
-// Code-behind
+/ Code-behind
 protected override bool ShouldRender()
 {
-  // Rendre seulement si paramètres critiques ont changé
+  / Rendre seulement si paramètres critiques ont changé
   return _dataChanged || _stateChanged;
 }
 
 protected override void OnParametersSet()
 {
-  // Détecter les changements de paramètres
+  / Détecter les changements de paramètres
   if (Items != _previousItems)
   {
     _dataChanged = true;
@@ -367,12 +367,12 @@ protected override void OnParametersSet()
 ```
 
 ```csharp
-// Code-behind
+/ Code-behind
 private string searchTerm = string.Empty;
 
 private async Task HandleSearchAsync(string term)
 {
-  // Exécuté 500ms après la dernière frappe
+  / Exécuté 500ms après la dernière frappe
   await LoadItemsAsync(term);
 }
 ```
@@ -394,13 +394,13 @@ private async Task HandleSearchAsync(string term)
 ### Validation et Sanitation
 
 ```csharp
-// ❌ JAMAIS afficher du HTML non maîtrisé
+/ ❌ JAMAIS afficher du HTML non maîtrisé
 <MudText>@((MarkupString)userInput)</MudText>  <!-- DANGEREUX -->
 
-// ✅ TOUJOURS valider et échapper
+/ ✅ TOUJOURS valider et échapper
 <MudText>@userInput</MudText>  <!-- Échappé automatiquement -->
 
-// ✅ TOUJOURS utiliser DataAnnotations
+/ ✅ TOUJOURS utiliser DataAnnotations
 public class PromptCreateModel
 {
   [Required(ErrorMessage = "Title is required")]
@@ -419,14 +419,14 @@ public class PromptCreateModel
 ### Gestion des Secrets
 
 ```csharp
-// ❌ Ne JAMAIS logger d'informations sensibles
+/ ❌ Ne JAMAIS logger d'informations sensibles
 _logger.LogInformation("User {Email} logged in with password {Password}", email, password);
 
-// ✅ Logger uniquement des substituts
+/ ✅ Logger uniquement des substituts
 _logger.LogInformation("User {UserId} logged in successfully", userId);
 
-// ✅ Chiffrer les secrets côté serveur
-// ✅ Manipuler uniquement des ReferenceId côté composant
+/ ✅ Chiffrer les secrets côté serveur
+/ ✅ Manipuler uniquement des ReferenceId côté composant
 [Parameter] public string ApiKeyReferenceId { get; set; }
 ```
 
@@ -464,7 +464,7 @@ _logger.LogInformation("User {UserId} logged in successfully", userId);
 ### Tests avec bUnit
 
 ```csharp
-// Tests/Components/StatChipTests.cs
+/ Tests/Components/StatChipTests.cs
 using Bunit;
 using FluentAssertions;
 using Xunit;
@@ -479,18 +479,18 @@ public class StatChipTests : TestContext
   [Fact]
   public void StatChip_ShouldRender_WithCorrectValue()
   {
-    // Arrange
+    / Arrange
     var icon = Icons.Material.Filled.Collections;
     var value = 156;
     var label = "Collections";
     
-    // Act
+    / Act
     var cut = RenderComponent<StatChip>(parameters => parameters
       .Add(p => p.Icon, icon)
       .Add(p => p.Value, value)
       .Add(p => p.Label, label));
     
-    // Assert
+    / Assert
     cut.Find("[data-test='chip-value']").TextContent.Should().Be("156");
     cut.Find("[data-test='chip-label']").TextContent.Should().Be("Collections");
   }
@@ -498,13 +498,13 @@ public class StatChipTests : TestContext
   [Fact]
   public void StatChip_ShouldUse_DefaultColor_WhenNotSpecified()
   {
-    // Arrange & Act
+    / Arrange & Act
     var cut = RenderComponent<StatChip>(parameters => parameters
       .Add(p => p.Icon, Icons.Material.Filled.Info)
       .Add(p => p.Value, 10)
       .Add(p => p.Label, "Test"));
     
-    // Assert
+    / Assert
     var chip = cut.FindComponent<MudChip<string>>();
     chip.Instance.Color.Should().Be(Color.Info);
   }
@@ -571,11 +571,11 @@ public class StatChipTests : TestContext
 ## 📚 Ressources
 
 ### Documentation Officielle
-- [Blazor Component Lifecycle](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/lifecycle)
-- [Blazor Event Handling](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/event-handling)
-- [bUnit Documentation](https://bunit.dev/)
-- [FluentValidation with Blazor](https://docs.fluentvalidation.net/en/latest/blazor.html)
+- [Blazor Component Lifecycle](https:/learn.microsoft.com/en-us/aspnet/core/blazor/components/lifecycle)
+- [Blazor Event Handling](https:/learn.microsoft.com/en-us/aspnet/core/blazor/components/event-handling)
+- [bUnit Documentation](https:/bunit.dev/)
+- [FluentValidation with Blazor](https:/docs.fluentvalidation.net/en/latest/blazor.html)
 
 ### Patterns et Best Practices
-- [Component Architecture Guidelines](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/)
-- [State Management in Blazor](https://learn.microsoft.com/en-us/aspnet/core/blazor/state-management)
+- [Component Architecture Guidelines](https:/learn.microsoft.com/en-us/aspnet/core/blazor/components/)
+- [State Management in Blazor](https:/learn.microsoft.com/en-us/aspnet/core/blazor/state-management)

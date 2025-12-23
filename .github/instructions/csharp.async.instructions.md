@@ -1,7 +1,7 @@
 ---
 description: Asynchronous C# programming - async/await, Task, parallelism, cancellation, best practices
 name: CSharp_Async_Programming
-applyTo: "**/backend/*Service.cs,**/backend/*Handler.cs,**/backend/*Repository.cs,**/backend/*Controller.cs"
+applyTo: "**/Service.cs,**/Handler.cs,**/Repository.cs,**/Controller.cs"
 ---
 
 # Programmation Asynchrone C# - Guide Complet
@@ -34,51 +34,51 @@ Guide exhaustif pour maîtriser `async`/`await`, `Task`, parallélisme, cancella
 
 1. ✅ **Async tout le long** : Si une méthode appelle du code async, elle DOIT être async
    ```csharp
-   // ✅ BON - Async propagé
+   / ✅ BON - Async propagé
    public async Task<User> GetUserAsync(Guid id)
    {
        return await _repository.GetByIdAsync(id);
    }
    
-   // ❌ MAUVAIS - Bloque le thread
+   / ❌ MAUVAIS - Bloque le thread
    public User GetUser(Guid id)
    {
-       return _repository.GetByIdAsync(id).Result;  // ❌ Deadlock potentiel
+       return _repository.GetByIdAsync(id).Result;  / ❌ Deadlock potentiel
    }
    ```
 
 2. ✅ **Suffixe Async OBLIGATOIRE** : Toute méthode async DOIT se terminer par `Async`
    ```csharp
-   // ✅ BON
+   / ✅ BON
    public async Task<User> GetUserAsync(Guid id)
    public async Task SendEmailAsync(string to, string subject)
    public async Task<bool> ValidateAsync(User user)
    
-   // ❌ MAUVAIS - Manque le suffixe
+   / ❌ MAUVAIS - Manque le suffixe
    public async Task<User> GetUser(Guid id)
    ```
 
 3. ✅ **CancellationToken partout** : Toute méthode async publique DOIT accepter un `CancellationToken`
    ```csharp
-   // ✅ BON
+   / ✅ BON
    public async Task<User> GetUserAsync(Guid id, CancellationToken cancellationToken = default)
    {
        return await _repository.GetByIdAsync(id, cancellationToken);
    }
    
-   // ❌ MAUVAIS - Pas de CancellationToken
+   / ❌ MAUVAIS - Pas de CancellationToken
    public async Task<User> GetUserAsync(Guid id)
    ```
 
 4. ✅ **ConfigureAwait(false) UNIQUEMENT en bibliothèques** : Pas dans applications ASP.NET/Blazor
    ```csharp
-   // ✅ BON - Application ASP.NET/Blazor
+   / ✅ BON - Application ASP.NET/Blazor
    public async Task<User> GetUserAsync(Guid id)
    {
-       return await _repository.GetByIdAsync(id);  // Pas de ConfigureAwait
+       return await _repository.GetByIdAsync(id);  / Pas de ConfigureAwait
    }
    
-   // ✅ BON - Bibliothèque réutilisable
+   / ✅ BON - Bibliothèque réutilisable
    public async Task<string> ReadFileAsync(string path)
    {
        return await File.ReadAllTextAsync(path).ConfigureAwait(false);
@@ -87,38 +87,38 @@ Guide exhaustif pour maîtriser `async`/`await`, `Task`, parallélisme, cancella
 
 5. ✅ **JAMAIS .Result ou .Wait()** : Toujours utiliser `await`
    ```csharp
-   // ❌ MAUVAIS - Risque de deadlock
+   / ❌ MAUVAIS - Risque de deadlock
    var user = GetUserAsync(id).Result;
    GetUserAsync(id).Wait();
    
-   // ✅ BON
+   / ✅ BON
    var user = await GetUserAsync(id);
    ```
 
 6. ✅ **ValueTask pour optimisation uniquement** : Utiliser `Task` par défaut
    ```csharp
-   // ✅ BON - Cas général
+   / ✅ BON - Cas général
    public async Task<User> GetUserAsync(Guid id)
    
-   // ✅ BON - Optimisation si souvent synchrone
+   / ✅ BON - Optimisation si souvent synchrone
    public ValueTask<User> GetCachedUserAsync(Guid id)
    {
        if (_cache.TryGetValue(id, out var user))
-           return new ValueTask<User>(user);  // Synchrone
+           return new ValueTask<User>(user);  / Synchrone
        
-       return new ValueTask<User>(LoadUserAsync(id));  // Asynchrone
+       return new ValueTask<User>(LoadUserAsync(id));  / Asynchrone
    }
    ```
 
 7. ✅ **Exceptions propagées automatiquement** : Ne pas wrapper dans try-catch sans raison
    ```csharp
-   // ✅ BON - Exception propagée naturellement
+   / ✅ BON - Exception propagée naturellement
    public async Task<User> GetUserAsync(Guid id, CancellationToken cancellationToken)
    {
        return await _repository.GetByIdAsync(id, cancellationToken);
    }
    
-   // ❌ MAUVAIS - Wrapper inutile
+   / ❌ MAUVAIS - Wrapper inutile
    public async Task<User> GetUserAsync(Guid id)
    {
        try
@@ -127,7 +127,7 @@ Guide exhaustif pour maîtriser `async`/`await`, `Task`, parallélisme, cancella
        }
        catch (Exception ex)
        {
-           throw;  // Inutile, se propage automatiquement
+           throw;  / Inutile, se propage automatiquement
        }
    }
    ```
@@ -137,7 +137,7 @@ Guide exhaustif pour maîtriser `async`/`await`, `Task`, parallélisme, cancella
 ### Quand Utiliser Task (99% des cas)
 
 ```csharp
-// ✅ BON - Cas standard avec Task<T>
+/ ✅ BON - Cas standard avec Task<T>
 public async Task<User> GetUserAsync(Guid id, CancellationToken cancellationToken = default)
 {
     var user = await _context.Users
@@ -149,33 +149,33 @@ public async Task<User> GetUserAsync(Guid id, CancellationToken cancellationToke
     return user;
 }
 
-// ✅ BON - Task sans valeur de retour
+/ ✅ BON - Task sans valeur de retour
 public async Task SendNotificationAsync(User user, CancellationToken cancellationToken = default)
 {
     await _emailService.SendAsync(user.Email, "Welcome!", cancellationToken);
     await _smsService.SendAsync(user.PhoneNumber, "Welcome!", cancellationToken);
 }
 
-// ✅ BON - Task.FromResult pour retour synchrone
+/ ✅ BON - Task.FromResult pour retour synchrone
 public Task<int> GetCachedCountAsync()
 {
-    return Task.FromResult(_cachedCount);  // Pas besoin d'async/await
+    return Task.FromResult(_cachedCount);  / Pas besoin d'async/await
 }
 ```
 
 ### Quand Utiliser ValueTask (cas avancés)
 
 ```csharp
-// ✅ BON - ValueTask si souvent synchrone (cache)
+/ ✅ BON - ValueTask si souvent synchrone (cache)
 public ValueTask<User> GetUserAsync(Guid id, CancellationToken cancellationToken = default)
 {
-    // Cas 1 : Valeur en cache (synchrone)
+    / Cas 1 : Valeur en cache (synchrone)
     if (_cache.TryGetValue(id, out var cachedUser))
     {
         return new ValueTask<User>(cachedUser);
     }
     
-    // Cas 2 : Chargement depuis DB (asynchrone)
+    / Cas 2 : Chargement depuis DB (asynchrone)
     return new ValueTask<User>(LoadUserFromDatabaseAsync(id, cancellationToken));
 }
 
@@ -191,7 +191,7 @@ private async Task<User> LoadUserFromDatabaseAsync(Guid id, CancellationToken ca
     return user;
 }
 
-// ✅ BON - ValueTask pour interfaces haute performance
+/ ✅ BON - ValueTask pour interfaces haute performance
 public interface IHighPerformanceRepository<T>
 {
     ValueTask<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
@@ -206,12 +206,12 @@ public interface IHighPerformanceRepository<T>
 - Si doute, utiliser Task
 
 ```csharp
-// ❌ MAUVAIS - ValueTask utilisé plusieurs fois
+/ ❌ MAUVAIS - ValueTask utilisé plusieurs fois
 var task = GetUserAsync(id);
-var user1 = await task;  // ❌ Première utilisation OK
-var user2 = await task;  // ❌ ERREUR - Réutilisation interdite
+var user1 = await task;  / ❌ Première utilisation OK
+var user2 = await task;  / ❌ ERREUR - Réutilisation interdite
 
-// ✅ BON - Convertir en Task si besoin de réutilisation
+/ ✅ BON - Convertir en Task si besoin de réutilisation
 var task = GetUserAsync(id).AsTask();
 var user1 = await task;
 var user2 = await task;
@@ -222,19 +222,19 @@ var user2 = await task;
 ### Task.WhenAll - Exécution Parallèle
 
 ```csharp
-// ✅ BON - Parallélisme avec Task.WhenAll
+/ ✅ BON - Parallélisme avec Task.WhenAll
 public async Task<UserDetails> GetUserDetailsAsync(Guid userId, CancellationToken cancellationToken = default)
 {
-    // Lancer toutes les requêtes en parallèle
+    / Lancer toutes les requêtes en parallèle
     var userTask = _userRepository.GetByIdAsync(userId, cancellationToken);
     var ordersTask = _orderRepository.GetByUserIdAsync(userId, cancellationToken);
     var addressesTask = _addressRepository.GetByUserIdAsync(userId, cancellationToken);
     var preferencesTask = _preferencesRepository.GetByUserIdAsync(userId, cancellationToken);
     
-    // Attendre que TOUTES soient terminées
+    / Attendre que TOUTES soient terminées
     await Task.WhenAll(userTask, ordersTask, addressesTask, preferencesTask);
     
-    // Récupérer les résultats
+    / Récupérer les résultats
     return new UserDetails
     {
         User = await userTask,
@@ -244,19 +244,19 @@ public async Task<UserDetails> GetUserDetailsAsync(Guid userId, CancellationToke
     };
 }
 
-// ❌ MAUVAIS - Séquentiel au lieu de parallèle
+/ ❌ MAUVAIS - Séquentiel au lieu de parallèle
 public async Task<UserDetails> GetUserDetailsAsync(Guid userId)
 {
-    var user = await _userRepository.GetByIdAsync(userId);          // 100ms
-    var orders = await _orderRepository.GetByUserIdAsync(userId);   // 100ms
-    var addresses = await _addressRepository.GetByUserIdAsync(userId); // 100ms
-    var preferences = await _preferencesRepository.GetByUserIdAsync(userId); // 100ms
-    // Total : 400ms au lieu de 100ms !
+    var user = await _userRepository.GetByIdAsync(userId);          / 100ms
+    var orders = await _orderRepository.GetByUserIdAsync(userId);   / 100ms
+    var addresses = await _addressRepository.GetByUserIdAsync(userId); / 100ms
+    var preferences = await _preferencesRepository.GetByUserIdAsync(userId); / 100ms
+    / Total : 400ms au lieu de 100ms !
     
     return new UserDetails { User = user, Orders = orders, Addresses = addresses, Preferences = preferences };
 }
 
-// ✅ BON - Gestion des erreurs avec Task.WhenAll
+/ ✅ BON - Gestion des erreurs avec Task.WhenAll
 public async Task<UserDetails> GetUserDetailsAsync(Guid userId, CancellationToken cancellationToken = default)
 {
     var userTask = _userRepository.GetByIdAsync(userId, cancellationToken);
@@ -269,8 +269,8 @@ public async Task<UserDetails> GetUserDetailsAsync(Guid userId, CancellationToke
     }
     catch (Exception ex)
     {
-        // Task.WhenAll lève la première exception
-        // Pour récupérer TOUTES les exceptions :
+        / Task.WhenAll lève la première exception
+        / Pour récupérer TOUTES les exceptions :
         var exceptions = new[] { userTask, ordersTask, addressesTask }
             .Where(t => t.IsFaulted)
             .SelectMany(t => t.Exception?.InnerExceptions ?? Enumerable.Empty<Exception>())
@@ -294,7 +294,7 @@ public async Task<UserDetails> GetUserDetailsAsync(Guid userId, CancellationToke
 ### Task.WhenAny - Course de Tâches
 
 ```csharp
-// ✅ BON - Timeout avec Task.WhenAny
+/ ✅ BON - Timeout avec Task.WhenAny
 public async Task<User> GetUserWithTimeoutAsync(Guid id, TimeSpan timeout, CancellationToken cancellationToken = default)
 {
     var userTask = _repository.GetByIdAsync(id, cancellationToken);
@@ -310,7 +310,7 @@ public async Task<User> GetUserWithTimeoutAsync(Guid id, TimeSpan timeout, Cance
     return await userTask;
 }
 
-// ✅ BON - Fallback avec WhenAny
+/ ✅ BON - Fallback avec WhenAny
 public async Task<Product> GetProductAsync(string productId, CancellationToken cancellationToken = default)
 {
     var primaryTask = _primaryService.GetProductAsync(productId, cancellationToken);
@@ -328,7 +328,7 @@ public async Task<Product> GetProductAsync(string productId, CancellationToken c
     {
         _logger.LogWarning(ex, "Primary service failed, trying fallback");
         
-        // Essayer l'autre tâche
+        / Essayer l'autre tâche
         var otherTask = completedTask == primaryTask ? fallbackTask : primaryTask;
         return await otherTask;
     }
@@ -338,7 +338,7 @@ public async Task<Product> GetProductAsync(string productId, CancellationToken c
 ### Parallel.ForEachAsync - Traitement Parallèle Contrôlé
 
 ```csharp
-// ✅ BON - Parallel.ForEachAsync pour traiter collection en parallèle
+/ ✅ BON - Parallel.ForEachAsync pour traiter collection en parallèle
 public async Task ProcessUsersAsync(
     IEnumerable<User> users, 
     int maxDegreeOfParallelism = 10,
@@ -356,24 +356,24 @@ public async Task ProcessUsersAsync(
     });
 }
 
-// ❌ MAUVAIS - Tout séquentiel
+/ ❌ MAUVAIS - Tout séquentiel
 public async Task ProcessUsersAsync(IEnumerable<User> users)
 {
-    foreach (var user in users)  // ❌ Un par un
+    foreach (var user in users)  / ❌ Un par un
     {
         await ProcessUserAsync(user);
     }
 }
 
-// ❌ MAUVAIS - Task.WhenAll avec trop de tâches simultanées
+/ ❌ MAUVAIS - Task.WhenAll avec trop de tâches simultanées
 public async Task ProcessUsersAsync(IEnumerable<User> users)
 {
     var tasks = users.Select(u => ProcessUserAsync(u));
-    await Task.WhenAll(tasks);  // ❌ Peut créer 10 000 tâches simultanées !
+    await Task.WhenAll(tasks);  / ❌ Peut créer 10 000 tâches simultanées !
 }
 
-// ✅ BON - SemaphoreSlim pour limiter concurrence
-private readonly SemaphoreSlim _semaphore = new(10);  // Max 10 simultanées
+/ ✅ BON - SemaphoreSlim pour limiter concurrence
+private readonly SemaphoreSlim _semaphore = new(10);  / Max 10 simultanées
 
 public async Task ProcessUsersAsync(IEnumerable<User> users, CancellationToken cancellationToken = default)
 {
@@ -397,7 +397,7 @@ public async Task ProcessUsersAsync(IEnumerable<User> users, CancellationToken c
 ### Channels - Producteur/Consommateur
 
 ```csharp
-// ✅ BON - Pattern producteur/consommateur avec Channels
+/ ✅ BON - Pattern producteur/consommateur avec Channels
 public async Task ProcessOrdersAsync(CancellationToken cancellationToken = default)
 {
     var channel = Channel.CreateBounded<Order>(new BoundedChannelOptions(100)
@@ -405,7 +405,7 @@ public async Task ProcessOrdersAsync(CancellationToken cancellationToken = defau
         FullMode = BoundedChannelFullMode.Wait
     });
     
-    // Producteur
+    / Producteur
     var producerTask = Task.Run(async () =>
     {
         await foreach (var order in _orderStream.ReadAllAsync(cancellationToken))
@@ -416,7 +416,7 @@ public async Task ProcessOrdersAsync(CancellationToken cancellationToken = defau
         channel.Writer.Complete();
     }, cancellationToken);
     
-    // Consommateurs (plusieurs en parallèle)
+    / Consommateurs (plusieurs en parallèle)
     var consumerTasks = Enumerable.Range(0, 5).Select(_ => Task.Run(async () =>
     {
         await foreach (var order in channel.Reader.ReadAllAsync(cancellationToken))
@@ -435,23 +435,23 @@ public async Task ProcessOrdersAsync(CancellationToken cancellationToken = defau
 ### Utilisation Correcte de CancellationToken
 
 ```csharp
-// ✅ BON - CancellationToken propagé partout
+/ ✅ BON - CancellationToken propagé partout
 public async Task<List<User>> SearchUsersAsync(
     string query, 
     CancellationToken cancellationToken = default)
 {
-    // Vérification rapide au début
+    / Vérification rapide au début
     cancellationToken.ThrowIfCancellationRequested();
     
     var users = await _context.Users
         .Where(u => u.Name.Contains(query))
-        .ToListAsync(cancellationToken);  // Passe le token à EF Core
+        .ToListAsync(cancellationToken);  / Passe le token à EF Core
     
     var enrichedUsers = new List<User>();
     
     foreach (var user in users)
     {
-        // Vérification dans les boucles longues
+        / Vérification dans les boucles longues
         cancellationToken.ThrowIfCancellationRequested();
         
         var details = await _detailsService.GetDetailsAsync(user.Id, cancellationToken);
@@ -462,16 +462,16 @@ public async Task<List<User>> SearchUsersAsync(
     return enrichedUsers;
 }
 
-// ❌ MAUVAIS - CancellationToken ignoré
+/ ❌ MAUVAIS - CancellationToken ignoré
 public async Task<List<User>> SearchUsersAsync(string query)
 {
     var users = await _context.Users
         .Where(u => u.Name.Contains(query))
-        .ToListAsync();  // ❌ Pas de cancellation
+        .ToListAsync();  / ❌ Pas de cancellation
     
     foreach (var user in users)
     {
-        var details = await _detailsService.GetDetailsAsync(user.Id);  // ❌ Pas de cancellation
+        var details = await _detailsService.GetDetailsAsync(user.Id);  / ❌ Pas de cancellation
         user.Details = details;
     }
     
@@ -482,7 +482,7 @@ public async Task<List<User>> SearchUsersAsync(string query)
 ### Créer et Gérer CancellationToken
 
 ```csharp
-// ✅ BON - CancellationTokenSource avec timeout
+/ ✅ BON - CancellationTokenSource avec timeout
 public async Task<User> GetUserWithTimeoutAsync(Guid id)
 {
     using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -497,7 +497,7 @@ public async Task<User> GetUserWithTimeoutAsync(Guid id)
     }
 }
 
-// ✅ BON - Combiner plusieurs CancellationToken
+/ ✅ BON - Combiner plusieurs CancellationToken
 public async Task<User> GetUserAsync(
     Guid id, 
     CancellationToken requestToken,
@@ -508,7 +508,7 @@ public async Task<User> GetUserAsync(
     return await _repository.GetByIdAsync(id, cts.Token);
 }
 
-// ✅ BON - Annulation manuelle
+/ ✅ BON - Annulation manuelle
 public class UserService
 {
     private CancellationTokenSource? _backgroundTaskCts;
@@ -535,12 +535,12 @@ public class UserService
     }
 }
 
-// ✅ BON - Enregistrer callback d'annulation
+/ ✅ BON - Enregistrer callback d'annulation
 public async Task DownloadFileAsync(string url, string path, CancellationToken cancellationToken = default)
 {
     using var client = new HttpClient();
     
-    // Enregistrer action de nettoyage si annulation
+    / Enregistrer action de nettoyage si annulation
     using var registration = cancellationToken.Register(() =>
     {
         if (File.Exists(path))
@@ -564,27 +564,27 @@ public async Task DownloadFileAsync(string url, string path, CancellationToken c
 ### Éviter les Allocations Inutiles
 
 ```csharp
-// ✅ BON - Pas d'async/await si simple return
+/ ✅ BON - Pas d'async/await si simple return
 public Task<User> GetByIdAsync(Guid id)
 {
     return _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-    // Pas besoin d'async/await, retourne directement la Task
+    / Pas besoin d'async/await, retourne directement la Task
 }
 
-// ❌ MAUVAIS - async/await inutile
+/ ❌ MAUVAIS - async/await inutile
 public async Task<User> GetByIdAsync(Guid id)
 {
     return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-    // Crée une state machine inutilement
+    / Crée une state machine inutilement
 }
 
-// ✅ EXCEPTION - async nécessaire pour try-catch
+/ ✅ EXCEPTION - async nécessaire pour try-catch
 public async Task<User> GetByIdAsync(Guid id)
 {
     try
     {
         return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-        // async/await nécessaire pour catcher l'exception ici
+        / async/await nécessaire pour catcher l'exception ici
     }
     catch (DbException ex)
     {
@@ -593,19 +593,19 @@ public async Task<User> GetByIdAsync(Guid id)
     }
 }
 
-// ✅ EXCEPTION - async nécessaire pour using
+/ ✅ EXCEPTION - async nécessaire pour using
 public async Task<User> GetByIdAsync(Guid id)
 {
     using var connection = await _connectionFactory.CreateAsync();
     return await connection.QueryFirstAsync<User>("SELECT * FROM Users WHERE Id = @Id", new { Id = id });
-    // async/await nécessaire pour disposer correctement connection
+    / async/await nécessaire pour disposer correctement connection
 }
 ```
 
 ### AsyncLocal pour Contexte Asynchrone
 
 ```csharp
-// ✅ BON - AsyncLocal pour contexte qui suit les appels async
+/ ✅ BON - AsyncLocal pour contexte qui suit les appels async
 public class CorrelationContext
 {
     private static readonly AsyncLocal<string?> _correlationId = new();
@@ -628,7 +628,7 @@ public class RequestLoggingMiddleware
         
         try
         {
-            await next(context);  // Le correlationId suit tout le flux async
+            await next(context);  / Le correlationId suit tout le flux async
         }
         finally
         {
@@ -641,7 +641,7 @@ public class UserService
 {
     public async Task CreateUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        // Peut utiliser CorrelationId même dans méthodes appelées
+        / Peut utiliser CorrelationId même dans méthodes appelées
         _logger.LogInformation("Creating user, CorrelationId: {CorrelationId}", 
             CorrelationContext.CorrelationId);
         
@@ -653,7 +653,7 @@ public class UserService
 ### IAsyncEnumerable - Streaming Asynchrone
 
 ```csharp
-// ✅ BON - IAsyncEnumerable pour grands datasets
+/ ✅ BON - IAsyncEnumerable pour grands datasets
 public async IAsyncEnumerable<Product> GetProductsStreamAsync(
     [EnumeratorCancellation] CancellationToken cancellationToken = default)
 {
@@ -681,7 +681,7 @@ public async IAsyncEnumerable<Product> GetProductsStreamAsync(
     }
 }
 
-// ✅ BON - Consommer IAsyncEnumerable
+/ ✅ BON - Consommer IAsyncEnumerable
 public async Task ProcessAllProductsAsync(CancellationToken cancellationToken = default)
 {
     var processedCount = 0;
@@ -698,10 +698,10 @@ public async Task ProcessAllProductsAsync(CancellationToken cancellationToken = 
     }
 }
 
-// ❌ MAUVAIS - Charger tout en mémoire
+/ ❌ MAUVAIS - Charger tout en mémoire
 public async Task ProcessAllProductsAsync()
 {
-    var allProducts = await _context.Products.ToListAsync();  // ❌ 100 000 produits en RAM !
+    var allProducts = await _context.Products.ToListAsync();  / ❌ 100 000 produits en RAM !
     
     foreach (var product in allProducts)
     {
@@ -715,19 +715,19 @@ public async Task ProcessAllProductsAsync()
 ### Async Void - À ÉVITER
 
 ```csharp
-// ❌ TRÈS MAUVAIS - async void (sauf event handlers)
-public async void ProcessUserAsync(User user)  // ❌ Exceptions non catchables !
+/ ❌ TRÈS MAUVAIS - async void (sauf event handlers)
+public async void ProcessUserAsync(User user)  / ❌ Exceptions non catchables !
 {
     await _repository.SaveAsync(user);
 }
 
-// ✅ BON - async Task
+/ ✅ BON - async Task
 public async Task ProcessUserAsync(User user, CancellationToken cancellationToken = default)
 {
     await _repository.SaveAsync(user, cancellationToken);
 }
 
-// ✅ EXCEPTION - Event handlers seulement
+/ ✅ EXCEPTION - Event handlers seulement
 private async void OnButtonClicked(object sender, EventArgs e)
 {
     try
@@ -737,7 +737,7 @@ private async void OnButtonClicked(object sender, EventArgs e)
     catch (Exception ex)
     {
         _logger.LogError(ex, "Error in button click handler");
-        // OBLIGATOIRE de catcher ici, sinon crash application
+        / OBLIGATOIRE de catcher ici, sinon crash application
     }
 }
 ```
@@ -745,27 +745,27 @@ private async void OnButtonClicked(object sender, EventArgs e)
 ### Sync over Async - Deadlock Garanti
 
 ```csharp
-// ❌ TRÈS MAUVAIS - .Result ou .Wait() = DEADLOCK
+/ ❌ TRÈS MAUVAIS - .Result ou .Wait() = DEADLOCK
 public User GetUser(Guid id)
 {
-    return GetUserAsync(id).Result;  // ❌ DEADLOCK dans ASP.NET/Blazor
+    return GetUserAsync(id).Result;  / ❌ DEADLOCK dans ASP.NET/Blazor
 }
 
 public void ProcessUser(Guid id)
 {
-    GetUserAsync(id).Wait();  // ❌ DEADLOCK dans ASP.NET/Blazor
+    GetUserAsync(id).Wait();  / ❌ DEADLOCK dans ASP.NET/Blazor
 }
 
-// ✅ BON - Async tout le long
+/ ✅ BON - Async tout le long
 public async Task<User> GetUserAsync(Guid id, CancellationToken cancellationToken = default)
 {
     return await _repository.GetByIdAsync(id, cancellationToken);
 }
 
-// ✅ BON - Si vraiment besoin de synchrone (rare), utiliser GetAwaiter().GetResult()
+/ ✅ BON - Si vraiment besoin de synchrone (rare), utiliser GetAwaiter().GetResult()
 public User GetUserSync(Guid id)
 {
-    // Moins de risque de deadlock que .Result, mais toujours à éviter
+    / Moins de risque de deadlock que .Result, mais toujours à éviter
     return GetUserAsync(id).GetAwaiter().GetResult();
 }
 ```
@@ -773,21 +773,21 @@ public User GetUserSync(Guid id)
 ### Fire and Forget - Gestion des Erreurs
 
 ```csharp
-// ❌ MAUVAIS - Fire and forget sans gestion d'erreurs
+/ ❌ MAUVAIS - Fire and forget sans gestion d'erreurs
 public async Task CreateUserAsync(User user)
 {
     await _repository.AddAsync(user);
     
-    // ❌ Exception perdue si SendWelcomeEmailAsync échoue
+    / ❌ Exception perdue si SendWelcomeEmailAsync échoue
     _ = SendWelcomeEmailAsync(user);
 }
 
-// ✅ BON - Background task avec gestion d'erreurs
+/ ✅ BON - Background task avec gestion d'erreurs
 public async Task CreateUserAsync(User user, CancellationToken cancellationToken = default)
 {
     await _repository.AddAsync(user, cancellationToken);
     
-    // Fire and forget avec try-catch
+    / Fire and forget avec try-catch
     _ = Task.Run(async () =>
     {
         try
@@ -797,12 +797,12 @@ public async Task CreateUserAsync(User user, CancellationToken cancellationToken
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to send welcome email to {Email}", user.Email);
-            // Peut enregistrer pour retry
+            / Peut enregistrer pour retry
         }
     }, cancellationToken);
 }
 
-// ✅ MEILLEUR - Utiliser IHostedService ou BackgroundService
+/ ✅ MEILLEUR - Utiliser IHostedService ou BackgroundService
 public class EmailBackgroundService : BackgroundService
 {
     private readonly Channel<EmailRequest> _channel;
@@ -837,24 +837,24 @@ public class EmailBackgroundService : BackgroundService
 ### Capture de Contexte Inutile
 
 ```csharp
-// ❌ MAUVAIS - Capture de variable modifiée dans boucle
+/ ❌ MAUVAIS - Capture de variable modifiée dans boucle
 public async Task ProcessItemsAsync(List<Item> items)
 {
     foreach (var item in items)
     {
-        // ❌ 'item' peut changer avant que la task s'exécute
+        / ❌ 'item' peut changer avant que la task s'exécute
         _ = Task.Run(async () => await ProcessAsync(item));
     }
 }
 
-// ✅ BON - Copie locale de la variable
+/ ✅ BON - Copie locale de la variable
 public async Task ProcessItemsAsync(List<Item> items, CancellationToken cancellationToken = default)
 {
     var tasks = new List<Task>();
     
     foreach (var item in items)
     {
-        var localItem = item;  // Copie locale
+        var localItem = item;  / Copie locale
         tasks.Add(Task.Run(async () => await ProcessAsync(localItem, cancellationToken), cancellationToken));
     }
     
@@ -867,12 +867,12 @@ public async Task ProcessItemsAsync(List<Item> items, CancellationToken cancella
 ### Lock vs SemaphoreSlim
 
 ```csharp
-// ❌ MAUVAIS - lock avec await (ne compile pas)
+/ ❌ MAUVAIS - lock avec await (ne compile pas)
 private readonly object _lock = new();
 
 public async Task<User> GetOrCreateUserAsync(string email)
 {
-    lock (_lock)  // ❌ Ne peut pas avoir await dans lock
+    lock (_lock)  / ❌ Ne peut pas avoir await dans lock
     {
         var user = await _repository.FindByEmailAsync(email);
         if (user is null)
@@ -884,7 +884,7 @@ public async Task<User> GetOrCreateUserAsync(string email)
     }
 }
 
-// ✅ BON - SemaphoreSlim pour async
+/ ✅ BON - SemaphoreSlim pour async
 private readonly SemaphoreSlim _semaphore = new(1, 1);
 
 public async Task<User> GetOrCreateUserAsync(string email, CancellationToken cancellationToken = default)
@@ -906,7 +906,7 @@ public async Task<User> GetOrCreateUserAsync(string email, CancellationToken can
     }
 }
 
-// ✅ BON - AsyncLock pattern personnalisé
+/ ✅ BON - AsyncLock pattern personnalisé
 public class AsyncLock
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
@@ -933,7 +933,7 @@ public class AsyncLock
     }
 }
 
-// Utilisation
+/ Utilisation
 private readonly AsyncLock _lock = new();
 
 public async Task<User> GetOrCreateUserAsync(string email, CancellationToken cancellationToken = default)
@@ -954,7 +954,7 @@ public async Task<User> GetOrCreateUserAsync(string email, CancellationToken can
 ### Collections Thread-Safe
 
 ```csharp
-// ✅ BON - ConcurrentDictionary pour cache thread-safe
+/ ✅ BON - ConcurrentDictionary pour cache thread-safe
 private readonly ConcurrentDictionary<Guid, User> _userCache = new();
 
 public async Task<User> GetUserAsync(Guid id, CancellationToken cancellationToken = default)
@@ -965,7 +965,7 @@ public async Task<User> GetUserAsync(Guid id, CancellationToken cancellationToke
     });
 }
 
-// Extension method pour GetOrAddAsync
+/ Extension method pour GetOrAddAsync
 public static class ConcurrentDictionaryExtensions
 {
     public static async Task<TValue> GetOrAddAsync<TKey, TValue>(
@@ -984,12 +984,12 @@ public static class ConcurrentDictionaryExtensions
     }
 }
 
-// ✅ BON - Channel pour queue thread-safe
+/ ✅ BON - Channel pour queue thread-safe
 private readonly Channel<Order> _orderQueue = Channel.CreateUnbounded<Order>();
 
 public void EnqueueOrder(Order order)
 {
-    _orderQueue.Writer.TryWrite(order);  // Thread-safe
+    _orderQueue.Writer.TryWrite(order);  / Thread-safe
 }
 
 public async Task<Order> DequeueOrderAsync(CancellationToken cancellationToken = default)
@@ -1003,11 +1003,11 @@ public async Task<Order> DequeueOrderAsync(CancellationToken cancellationToken =
 ### Tester du Code Asynchrone
 
 ```csharp
-// ✅ BON - Test async
+/ ✅ BON - Test async
 [Fact]
 public async Task GetUserAsync_ValidId_ReturnsUser()
 {
-    // Arrange
+    / Arrange
     var userId = Guid.NewGuid();
     var expectedUser = new User { Id = userId, Name = "John" };
     _mockRepository
@@ -1016,60 +1016,60 @@ public async Task GetUserAsync_ValidId_ReturnsUser()
     
     var service = new UserService(_mockRepository.Object);
     
-    // Act
+    / Act
     var result = await service.GetUserAsync(userId);
     
-    // Assert
+    / Assert
     Assert.NotNull(result);
     Assert.Equal(userId, result.Id);
     Assert.Equal("John", result.Name);
 }
 
-// ✅ BON - Tester avec CancellationToken
+/ ✅ BON - Tester avec CancellationToken
 [Fact]
 public async Task GetUserAsync_CancellationRequested_ThrowsOperationCanceledException()
 {
-    // Arrange
+    / Arrange
     var userId = Guid.NewGuid();
     var cts = new CancellationTokenSource();
-    cts.Cancel();  // Annulation immédiate
+    cts.Cancel();  / Annulation immédiate
     
     var service = new UserService(_mockRepository.Object);
     
-    // Act & Assert
+    / Act & Assert
     await Assert.ThrowsAsync<OperationCanceledException>(
         async () => await service.GetUserAsync(userId, cts.Token)
     );
 }
 
-// ✅ BON - Tester timeout
+/ ✅ BON - Tester timeout
 [Fact]
 public async Task GetUserAsync_Timeout_ThrowsTimeoutException()
 {
-    // Arrange
+    / Arrange
     var userId = Guid.NewGuid();
     _mockRepository
         .Setup(r => r.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
         .Returns(async (Guid id, CancellationToken ct) =>
         {
-            await Task.Delay(TimeSpan.FromSeconds(10), ct);  // Simule lenteur
+            await Task.Delay(TimeSpan.FromSeconds(10), ct);  / Simule lenteur
             return new User { Id = id };
         });
     
     var service = new UserService(_mockRepository.Object);
     
-    // Act & Assert
+    / Act & Assert
     using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
     await Assert.ThrowsAsync<OperationCanceledException>(
         async () => await service.GetUserAsync(userId, cts.Token)
     );
 }
 
-// ✅ BON - Tester Task.WhenAll
+/ ✅ BON - Tester Task.WhenAll
 [Fact]
 public async Task GetUserDetailsAsync_CallsAllRepositories()
 {
-    // Arrange
+    / Arrange
     var userId = Guid.NewGuid();
     var user = new User { Id = userId };
     var orders = new List<Order>();
@@ -1081,10 +1081,10 @@ public async Task GetUserDetailsAsync_CallsAllRepositories()
     
     var service = new UserService(_mockUserRepo.Object, _mockOrderRepo.Object, _mockAddressRepo.Object);
     
-    // Act
+    / Act
     var result = await service.GetUserDetailsAsync(userId);
     
-    // Assert
+    / Assert
     Assert.NotNull(result);
     _mockUserRepo.Verify(r => r.GetByIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
     _mockOrderRepo.Verify(r => r.GetByUserIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
@@ -1129,10 +1129,10 @@ Avant de commiter du code async, VÉRIFIER :
 ## 📚 Ressources
 
 ### Documentation Officielle Microsoft
-- [Async/Await Best Practices](https://learn.microsoft.com/en-us/archive/msdn-magazine/2013/march/async-await-best-practices-in-asynchronous-programming)
-- [Task Asynchronous Programming Model (TAP)](https://learn.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/task-based-asynchronous-pattern-tap)
-- [Async Return Types](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/async/async-return-types)
-- [Cancellation in Managed Threads](https://learn.microsoft.com/en-us/dotnet/standard/threading/cancellation-in-managed-threads)
+- [Async/Await Best Practices](https:/learn.microsoft.com/en-us/archive/msdn-magazine/2013/march/async-await-best-practices-in-asynchronous-programming)
+- [Task Asynchronous Programming Model (TAP)](https:/learn.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/task-based-asynchronous-pattern-tap)
+- [Async Return Types](https:/learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/async/async-return-types)
+- [Cancellation in Managed Threads](https:/learn.microsoft.com/en-us/dotnet/standard/threading/cancellation-in-managed-threads)
 
 ### Articles Recommandés
 - **Async/Await Best Practices** - Stephen Cleary

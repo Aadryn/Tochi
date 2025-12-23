@@ -1,7 +1,7 @@
 ---
 description: Vue 3 Transitions - Animations d'entrée/sortie, TransitionGroup, hooks JavaScript, animations CSS
 name: Vue3_Transitions
-applyTo: "**/frontend/transitions/**/*.ts,**/frontend/components/**/*.vue"
+applyTo: "**/transitions/**/*.ts,**/components/**/*.vue"
 ---
 
 # Vue 3 Transitions et Animations
@@ -493,42 +493,42 @@ function onLeave(el: Element, done: () => void): void {
 
 ```vue
 <script setup lang="ts">
-// Hooks d'entrée
+/ Hooks d'entrée
 function onBeforeEnter(el: Element): void {
-  // Avant que l'élément soit inséré
+  / Avant que l'élément soit inséré
 }
 
 function onEnter(el: Element, done: () => void): void {
-  // Quand l'élément est inséré (transition en cours)
-  // IMPORTANT: appeler done() quand terminé
+  / Quand l'élément est inséré (transition en cours)
+  / IMPORTANT: appeler done() quand terminé
   done();
 }
 
 function onAfterEnter(el: Element): void {
-  // Après la transition d'entrée
+  / Après la transition d'entrée
 }
 
 function onEnterCancelled(el: Element): void {
-  // Transition d'entrée annulée
+  / Transition d'entrée annulée
 }
 
-// Hooks de sortie
+/ Hooks de sortie
 function onBeforeLeave(el: Element): void {
-  // Avant la transition de sortie
+  / Avant la transition de sortie
 }
 
 function onLeave(el: Element, done: () => void): void {
-  // Pendant la transition de sortie
-  // IMPORTANT: appeler done() quand terminé
+  / Pendant la transition de sortie
+  / IMPORTANT: appeler done() quand terminé
   done();
 }
 
 function onAfterLeave(el: Element): void {
-  // Après la transition de sortie
+  / Après la transition de sortie
 }
 
 function onLeaveCancelled(el: Element): void {
-  // Transition de sortie annulée (v-show only)
+  / Transition de sortie annulée (v-show only)
 }
 </script>
 
@@ -552,7 +552,7 @@ function onLeaveCancelled(el: Element): void {
 
 ```vue
 <script setup lang="ts">
-// Le contenu est visible au premier rendu et animé
+/ Le contenu est visible au premier rendu et animé
 </script>
 
 <template>
@@ -669,7 +669,7 @@ function onLeave(el: Element, done: () => void): void {
 ## 🔧 Composable de Transition Réutilisable
 
 ```typescript
-// composables/useTransition.ts
+/ composables/useTransition.ts
 import { ref, computed, type ComputedRef } from 'vue';
 import type { TransitionProps } from 'vue';
 
@@ -716,7 +716,7 @@ export function useTransition(config: TransitionConfig): UseTransitionReturn {
   };
 }
 
-// composables/useStaggeredList.ts
+/ composables/useStaggeredList.ts
 import { ref, watch, type Ref } from 'vue';
 import gsap from 'gsap';
 
@@ -764,7 +764,7 @@ export function useStaggeredList(
   }
 
   function onLeave(el: Element, done: () => void): void {
-    // Cancel any existing animation
+    / Cancel any existing animation
     const existing = animations.get(el);
     if (existing) {
       existing.kill();
@@ -784,7 +784,7 @@ export function useStaggeredList(
     animations.set(el, tween);
   }
 
-  // Cleanup on items change
+  / Cleanup on items change
   watch(items, () => {
     animations.forEach((tween) => tween.kill());
     animations.clear();
@@ -955,7 +955,7 @@ function onLeave(el: Element, done: () => void): void {
   htmlEl.style.height = `${htmlEl.scrollHeight}px`;
   htmlEl.style.overflow = 'hidden';
   
-  // Force reflow
+  / Force reflow
   htmlEl.offsetHeight;
   
   htmlEl.style.transition = 'height 0.3s ease, opacity 0.3s ease';
@@ -990,7 +990,7 @@ import { computed } from 'vue';
 
 const route = useRoute();
 
-// Transition basée sur la meta de la route
+/ Transition basée sur la meta de la route
 const transitionName = computed(() => 
   (route.meta.transition as string) ?? 'fade'
 );
@@ -1034,7 +1034,7 @@ const transitionName = computed(() =>
 ```
 
 ```typescript
-// router/index.ts
+/ router/index.ts
 const routes = [
   {
     path: '/',

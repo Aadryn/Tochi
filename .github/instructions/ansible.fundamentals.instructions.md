@@ -232,7 +232,7 @@ version: "15"        # Ambigu
   post_tasks:
     - name: Verify application is running
       ansible.builtin.uri:
-        url: "http://{{ inventory_hostname }}:{{ app_port }}/health"
+        url: "http:/{{ inventory_hostname }}:{{ app_port }}/health"
         status_code: 200
       retries: 5
       delay: 10

@@ -34,7 +34,7 @@ Guide complet pour créer, structurer et gérer les Architecture Decision Record
 
 ### Format et Structure
 
-**TOUJOURS utiliser le format [MADR](https://adr.github.io/madr/) (Markdown Any Decision Records).**
+**TOUJOURS utiliser le format [MADR](https:/adr.github.io/madr/) (Markdown Any Decision Records).**
 
 **Structure de fichier OBLIGATOIRE :**
 
@@ -296,7 +296,7 @@ Cette approche permet de :
 ```markdown
 ## Références
 
-- [Documentation Ansible sur les rôles réutilisables](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html)
+- [Documentation Ansible sur les rôles réutilisables](https:/docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html)
 - Code source : `roles/dotnet-app/tasks/main.yml`
 - Variables : `inventories/dev/group_vars/dotnet_servers.yml`
 - Issue #42: Discussion sur l'architecture multi-composants
@@ -539,8 +539,8 @@ Configuration standard :
 
 ## Références
 
-- [Documentation nginx reverse proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
-- [Microsoft: Best practices for Kestrel behind reverse proxy](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/when-to-use-a-reverse-proxy)
+- [Documentation nginx reverse proxy](https:/docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
+- [Microsoft: Best practices for Kestrel behind reverse proxy](https:/learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/when-to-use-a-reverse-proxy)
 - Configuration : `roles/dotnet-app/templates/nginx.conf.j2`
 - ADR-001: Architecture multi-workload (dépendance)
 - ADR-002: Systemd hardening (dépendance)
@@ -607,9 +607,9 @@ Date: 2025-06-15
 
 ## 🔗 Références
 
-- [Architecture Decision Records (ADR.github.io)](https://adr.github.io/)
-- [MADR Template](https://adr.github.io/madr/)
-- [Why Write ADRs - GitHub Blog](https://github.blog/2020-08-13-why-write-adrs/)
-- [Architectural Decision Records - Martin Fowler](https://martinfowler.com/articles/documenting-architecture-decisions.html)
-- [ADR Tools](https://github.com/npryce/adr-tools)
+- [Architecture Decision Records (ADR.github.io)](https:/adr.github.io/)
+- [MADR Template](https:/adr.github.io/madr/)
+- [Why Write ADRs - GitHub Blog](https:/github.blog/2020-08-13-why-write-adrs/)
+- [Architectural Decision Records - Martin Fowler](https:/martinfowler.com/articles/documenting-architecture-decisions.html)
+- [ADR Tools](https:/github.com/npryce/adr-tools)
 - Copilot instructions: `.github/copilot-instructions.md` (section Conformité ADR)

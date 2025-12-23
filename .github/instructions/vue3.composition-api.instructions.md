@@ -1,7 +1,7 @@
 ---
 description: Vue 3 Composition API - Composables, Reactivity, ref, reactive, computed, watch, provide/inject
 name: Vue3_Composition_API
-applyTo: "**/frontend/composables/use*.ts,**/frontend/**/*.vue"
+applyTo: "**/composables/use*.ts,**/*.vue"
 ---
 
 # Vue 3 - Composition API
@@ -44,16 +44,16 @@ Guide complet de la Composition API Vue 3 avec TypeScript.
 ```typescript
 import { ref, reactive, toRefs } from 'vue'
 
-// ✅ ref : Pour valeurs primitives et objets simples
+/ ✅ ref : Pour valeurs primitives et objets simples
 const count = ref(0)
 const user = ref<User | null>(null)
 const isLoading = ref(false)
 
-// Accès avec .value en TypeScript
+/ Accès avec .value en TypeScript
 count.value++
 user.value = { id: '1', name: 'John' }
 
-// ✅ reactive : Pour objets complexes avec structure stable
+/ ✅ reactive : Pour objets complexes avec structure stable
 const state = reactive({
   users: [] as User[],
   filters: {
@@ -67,14 +67,14 @@ const state = reactive({
   },
 })
 
-// Accès direct (pas de .value)
+/ Accès direct (pas de .value)
 state.users.push(newUser)
 state.filters.search = 'query'
 
-// ❌ MAUVAIS : reactive avec valeurs primitives
-// const count = reactive(0) // Non réactif !
+/ ❌ MAUVAIS : reactive avec valeurs primitives
+/ const count = reactive(0) / Non réactif !
 
-// ✅ BON : Extraire refs depuis reactive
+/ ✅ BON : Extraire refs depuis reactive
 const { users, filters, pagination } = toRefs(state)
 ```
 
@@ -87,12 +87,12 @@ const items = ref<Item[]>([])
 const searchQuery = ref('')
 const selectedStatus = ref<string>('all')
 
-// ✅ Computed simple (getter uniquement)
+/ ✅ Computed simple (getter uniquement)
 const activeItems = computed(() =>
   items.value.filter(item => item.status === 'active')
 )
 
-// ✅ Computed avec filtres multiples
+/ ✅ Computed avec filtres multiples
 const filteredItems = computed(() => {
   let result = items.value
 
@@ -110,7 +110,7 @@ const filteredItems = computed(() => {
   return result
 })
 
-// ✅ Computed avec getter/setter
+/ ✅ Computed avec getter/setter
 const fullName = computed({
   get: () => `${firstName.value} ${lastName.value}`,
   set: (value: string) => {
@@ -129,14 +129,14 @@ import { watch, watchEffect, ref } from 'vue'
 const userId = ref<string>('')
 const user = ref<User | null>(null)
 
-// ✅ watch : Réaction à des sources spécifiques
+/ ✅ watch : Réaction à des sources spécifiques
 watch(userId, async (newId, oldId) => {
   if (newId && newId !== oldId) {
     user.value = await fetchUser(newId)
   }
 })
 
-// ✅ watch avec options
+/ ✅ watch avec options
 watch(
   userId,
   async (newId) => {
@@ -145,29 +145,29 @@ watch(
     }
   },
   {
-    immediate: true,  // Exécuter immédiatement
-    deep: false,      // Pas de surveillance profonde (performance)
+    immediate: true,  / Exécuter immédiatement
+    deep: false,      / Pas de surveillance profonde (performance)
   }
 )
 
-// ✅ watch multiple sources
+/ ✅ watch multiple sources
 watch(
   [searchQuery, selectedStatus],
   ([newSearch, newStatus]) => {
     fetchItems(newSearch, newStatus)
   },
-  { debounce: 300 } // Avec debounce si disponible
+  { debounce: 300 } / Avec debounce si disponible
 )
 
-// ✅ watchEffect : Réaction automatique aux dépendances
+/ ✅ watchEffect : Réaction automatique aux dépendances
 watchEffect(async () => {
-  // Toute ref/reactive utilisée est automatiquement trackée
+  / Toute ref/reactive utilisée est automatiquement trackée
   if (userId.value) {
     user.value = await fetchUser(userId.value)
   }
 })
 
-// ✅ watchEffect avec cleanup
+/ ✅ watchEffect avec cleanup
 watchEffect((onCleanup) => {
   const controller = new AbortController()
   
@@ -184,7 +184,7 @@ watchEffect((onCleanup) => {
 ### Structure Standard d'un Composable
 
 ```typescript
-// composables/useUsers.ts
+/ composables/useUsers.ts
 import { ref, computed, readonly } from 'vue'
 import type { User } from '@/types'
 import { usersApi } from '@/api'
@@ -198,19 +198,19 @@ import { usersApi } from '@/api'
  * ```
  */
 export function useUsers() {
-  // État interne
+  / État interne
   const users = ref<User[]>([])
   const isLoading = ref(false)
   const error = ref<Error | null>(null)
 
-  // Computed
+  / Computed
   const activeUsers = computed(() =>
     users.value.filter(u => u.status === 'active')
   )
 
   const userCount = computed(() => users.value.length)
 
-  // Actions
+  / Actions
   async function fetchUsers() {
     isLoading.value = true
     error.value = null
@@ -242,18 +242,18 @@ export function useUsers() {
     users.value = users.value.filter(u => u.id !== userId)
   }
 
-  // Retour avec readonly pour les états non modifiables directement
+  / Retour avec readonly pour les états non modifiables directement
   return {
-    // État (readonly pour prévenir les mutations externes)
+    / État (readonly pour prévenir les mutations externes)
     users: readonly(users),
     isLoading: readonly(isLoading),
     error: readonly(error),
     
-    // Computed
+    / Computed
     activeUsers,
     userCount,
     
-    // Actions
+    / Actions
     fetchUsers,
     createUser,
     deleteUser,
@@ -264,7 +264,7 @@ export function useUsers() {
 ### Composable avec Paramètres
 
 ```typescript
-// composables/useApi.ts
+/ composables/useApi.ts
 import { ref, type Ref } from 'vue'
 import axios, { type AxiosRequestConfig } from 'axios'
 
@@ -326,7 +326,7 @@ export function useApi<T>(
 ### Composable avec État Partagé
 
 ```typescript
-// composables/useNotification.ts
+/ composables/useNotification.ts
 import { ref } from 'vue'
 
 export interface Notification {
@@ -336,7 +336,7 @@ export interface Notification {
   duration?: number
 }
 
-// État global partagé entre toutes les instances
+/ État global partagé entre toutes les instances
 const notifications = ref<Notification[]>([])
 
 /**
@@ -403,7 +403,7 @@ export function useNotification() {
 ### Provider (Composant Parent)
 
 ```typescript
-// composables/useTheme.ts
+/ composables/useTheme.ts
 import { ref, provide, inject, type InjectionKey, type Ref } from 'vue'
 
 export interface Theme {
@@ -440,7 +440,7 @@ export function provideTheme() {
 ### Consumer (Composant Enfant)
 
 ```typescript
-// composables/useTheme.ts (suite)
+/ composables/useTheme.ts (suite)
 export function useTheme(): Theme {
   const theme = inject(ThemeKey)
   
@@ -475,37 +475,37 @@ const { isDark, toggle } = useTheme()
 ### ❌ Réactivité Perdue
 
 ```typescript
-// ❌ MAUVAIS : Destructuration qui perd la réactivité
-const { users } = useUsers() // Si users est reactive, la réactivité est perdue !
+/ ❌ MAUVAIS : Destructuration qui perd la réactivité
+const { users } = useUsers() / Si users est reactive, la réactivité est perdue !
 
-// ✅ BON : Utiliser toRefs ou retourner des refs
-const { users } = useUsers() // Si users est ref, OK
-const { users } = storeToRefs(useUsersStore()) // Pour Pinia
+/ ✅ BON : Utiliser toRefs ou retourner des refs
+const { users } = useUsers() / Si users est ref, OK
+const { users } = storeToRefs(useUsersStore()) / Pour Pinia
 ```
 
 ### ❌ Effets de Bord dans Computed
 
 ```typescript
-// ❌ MAUVAIS : Effet de bord dans computed
+/ ❌ MAUVAIS : Effet de bord dans computed
 const total = computed(() => {
-  console.log('Computing...') // ❌ Effet de bord
-  localStorage.setItem('total', sum.toString()) // ❌ Effet de bord
+  console.log('Computing...') / ❌ Effet de bord
+  localStorage.setItem('total', sum.toString()) / ❌ Effet de bord
   return sum
 })
 
-// ✅ BON : Computed pur
+/ ✅ BON : Computed pur
 const total = computed(() => items.value.reduce((acc, i) => acc + i.price, 0))
 ```
 
 ### ❌ Oublier le Cleanup
 
 ```typescript
-// ❌ MAUVAIS : Pas de cleanup
+/ ❌ MAUVAIS : Pas de cleanup
 onMounted(() => {
   window.addEventListener('resize', handleResize)
 })
 
-// ✅ BON : Avec cleanup
+/ ✅ BON : Avec cleanup
 onMounted(() => {
   window.addEventListener('resize', handleResize)
 })

@@ -1,7 +1,7 @@
 ---
 description: Règles fondamentales Blazor - Lifecycle, Event Handling, Data Binding, Dependency Injection, JavaScript Interop
 name: Blazor_Fundamentals
-applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.cs"
+applyTo: "**Presentation/**/*.razor,**Presentation/**/*.razor.cs"
 ---
 
 # Blazor - Règles Fondamentales
@@ -59,7 +59,7 @@ applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.
 ### Utilisation Correcte du Lifecycle
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 public partial class MyComponent : IAsyncDisposable
 {
   [Inject] private IService Service { get; set; }
@@ -70,29 +70,29 @@ public partial class MyComponent : IAsyncDisposable
   private Item item;
   private bool isLoading = true;
   
-  // ✅ BON : Initialisation asynchrone
+  / ✅ BON : Initialisation asynchrone
   protected override async Task OnInitializedAsync()
   {
-    // Charger les données initiales UNE SEULE FOIS
+    / Charger les données initiales UNE SEULE FOIS
     await LoadDataAsync();
   }
   
-  // ✅ BON : Réagir aux changements de paramètres
+  / ✅ BON : Réagir aux changements de paramètres
   protected override async Task OnParametersSetAsync()
   {
-    // Recharger si ItemId change
+    / Recharger si ItemId change
     if (ItemId != item?.Id)
     {
       await LoadDataAsync();
     }
   }
   
-  // ✅ BON : JavaScript Interop APRÈS le rendu
+  / ✅ BON : JavaScript Interop APRÈS le rendu
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
     if (firstRender)
     {
-      // Initialiser JavaScript (charts, maps, etc.)
+      / Initialiser JavaScript (charts, maps, etc.)
       await JS.InvokeVoidAsync("initializeChart", "chart-container");
     }
   }
@@ -100,18 +100,18 @@ public partial class MyComponent : IAsyncDisposable
   private async Task LoadDataAsync()
   {
     isLoading = true;
-    StateHasChanged(); // Forcer le rendu
+    StateHasChanged(); / Forcer le rendu
     
     item = await Service.GetByIdAsync(ItemId);
     
     isLoading = false;
-    StateHasChanged(); // Forcer le rendu
+    StateHasChanged(); / Forcer le rendu
   }
   
-  // ✅ BON : Nettoyage des ressources
+  / ✅ BON : Nettoyage des ressources
   public async ValueTask DisposeAsync()
   {
-    // Nettoyer les abonnements, timers, etc.
+    / Nettoyer les abonnements, timers, etc.
     await JS.InvokeVoidAsync("disposeChart", "chart-container");
   }
 }
@@ -120,25 +120,25 @@ public partial class MyComponent : IAsyncDisposable
 ### ❌ Erreurs Courantes
 
 ```csharp
-// ❌ MAUVAIS : Logique dans le constructeur
+/ ❌ MAUVAIS : Logique dans le constructeur
 public MyComponent()
 {
-  // NE JAMAIS mettre de logique ici
-  // Les injections ne sont pas encore disponibles
-  item = Service.GetById(123); // ❌ Service est null !
+  / NE JAMAIS mettre de logique ici
+  / Les injections ne sont pas encore disponibles
+  item = Service.GetById(123); / ❌ Service est null !
 }
 
-// ❌ MAUVAIS : JavaScript Interop dans OnInitialized
+/ ❌ MAUVAIS : JavaScript Interop dans OnInitialized
 protected override async Task OnInitializedAsync()
 {
-  // ❌ DOM pas encore rendu !
+  / ❌ DOM pas encore rendu !
   await JS.InvokeVoidAsync("initializeChart", "chart-container");
 }
 
-// ❌ MAUVAIS : Recharger données dans OnParametersSet sans condition
+/ ❌ MAUVAIS : Recharger données dans OnParametersSet sans condition
 protected override async Task OnParametersSetAsync()
 {
-  // ❌ Exécuté à chaque render, même sans changement de paramètres !
+  / ❌ Exécuté à chaque render, même sans changement de paramètres !
   await LoadDataAsync();
 }
 ```
@@ -182,14 +182,14 @@ protected override async Task OnParametersSetAsync()
 ```
 
 ```csharp
-// Code-behind
+/ Code-behind
 private string userName = string.Empty;
 private string searchTerm = string.Empty;
 
 private void HandleNameChanged(string value)
 {
   userName = value;
-  // Logique additionnelle
+  / Logique additionnelle
   ValidateName(value);
 }
 ```
@@ -207,7 +207,7 @@ private void HandleNameChanged(string value)
 ```
 
 ```csharp
-// Code-behind
+/ Code-behind
 private UserModel user = new();
 
 public class UserModel
@@ -245,7 +245,7 @@ public class UserModel
 ```
 
 ```csharp
-// Code-behind
+/ Code-behind
 private async Task HandleClickAsync()
 {
   await SubmitAsync();
@@ -287,7 +287,7 @@ private void HandleBlur(FocusEventArgs e)
   
   private async Task SaveAsync()
   {
-    // Logique de sauvegarde
+    / Logique de sauvegarde
     await OnSaved.InvokeAsync();
   }
   
@@ -350,10 +350,10 @@ private void HandleBlur(FocusEventArgs e)
 ### Injection de Services
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 public partial class MyComponent
 {
-  // ✅ BON : Property injection (RECOMMANDÉ)
+  / ✅ BON : Property injection (RECOMMANDÉ)
   [Inject] private IPromptService PromptService { get; set; }
   [Inject] private IStringLocalizer<SharedResources> Localizer { get; set; }
   [Inject] private ISnackbar Snackbar { get; set; }
@@ -361,10 +361,10 @@ public partial class MyComponent
   [Inject] private IJSRuntime JS { get; set; }
   [Inject] private ILogger<MyComponent> Logger { get; set; }
   
-  // ❌ MAUVAIS : Constructor injection (ne fonctionne pas bien avec Blazor)
+  / ❌ MAUVAIS : Constructor injection (ne fonctionne pas bien avec Blazor)
   public MyComponent(IPromptService promptService)
   {
-    // Ne pas utiliser dans les composants Blazor
+    / Ne pas utiliser dans les composants Blazor
   }
 }
 ```
@@ -380,17 +380,17 @@ public partial class MyComponent
 ### Scopes de Services
 
 ```csharp
-// ✅ BON : Enregistrement selon le besoin
+/ ✅ BON : Enregistrement selon le besoin
 public static IServiceCollection AddApplicationServices(this IServiceCollection services)
 {
-  // Singleton : Instance unique pour toute l'application
+  / Singleton : Instance unique pour toute l'application
   services.AddSingleton<IConfigurationService, ConfigurationService>();
   
-  // Scoped : Instance unique par requête/circuit SignalR
+  / Scoped : Instance unique par requête/circuit SignalR
   services.AddScoped<IPromptService, PromptService>();
   services.AddScoped<IUserContext, UserContext>();
   
-  // Transient : Nouvelle instance à chaque injection
+  / Transient : Nouvelle instance à chaque injection
   services.AddTransient<IEmailService, EmailService>();
   services.AddTransient<INotificationService, NotificationService>();
   
@@ -408,27 +408,27 @@ public static IServiceCollection AddApplicationServices(this IServiceCollection 
 ### Déclaration de Paramètres
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 public partial class ItemCard
 {
-  // ✅ BON : Paramètre obligatoire
+  / ✅ BON : Paramètre obligatoire
   [Parameter, EditorRequired]
   public ItemDto Item { get; set; } = null!;
   
-  // ✅ BON : Paramètre optionnel avec valeur par défaut
+  / ✅ BON : Paramètre optionnel avec valeur par défaut
   [Parameter]
   public bool ShowActions { get; set; } = true;
   
-  // ✅ BON : Paramètre EventCallback
+  / ✅ BON : Paramètre EventCallback
   [Parameter]
   public EventCallback<string> OnEdit { get; set; }
   
-  // ✅ BON : CascadingParameter (reçu d'un parent CascadingValue)
+  / ✅ BON : CascadingParameter (reçu d'un parent CascadingValue)
   [CascadingParameter]
   public ThemeProvider Theme { get; set; }
   
-  // ❌ MAUVAIS : Pas d'attribut [Parameter]
-  public string Title { get; set; } // Ne sera pas bindé depuis le parent
+  / ❌ MAUVAIS : Pas d'attribut [Parameter]
+  public string Title { get; set; } / Ne sera pas bindé depuis le parent
 }
 ```
 
@@ -460,7 +460,7 @@ public partial class ItemCard
 ```
 
 ```csharp
-// Composant Enfant : Recevoir la valeur cascadée
+/ Composant Enfant : Recevoir la valeur cascadée
 public partial class ChildComponent1
 {
   [CascadingParameter]
@@ -479,29 +479,29 @@ public partial class ChildComponent3
 ### Appeler JavaScript depuis C#
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 [Inject] private IJSRuntime JS { get; set; }
 
-// ✅ BON : Appel void (sans retour)
+/ ✅ BON : Appel void (sans retour)
 private async Task InitializeChartAsync()
 {
   await JS.InvokeVoidAsync("initializeChart", "chart-container", chartData);
 }
 
-// ✅ BON : Appel avec retour de valeur
+/ ✅ BON : Appel avec retour de valeur
 private async Task<bool> ConfirmDeleteAsync()
 {
   return await JS.InvokeAsync<bool>("confirm", "Êtes-vous sûr ?");
 }
 
-// ✅ BON : Appel avec timeout
+/ ✅ BON : Appel avec timeout
 private async Task<string> GetUserLocationAsync()
 {
   var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
   return await JS.InvokeAsync<string>("getUserLocation", cts.Token);
 }
 
-// ✅ BON : Gestion d'erreurs
+/ ✅ BON : Gestion d'erreurs
 private async Task CallJavaScriptAsync()
 {
   try
@@ -519,12 +519,12 @@ private async Task CallJavaScriptAsync()
 ### JavaScript pour Blazor
 
 ```javascript
-// wwwroot/js/app.js
+/ wwwroot/js/app.js
 
-// ✅ BON : Fonction JavaScript exposée globalement
+/ ✅ BON : Fonction JavaScript exposée globalement
 window.initializeChart = function(containerId, data) {
   const container = document.getElementById(containerId);
-  // Logique d'initialisation du chart
+  / Logique d'initialisation du chart
 };
 
 window.getUserLocation = function() {
@@ -539,13 +539,13 @@ window.getUserLocation = function() {
   });
 };
 
-// ✅ BON : Module JavaScript
+/ ✅ BON : Module JavaScript
 export function initializeMap(containerId, options) {
   const container = document.getElementById(containerId);
-  // Initialiser la carte
+  / Initialiser la carte
   return {
     dispose: () => {
-      // Nettoyage
+      / Nettoyage
     }
   };
 }
@@ -554,7 +554,7 @@ export function initializeMap(containerId, options) {
 ### Appeler C# depuis JavaScript (JSInvokable)
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 public partial class MyComponent
 {
   private DotNetObjectReference<MyComponent> objRef;
@@ -568,16 +568,16 @@ public partial class MyComponent
     }
   }
   
-  // ✅ BON : Méthode invocable depuis JavaScript
+  / ✅ BON : Méthode invocable depuis JavaScript
   [JSInvokable]
   public async Task OnDataReceived(string data)
   {
-    // Traiter les données reçues depuis JavaScript
+    / Traiter les données reçues depuis JavaScript
     await ProcessDataAsync(data);
-    StateHasChanged(); // Forcer le rendu
+    StateHasChanged(); / Forcer le rendu
   }
   
-  // ✅ BON : Méthode static invocable
+  / ✅ BON : Méthode static invocable
   [JSInvokable("MyComponent.StaticMethod")]
   public static Task<string> GetStaticData()
   {
@@ -593,7 +593,7 @@ public partial class MyComponent
 ```
 
 ```javascript
-// JavaScript appelant C#
+/ JavaScript appelant C#
 let dotNetHelper;
 
 window.registerComponent = function(helper) {
@@ -601,10 +601,10 @@ window.registerComponent = function(helper) {
 };
 
 window.sendDataToBlazor = async function(data) {
-  // Appeler méthode d'instance
+  / Appeler méthode d'instance
   await dotNetHelper.invokeMethodAsync('OnDataReceived', data);
   
-  // Appeler méthode statique
+  / Appeler méthode statique
   const result = await DotNet.invokeMethodAsync('MyAssembly', 'MyComponent.StaticMethod');
 };
 
@@ -618,7 +618,7 @@ window.unregisterComponent = function() {
 ### État Local du Composant
 
 ```csharp
-// ✅ BON : État privé du composant
+/ ✅ BON : État privé du composant
 private string searchTerm = string.Empty;
 private List<ItemDto> items = new();
 private bool isLoading = false;
@@ -628,7 +628,7 @@ private int currentPage = 1;
 ### État Partagé entre Composants (Service)
 
 ```csharp
-// Services/AppState.cs
+/ Services/AppState.cs
 public class AppState
 {
   public event Action OnChange;
@@ -649,7 +649,7 @@ public class AppState
 ```
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 [Inject] private AppState AppState { get; set; }
 
 protected override void OnInitialized()
@@ -659,7 +659,7 @@ protected override void OnInitialized()
 
 private void UpdateUserName(string name)
 {
-  AppState.UserName = name; // Notifie tous les composants abonnés
+  AppState.UserName = name; / Notifie tous les composants abonnés
 }
 
 public void Dispose()
@@ -671,7 +671,7 @@ public void Dispose()
 ### État avec Fluxor (Redux-like)
 
 ```csharp
-// States/PromptState.cs
+/ States/PromptState.cs
 public record PromptState
 {
   public List<PromptDto> Prompts { get; init; } = new();
@@ -679,12 +679,12 @@ public record PromptState
   public string ErrorMessage { get; init; } = string.Empty;
 }
 
-// Actions/PromptActions.cs
+/ Actions/PromptActions.cs
 public record LoadPromptsAction();
 public record PromptsLoadedAction(List<PromptDto> Prompts);
 public record PromptsLoadFailedAction(string ErrorMessage);
 
-// Reducers/PromptReducer.cs
+/ Reducers/PromptReducer.cs
 public static class PromptReducer
 {
   [ReducerMethod]
@@ -700,7 +700,7 @@ public static class PromptReducer
   }
 }
 
-// Component.razor.cs
+/ Component.razor.cs
 [Inject] private IState<PromptState> PromptState { get; set; }
 [Inject] private IDispatcher Dispatcher { get; set; }
 
@@ -789,12 +789,12 @@ Get-ChildItem -Recurse -Filter "*.razor.cs" |
 ## 📚 Ressources
 
 ### Documentation Officielle
-- [Blazor Lifecycle](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/lifecycle)
-- [Data Binding](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/data-binding)
-- [Event Handling](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/event-handling)
-- [Dependency Injection](https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/dependency-injection)
-- [JavaScript Interop](https://learn.microsoft.com/en-us/aspnet/core/blazor/javascript-interoperability/)
+- [Blazor Lifecycle](https:/learn.microsoft.com/en-us/aspnet/core/blazor/components/lifecycle)
+- [Data Binding](https:/learn.microsoft.com/en-us/aspnet/core/blazor/components/data-binding)
+- [Event Handling](https:/learn.microsoft.com/en-us/aspnet/core/blazor/components/event-handling)
+- [Dependency Injection](https:/learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/dependency-injection)
+- [JavaScript Interop](https:/learn.microsoft.com/en-us/aspnet/core/blazor/javascript-interoperability/)
 
 ### State Management
-- [Fluxor](https://github.com/mrpmorris/Fluxor) - Redux pattern for Blazor
-- [Blazor State](https://github.com/TimeWarpEngineering/blazor-state)
+- [Fluxor](https:/github.com/mrpmorris/Fluxor) - Redux pattern for Blazor
+- [Blazor State](https:/github.com/TimeWarpEngineering/blazor-state)

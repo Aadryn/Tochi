@@ -1,7 +1,7 @@
 ---
 description: Test-Driven Development (TDD) with xUnit, NFluent, NSubstitute, and Bogus
 name: CSharp_TDD_Testing
-applyTo: "**/backend/tests/**/*Tests.cs,**/backend/tests/**/*Test.cs"
+applyTo: "**tests/**/*Tests.cs,**tests/**/*Test.cs"
 ---
 
 # Test-Driven Development (TDD) - Guide Complet C#
@@ -61,24 +61,24 @@ Guide exhaustif pour TDD avec **xUnit**, **NFluent**, **NSubstitute**, et **Bogu
 ### xUnit - Framework de Tests
 
 ```csharp
-// ✅ BON - Test unitaire basique
+/ ✅ BON - Test unitaire basique
 public class CalculatorTests
 {
     [Fact]
     public void Add_TwoPositiveNumbers_ReturnsSum()
     {
-        // Arrange
+        / Arrange
         var calculator = new Calculator();
         
-        // Act
+        / Act
         var result = calculator.Add(5, 3);
         
-        // Assert
+        / Assert
         Assert.Equal(8, result);
     }
 }
 
-// ✅ BON - Test avec théories (paramétrisé)
+/ ✅ BON - Test avec théories (paramétrisé)
 public class CalculatorTests
 {
     [Theory]
@@ -88,18 +88,18 @@ public class CalculatorTests
     [InlineData(0, 0, 0)]
     public void Add_VariousInputs_ReturnsExpectedSum(int a, int b, int expected)
     {
-        // Arrange
+        / Arrange
         var calculator = new Calculator();
         
-        // Act
+        / Act
         var result = calculator.Add(a, b);
         
-        // Assert
+        / Assert
         Assert.Equal(expected, result);
     }
 }
 
-// ✅ BON - MemberData pour données complexes
+/ ✅ BON - MemberData pour données complexes
 public class UserValidatorTests
 {
     public static IEnumerable<object[]> ValidEmails => new List<object[]>
@@ -113,18 +113,18 @@ public class UserValidatorTests
     [MemberData(nameof(ValidEmails))]
     public void ValidateEmail_ValidFormat_ReturnsTrue(string email)
     {
-        // Arrange
+        / Arrange
         var validator = new UserValidator();
         
-        // Act
+        / Act
         var isValid = validator.ValidateEmail(email);
         
-        // Assert
+        / Assert
         Assert.True(isValid);
     }
 }
 
-// ✅ BON - ClassData pour scénarios réutilisables
+/ ✅ BON - ClassData pour scénarios réutilisables
 public class CalculatorTestData : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
@@ -152,20 +152,20 @@ public void Add_VariousScenarios_ReturnsExpectedResult(int a, int b, int expecte
 ```csharp
 using NFluent;
 
-// ✅ BON - Assertions fluides et lisibles
+/ ✅ BON - Assertions fluides et lisibles
 public class UserServiceTests
 {
     [Fact]
     public void CreateUser_ValidData_ReturnsCreatedUser()
     {
-        // Arrange
+        / Arrange
         var service = new UserService();
         var email = "user@example.com";
         
-        // Act
+        / Act
         var user = service.CreateUser(email, "John", "Doe");
         
-        // Assert - NFluent
+        / Assert - NFluent
         Check.That(user).IsNotNull();
         Check.That(user.Email).IsEqualTo(email);
         Check.That(user.FirstName).IsEqualTo("John");
@@ -174,11 +174,11 @@ public class UserServiceTests
         Check.That(user.CreatedAt).IsCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
     
-    // ✅ BON - Vérifications de collections
+    / ✅ BON - Vérifications de collections
     [Fact]
     public void GetActiveUsers_MultipleUsers_ReturnsOnlyActive()
     {
-        // Arrange
+        / Arrange
         var service = new UserService();
         var users = new List<User>
         {
@@ -187,69 +187,69 @@ public class UserServiceTests
             new() { Id = Guid.NewGuid(), IsActive = true, Name = "Charlie" }
         };
         
-        // Act
+        / Act
         var activeUsers = service.FilterActiveUsers(users);
         
-        // Assert
+        / Assert
         Check.That(activeUsers).HasSize(2);
         Check.That(activeUsers).ContainsOnlyElementsThatMatch(u => u.IsActive);
-        Check.That(activeUsers).Not.Contains(users[1]);  // Bob inactif
+        Check.That(activeUsers).Not.Contains(users[1]);  / Bob inactif
     }
     
-    // ✅ BON - Vérifications de strings
+    / ✅ BON - Vérifications de strings
     [Fact]
     public void GenerateWelcomeMessage_ValidUser_ReturnsFormattedMessage()
     {
-        // Arrange
+        / Arrange
         var service = new MessageService();
         var user = new User { FirstName = "John", LastName = "Doe" };
         
-        // Act
+        / Act
         var message = service.GenerateWelcomeMessage(user);
         
-        // Assert
+        / Assert
         Check.That(message).IsNotEmpty();
         Check.That(message).StartsWith("Welcome");
         Check.That(message).Contains("John Doe");
         Check.That(message).HasSize(greaterThan: 10);
     }
     
-    // ✅ BON - Vérifications d'exceptions
+    / ✅ BON - Vérifications d'exceptions
     [Fact]
     public void CreateUser_NullEmail_ThrowsArgumentNullException()
     {
-        // Arrange
+        / Arrange
         var service = new UserService();
         
-        // Act & Assert
+        / Act & Assert
         Check.ThatCode(() => service.CreateUser(null, "John", "Doe"))
             .Throws<ArgumentNullException>()
             .WithMessage(message => message.Contains("email"));
     }
     
-    // ✅ BON - Vérifications numériques
+    / ✅ BON - Vérifications numériques
     [Fact]
     public void CalculateDiscount_PremiumUser_ReturnsCorrectAmount()
     {
-        // Arrange
+        / Arrange
         var service = new PricingService();
         var user = new User { IsPremium = true };
         
-        // Act
+        / Act
         var discount = service.CalculateDiscount(user, 100m);
         
-        // Assert
+        / Assert
         Check.That(discount).IsStrictlyGreaterThan(0);
         Check.That(discount).IsStrictlyLessThan(100);
         Check.That(discount).IsEqualTo(10m);
         Check.That(discount).IsCloseTo(10m, 0.01m);
     }
     
-    // ✅ BON - Vérifications d'objets complexes
+    / ✅ BON - Vérifications d'objets complexes
     [Fact]
     public void MapToDto_ValidEntity_ReturnsMappedDto()
     {
-        // Arrange
+        / Arrange
         var mapper = new UserMapper();
         var entity = new UserEntity
         {
@@ -259,10 +259,10 @@ public class UserServiceTests
             LastName = "Doe"
         };
         
-        // Act
+        / Act
         var dto = mapper.MapToDto(entity);
         
-        // Assert
+        / Assert
         Check.That(dto).IsInstanceOf<UserDto>();
         Check.That(dto).HasFieldsWithSameValues(new
         {
@@ -280,13 +280,13 @@ public class UserServiceTests
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-// ✅ BON - Mock simple
+/ ✅ BON - Mock simple
 public class UserServiceTests
 {
     [Fact]
     public void GetUser_ExistingId_ReturnsUser()
     {
-        // Arrange
+        / Arrange
         var mockRepository = Substitute.For<IUserRepository>();
         var userId = Guid.NewGuid();
         var expectedUser = new User { Id = userId, Name = "John" };
@@ -296,79 +296,79 @@ public class UserServiceTests
         
         var service = new UserService(mockRepository);
         
-        // Act
+        / Act
         var result = await service.GetUserAsync(userId);
         
-        // Assert
+        / Assert
         Check.That(result).IsEqualTo(expectedUser);
     }
     
-    // ✅ BON - Vérifier les appels
+    / ✅ BON - Vérifier les appels
     [Fact]
     public async Task CreateUser_ValidData_CallsRepositoryOnce()
     {
-        // Arrange
+        / Arrange
         var mockRepository = Substitute.For<IUserRepository>();
         var service = new UserService(mockRepository);
         var user = new User { Email = "user@example.com" };
         
-        // Act
+        / Act
         await service.CreateUserAsync(user);
         
-        // Assert
+        / Assert
         await mockRepository.Received(1).AddAsync(
             Arg.Is<User>(u => u.Email == user.Email),
             Arg.Any<CancellationToken>()
         );
     }
     
-    // ✅ BON - Vérifier qu'un appel N'a PAS eu lieu
+    / ✅ BON - Vérifier qu'un appel N'a PAS eu lieu
     [Fact]
     public async Task GetUser_InvalidId_DoesNotCallRepository()
     {
-        // Arrange
+        / Arrange
         var mockRepository = Substitute.For<IUserRepository>();
         var service = new UserService(mockRepository);
         
-        // Act
+        / Act
         await service.GetUserAsync(Guid.Empty);
         
-        // Assert
+        / Assert
         await mockRepository.DidNotReceive().GetByIdAsync(
             Arg.Any<Guid>(),
             Arg.Any<CancellationToken>()
         );
     }
     
-    // ✅ BON - Configurer exceptions
+    / ✅ BON - Configurer exceptions
     [Fact]
     public async Task GetUser_RepositoryThrows_PropagatesException()
     {
-        // Arrange
+        / Arrange
         var mockRepository = Substitute.For<IUserRepository>();
         mockRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Throws(new DatabaseException("Connection failed"));
         
         var service = new UserService(mockRepository);
         
-        // Act & Assert
+        / Act & Assert
         Check.ThatAsyncCode(async () => await service.GetUserAsync(Guid.NewGuid()))
             .Throws<DatabaseException>()
             .WithMessage("Connection failed");
     }
     
-    // ✅ BON - Argument matchers
+    / ✅ BON - Argument matchers
     [Fact]
     public async Task SearchUsers_WithQuery_PassesCorrectParameters()
     {
-        // Arrange
+        / Arrange
         var mockRepository = Substitute.For<IUserRepository>();
         var service = new UserService(mockRepository);
         
-        // Act
+        / Act
         await service.SearchUsersAsync("john", isActive: true);
         
-        // Assert
+        / Assert
         await mockRepository.Received().SearchAsync(
             Arg.Is<string>(q => q.ToLower() == "john"),
             Arg.Is<bool>(active => active == true),
@@ -376,33 +376,33 @@ public class UserServiceTests
         );
     }
     
-    // ✅ BON - Retours séquentiels
+    / ✅ BON - Retours séquentiels
     [Fact]
     public async Task RetryOperation_FirstFailsThenSucceeds_ReturnsResult()
     {
-        // Arrange
+        / Arrange
         var mockService = Substitute.For<IExternalService>();
         mockService.GetDataAsync()
             .Returns(
-                Task.FromException<string>(new TimeoutException()),  // 1er appel échoue
-                Task.FromResult("Success")                            // 2ème appel réussit
+                Task.FromException<string>(new TimeoutException()),  / 1er appel échoue
+                Task.FromResult("Success")                            / 2ème appel réussit
             );
         
         var service = new ResilientService(mockService);
         
-        // Act
+        / Act
         var result = await service.GetDataWithRetryAsync();
         
-        // Assert
+        / Assert
         Check.That(result).IsEqualTo("Success");
         await mockService.Received(2).GetDataAsync();
     }
     
-    // ✅ BON - Callback pour actions complexes
+    / ✅ BON - Callback pour actions complexes
     [Fact]
     public async Task SaveUser_ValidUser_UpdatesTimestamp()
     {
-        // Arrange
+        / Arrange
         var mockRepository = Substitute.For<IUserRepository>();
         User capturedUser = null;
         
@@ -413,26 +413,26 @@ public class UserServiceTests
         var service = new UserService(mockRepository);
         var user = new User { Email = "user@example.com" };
         
-        // Act
+        / Act
         await service.CreateUserAsync(user);
         
-        // Assert
+        / Assert
         Check.That(capturedUser).IsNotNull();
         Check.That(capturedUser.CreatedAt).IsCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
     
-    // ✅ BON - Partial mock (spy)
+    / ✅ BON - Partial mock (spy)
     [Fact]
     public void CalculateTotal_CallsProtectedMethod()
     {
-        // Arrange
+        / Arrange
         var service = Substitute.ForPartsOf<OrderService>();
         var order = new Order { Lines = new List<OrderLine>() };
         
-        // Act
+        / Act
         var total = service.CalculateTotal(order);
         
-        // Assert
+        / Assert
         service.Received().CalculateTax(Arg.Any<decimal>());
     }
 }
@@ -443,7 +443,7 @@ public class UserServiceTests
 ```csharp
 using Bogus;
 
-// ✅ BON - Faker simple
+/ ✅ BON - Faker simple
 public class UserTestDataGenerator
 {
     private readonly Faker<User> _userFaker;
@@ -458,7 +458,7 @@ public class UserTestDataGenerator
             .RuleFor(u => u.BirthDate, f => f.Date.Past(50, DateTime.Now.AddYears(-18)))
             .RuleFor(u => u.PhoneNumber, f => f.Phone.PhoneNumber())
             .RuleFor(u => u.Address, f => f.Address.FullAddress())
-            .RuleFor(u => u.IsActive, f => f.Random.Bool(0.8f))  // 80% actifs
+            .RuleFor(u => u.IsActive, f => f.Random.Bool(0.8f))  / 80% actifs
             .RuleFor(u => u.CreatedAt, f => f.Date.Past(2));
     }
     
@@ -467,7 +467,7 @@ public class UserTestDataGenerator
     public List<User> GenerateUsers(int count) => _userFaker.Generate(count);
 }
 
-// Utilisation dans tests
+/ Utilisation dans tests
 public class UserServiceTests
 {
     private readonly UserTestDataGenerator _dataGenerator = new();
@@ -475,19 +475,19 @@ public class UserServiceTests
     [Fact]
     public void ProcessUsers_MultipleUsers_ProcessesAll()
     {
-        // Arrange
+        / Arrange
         var users = _dataGenerator.GenerateUsers(10);
         var service = new UserService();
         
-        // Act
+        / Act
         var processed = service.ProcessUsers(users);
         
-        // Assert
+        / Assert
         Check.That(processed).HasSize(10);
     }
 }
 
-// ✅ BON - Faker avec règles conditionnelles
+/ ✅ BON - Faker avec règles conditionnelles
 public class OrderTestDataGenerator
 {
     private readonly Faker<Order> _orderFaker;
@@ -528,14 +528,14 @@ public class OrderTestDataGenerator
     }
 }
 
-// ✅ BON - Faker avec données localisées
+/ ✅ BON - Faker avec données localisées
 public class FrenchUserDataGenerator
 {
     private readonly Faker<User> _userFaker;
     
     public FrenchUserDataGenerator()
     {
-        _userFaker = new Faker<User>("fr")  // Locale française
+        _userFaker = new Faker<User>("fr")  / Locale française
             .RuleFor(u => u.Id, f => Guid.NewGuid())
             .RuleFor(u => u.Email, f => f.Internet.Email())
             .RuleFor(u => u.FirstName, f => f.Name.FirstName())
@@ -547,7 +547,7 @@ public class FrenchUserDataGenerator
     public User GenerateUser() => _userFaker.Generate();
 }
 
-// ✅ BON - Faker avec datasets prédéfinis
+/ ✅ BON - Faker avec datasets prédéfinis
 public class ProductTestDataGenerator
 {
     private readonly Faker<Product> _productFaker;
@@ -581,7 +581,7 @@ public class ProductTestDataGenerator
     }
 }
 
-// ✅ BON - Combinaison Bogus + NSubstitute
+/ ✅ BON - Combinaison Bogus + NSubstitute
 public class UserServiceIntegrationTests
 {
     private readonly Faker<User> _userFaker = new Faker<User>()
@@ -593,16 +593,16 @@ public class UserServiceIntegrationTests
     [Fact]
     public async Task CreateUser_RandomData_SavesCorrectly()
     {
-        // Arrange
+        / Arrange
         var mockRepository = Substitute.For<IUserRepository>();
         var service = new UserService(mockRepository);
         
         var fakeUser = _userFaker.Generate();
         
-        // Act
+        / Act
         await service.CreateUserAsync(fakeUser);
         
-        // Assert
+        / Assert
         await mockRepository.Received(1).AddAsync(
             Arg.Is<User>(u => 
                 u.Email == fakeUser.Email &&
@@ -620,31 +620,31 @@ public class UserServiceIntegrationTests
 ### AAA Pattern (Arrange-Act-Assert)
 
 ```csharp
-// ✅ BON - Structure AAA claire
+/ ✅ BON - Structure AAA claire
 [Fact]
 public void Transfer_SufficientBalance_TransfersAmount()
 {
-    // Arrange - Préparation du contexte
+    / Arrange - Préparation du contexte
     var sourceAccount = new Account { Balance = 1000m };
     var targetAccount = new Account { Balance = 500m };
     var service = new TransferService();
     var amount = 200m;
     
-    // Act - Exécution de l'action
+    / Act - Exécution de l'action
     var result = service.Transfer(sourceAccount, targetAccount, amount);
     
-    // Assert - Vérifications
+    / Assert - Vérifications
     Check.That(result).IsTrue();
     Check.That(sourceAccount.Balance).IsEqualTo(800m);
     Check.That(targetAccount.Balance).IsEqualTo(700m);
 }
 
-// ❌ MAUVAIS - Mélange des phases
+/ ❌ MAUVAIS - Mélange des phases
 [Fact]
 public void Transfer_Test()
 {
     var sourceAccount = new Account { Balance = 1000m };
-    var result = service.Transfer(sourceAccount, targetAccount, 200m);  // Act avant Arrange complet
+    var result = service.Transfer(sourceAccount, targetAccount, 200m);  / Act avant Arrange complet
     var targetAccount = new Account { Balance = 500m };
     Check.That(result).IsTrue();
     var service = new TransferService();
@@ -655,7 +655,7 @@ public void Transfer_Test()
 ### Builder Pattern pour Tests
 
 ```csharp
-// ✅ BON - Test Data Builder
+/ ✅ BON - Test Data Builder
 public class UserBuilder
 {
     private Guid _id = Guid.NewGuid();
@@ -710,11 +710,11 @@ public class UserBuilder
     }
 }
 
-// Utilisation
+/ Utilisation
 [Fact]
 public void GetActiveUsers_MixedUsers_ReturnsOnlyActive()
 {
-    // Arrange
+    / Arrange
     var users = new List<User>
     {
         new UserBuilder().WithEmail("active1@test.com").Build(),
@@ -724,10 +724,10 @@ public void GetActiveUsers_MixedUsers_ReturnsOnlyActive()
     
     var service = new UserService();
     
-    // Act
+    / Act
     var activeUsers = service.GetActiveUsers(users);
     
-    // Assert
+    / Assert
     Check.That(activeUsers).HasSize(2);
     Check.That(activeUsers).ContainsOnlyElementsThatMatch(u => u.IsActive);
 }
@@ -736,7 +736,7 @@ public void GetActiveUsers_MixedUsers_ReturnsOnlyActive()
 ### Object Mother Pattern
 
 ```csharp
-// ✅ BON - Object Mother pour objets complexes réutilisables
+/ ✅ BON - Object Mother pour objets complexes réutilisables
 public static class UserMother
 {
     public static User CreateDefault()
@@ -787,18 +787,18 @@ public static class UserMother
     }
 }
 
-// Utilisation
+/ Utilisation
 [Fact]
 public void ProcessUser_AdminUser_GrantsFullAccess()
 {
-    // Arrange
+    / Arrange
     var admin = UserMother.CreateAdmin();
     var service = new UserService();
     
-    // Act
+    / Act
     var result = service.ProcessUser(admin);
     
-    // Assert
+    / Assert
     Check.That(result.HasFullAccess).IsTrue();
 }
 ```
@@ -806,7 +806,7 @@ public void ProcessUser_AdminUser_GrantsFullAccess()
 ### Test Fixtures avec IClassFixture
 
 ```csharp
-// ✅ BON - Fixture pour ressources partagées
+/ ✅ BON - Fixture pour ressources partagées
 public class DatabaseFixture : IDisposable
 {
     public AppDbContext Context { get; }
@@ -819,7 +819,7 @@ public class DatabaseFixture : IDisposable
         
         Context = new AppDbContext(options);
         
-        // Seed data
+        / Seed data
         Context.Users.AddRange(
             new User { Email = "user1@test.com", FirstName = "User", LastName = "One" },
             new User { Email = "user2@test.com", FirstName = "User", LastName = "Two" }
@@ -845,13 +845,13 @@ public class UserRepositoryTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task GetAllUsers_DatabaseWithUsers_ReturnsAllUsers()
     {
-        // Arrange
+        / Arrange
         var repository = new UserRepository(_fixture.Context);
         
-        // Act
+        / Act
         var users = await repository.GetAllAsync();
         
-        // Assert
+        / Assert
         Check.That(users).HasSize(2);
     }
 }
@@ -873,10 +873,10 @@ public class EmailValidatorTests
     [InlineData("user_name@example.com")]
     public void Validate_ValidEmailFormats_ReturnsTrue(string email)
     {
-        // Act
+        / Act
         var isValid = _validator.Validate(email);
         
-        // Assert
+        / Assert
         Check.That(isValid).IsTrue();
     }
     
@@ -889,17 +889,17 @@ public class EmailValidatorTests
     [InlineData("user@@example.com")]
     public void Validate_InvalidEmailFormats_ReturnsFalse(string email)
     {
-        // Act
+        / Act
         var isValid = _validator.Validate(email);
         
-        // Assert
+        / Assert
         Check.That(isValid).IsFalse();
     }
     
     [Fact]
     public void Validate_NullEmail_ThrowsArgumentNullException()
     {
-        // Act & Assert
+        / Act & Assert
         Check.ThatCode(() => _validator.Validate(null))
             .Throws<ArgumentNullException>()
             .WithProperty("ParamName", "email");
@@ -915,32 +915,32 @@ public class PricingServiceTests
     private readonly PricingService _service = new();
     
     [Theory]
-    [InlineData(100, 0, 100)]      // Pas de remise
-    [InlineData(100, 10, 90)]      // 10% de remise
-    [InlineData(100, 25, 75)]      // 25% de remise
-    [InlineData(100, 100, 0)]      // 100% de remise
+    [InlineData(100, 0, 100)]      / Pas de remise
+    [InlineData(100, 10, 90)]      / 10% de remise
+    [InlineData(100, 25, 75)]      / 25% de remise
+    [InlineData(100, 100, 0)]      / 100% de remise
     public void CalculateFinalPrice_VariousDiscounts_ReturnsCorrectAmount(
         decimal basePrice, 
         decimal discountPercent, 
         decimal expected)
     {
-        // Act
+        / Act
         var finalPrice = _service.CalculateFinalPrice(basePrice, discountPercent);
         
-        // Assert
+        / Assert
         Check.That(finalPrice).IsEqualTo(expected);
     }
     
     [Fact]
     public void CalculateTax_FrenchVAT_Adds20Percent()
     {
-        // Arrange
+        / Arrange
         var priceExcludingTax = 100m;
         
-        // Act
+        / Act
         var priceIncludingTax = _service.CalculateTax(priceExcludingTax, "FR");
         
-        // Assert
+        / Assert
         Check.That(priceIncludingTax).IsEqualTo(120m);
     }
     
@@ -949,7 +949,7 @@ public class PricingServiceTests
     [InlineData(-1)]
     public void CalculateFinalPrice_NegativePrice_ThrowsArgumentException(decimal price)
     {
-        // Act & Assert
+        / Act & Assert
         Check.ThatCode(() => _service.CalculateFinalPrice(price, 0))
             .Throws<ArgumentException>()
             .WithMessage("Price cannot be negative");
@@ -965,7 +965,7 @@ public class UserServiceAsyncTests
     [Fact]
     public async Task GetUserAsync_ExistingId_ReturnsUser()
     {
-        // Arrange
+        / Arrange
         var mockRepository = Substitute.For<IUserRepository>();
         var userId = Guid.NewGuid();
         var expectedUser = new User { Id = userId, Email = "user@example.com" };
@@ -975,17 +975,17 @@ public class UserServiceAsyncTests
         
         var service = new UserService(mockRepository);
         
-        // Act
+        / Act
         var user = await service.GetUserAsync(userId);
         
-        // Assert
+        / Assert
         Check.That(user).IsEqualTo(expectedUser);
     }
     
     [Fact]
     public async Task CreateUserAsync_WithCancellation_ThrowsOperationCanceledException()
     {
-        // Arrange
+        / Arrange
         var mockRepository = Substitute.For<IUserRepository>();
         var service = new UserService(mockRepository);
         var cts = new CancellationTokenSource();
@@ -993,7 +993,7 @@ public class UserServiceAsyncTests
         
         var user = new User { Email = "user@example.com" };
         
-        // Act & Assert
+        / Act & Assert
         await Check.ThatAsyncCode(async () => await service.CreateUserAsync(user, cts.Token))
             .ThrowsAny();
     }
@@ -1001,21 +1001,21 @@ public class UserServiceAsyncTests
     [Fact]
     public async Task GetAllUsersAsync_MultipleParallelCalls_ReturnsConsistentResults()
     {
-        // Arrange
+        / Arrange
         var mockRepository = Substitute.For<IUserRepository>();
         var users = new List<User> { new() { Id = Guid.NewGuid() } };
         mockRepository.GetAllAsync(Arg.Any<CancellationToken>()).Returns(users);
         
         var service = new UserService(mockRepository);
         
-        // Act
+        / Act
         var tasks = Enumerable.Range(0, 10)
             .Select(_ => service.GetAllUsersAsync())
             .ToList();
         
         var results = await Task.WhenAll(tasks);
         
-        // Assert
+        / Assert
         Check.That(results).ContainsOnlyElementsOfType<IEnumerable<User>>();
         Check.That(results.All(r => r.Count() == 1)).IsTrue();
     }
@@ -1037,14 +1037,14 @@ public class BoundaryTests
     [InlineData(0)]
     public void Add_BoundaryValues_HandlesCorrectly(int value)
     {
-        // Act & Assert - Ne doit pas planter
+        / Act & Assert - Ne doit pas planter
         Check.ThatCode(() => _calculator.Add(value, 0)).DoesNotThrow();
     }
     
     [Fact]
     public void Add_MaxValuePlusOne_ThrowsOverflowException()
     {
-        // Act & Assert
+        / Act & Assert
         Check.ThatCode(() => _calculator.Add(int.MaxValue, 1))
             .Throws<OverflowException>();
     }
@@ -1055,27 +1055,27 @@ public class BoundaryTests
     [InlineData(null)]
     public void ProcessText_EmptyOrWhitespace_ReturnsEmptyString(string input)
     {
-        // Arrange
+        / Arrange
         var processor = new TextProcessor();
         
-        // Act
+        / Act
         var result = processor.Process(input);
         
-        // Assert
+        / Assert
         Check.That(result).IsEmpty();
     }
     
     [Fact]
     public void GetUsers_EmptyCollection_ReturnsEmptyList()
     {
-        // Arrange
+        / Arrange
         var service = new UserService();
         var emptyList = new List<User>();
         
-        // Act
+        / Act
         var result = service.FilterActiveUsers(emptyList);
         
-        // Assert
+        / Assert
         Check.That(result).IsEmpty();
     }
 }
@@ -1089,10 +1089,10 @@ public class NullSafetyTests
     [Fact]
     public void CreateUser_NullEmail_ThrowsArgumentNullException()
     {
-        // Arrange
+        / Arrange
         var service = new UserService();
         
-        // Act & Assert
+        / Act & Assert
         Check.ThatCode(() => service.CreateUser(null, "John", "Doe"))
             .Throws<ArgumentNullException>()
             .WithProperty("ParamName", "email");
@@ -1101,7 +1101,7 @@ public class NullSafetyTests
     [Fact]
     public void GetUserById_NullRepository_ThrowsArgumentNullException()
     {
-        // Act & Assert
+        / Act & Assert
         Check.ThatCode(() => new UserService(null))
             .Throws<ArgumentNullException>();
     }
@@ -1109,13 +1109,13 @@ public class NullSafetyTests
     [Fact]
     public void ProcessUser_NullUser_ReturnsNull()
     {
-        // Arrange
+        / Arrange
         var service = new UserService();
         
-        // Act
+        / Act
         var result = service.ProcessUser(null);
         
-        // Assert
+        / Assert
         Check.That(result).IsNull();
     }
 }
@@ -1126,7 +1126,7 @@ public class NullSafetyTests
 ### Convention de Nommage
 
 ```csharp
-// ✅ BON - Format: MethodName_Scenario_ExpectedBehavior
+/ ✅ BON - Format: MethodName_Scenario_ExpectedBehavior
 public class NamingConventionTests
 {
     [Fact]
@@ -1148,23 +1148,23 @@ public class NamingConventionTests
     public void CreateOrder_InsufficientStock_ThrowsInsufficientStockException() { }
 }
 
-// ❌ MAUVAIS - Noms vagues
+/ ❌ MAUVAIS - Noms vagues
 public class BadNamingTests
 {
     [Fact]
-    public void Test1() { }  // Trop vague
+    public void Test1() { }  / Trop vague
     
     [Fact]
-    public void AddTest() { }  // Pas de scénario
+    public void AddTest() { }  / Pas de scénario
     
     [Fact]
-    public void TestUserCreation() { }  // Manque comportement attendu
+    public void TestUserCreation() { }  / Manque comportement attendu
     
     [Fact]
-    public void ShouldWork() { }  // Non descriptif
+    public void ShouldWork() { }  / Non descriptif
 }
 
-// ✅ ACCEPTABLE - Format alternatif avec Given-When-Then
+/ ✅ ACCEPTABLE - Format alternatif avec Given-When-Then
 public class GivenWhenThenTests
 {
     [Fact]
@@ -1219,10 +1219,10 @@ Avant de committer, VÉRIFIER :
 ## 📚 Ressources
 
 ### Documentation Officielle
-- [xUnit Documentation](https://xunit.net/)
-- [NFluent - Fluent Assertions](https://www.n-fluent.net/)
-- [NSubstitute Documentation](https://nsubstitute.github.io/)
-- [Bogus - Fake Data Generator](https://github.com/bchavez/Bogus)
+- [xUnit Documentation](https:/xunit.net/)
+- [NFluent - Fluent Assertions](https:/www.n-fluent.net/)
+- [NSubstitute Documentation](https:/nsubstitute.github.io/)
+- [Bogus - Fake Data Generator](https:/github.com/bchavez/Bogus)
 
 ### Livres Recommandés
 - **Test-Driven Development: By Example** - Kent Beck

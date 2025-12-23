@@ -1,7 +1,7 @@
 ---
 description: Vue 3 Performance - Optimisation, lazy loading, memoization, virtual scroll, devtools
 name: Vue3_Performance
-applyTo: "**/frontend/**/*.vue,**/frontend/**/*.ts"
+applyTo: "**/*.vue,**/*.ts"
 ---
 
 # Vue 3 Performance
@@ -110,7 +110,7 @@ import { computed, ref } from 'vue';
 
 const items = ref([/* ... */]);
 
-// ✅ Computed pour filtrer
+/ ✅ Computed pour filtrer
 const visibleItems = computed(() => 
   items.value.filter(item => item.isVisible)
 );
@@ -135,12 +135,12 @@ import { computed } from 'vue';
 
 const props = defineProps<{ item: { id: string; status: string } }>();
 
-// ✅ Handler défini une seule fois
+/ ✅ Handler défini une seule fois
 function handleItemClick(): void {
   handleClick(props.item.id);
 }
 
-// ✅ Computed pour les styles
+/ ✅ Computed pour les styles
 const itemStyle = computed(() => ({
   color: getColor(props.item.status),
 }));
@@ -155,21 +155,21 @@ const itemStyle = computed(() => ({
 <script setup lang="ts">
 import { defineAsyncComponent } from 'vue';
 
-// ✅ Lazy loading basique
+/ ✅ Lazy loading basique
 const HeavyChart = defineAsyncComponent(
   () => import('@/components/HeavyChart.vue')
 );
 
-// ✅ Avec loading et error states
+/ ✅ Avec loading et error states
 const HeavyTable = defineAsyncComponent({
   loader: () => import('@/components/HeavyTable.vue'),
   loadingComponent: () => import('@/components/LoadingSpinner.vue'),
   errorComponent: () => import('@/components/ErrorState.vue'),
-  delay: 200, // Délai avant d'afficher loading
-  timeout: 10000, // Timeout en ms
+  delay: 200, / Délai avant d'afficher loading
+  timeout: 10000, / Timeout en ms
 });
 
-// ✅ Avec Suspense
+/ ✅ Avec Suspense
 const AsyncDashboard = defineAsyncComponent(
   () => import('@/components/Dashboard.vue')
 );
@@ -194,7 +194,7 @@ const AsyncDashboard = defineAsyncComponent(
 ### Route Lazy Loading
 
 ```typescript
-// router/routes.ts
+/ router/routes.ts
 const routes = [
   {
     path: '/dashboard',
@@ -202,7 +202,7 @@ const routes = [
   },
   {
     path: '/admin',
-    // Grouper les chunks par feature
+    / Grouper les chunks par feature
     component: () => import(/* webpackChunkName: "admin" */ '@/views/AdminLayout.vue'),
     children: [
       {
@@ -224,7 +224,7 @@ const routes = [
 <script setup lang="ts">
 import { ref, shallowRef, watch } from 'vue';
 
-// ✅ Charger le composant seulement quand nécessaire
+/ ✅ Charger le composant seulement quand nécessaire
 const ChartComponent = shallowRef<Component | null>(null);
 const showChart = ref(false);
 
@@ -254,25 +254,25 @@ watch(showChart, async (show) => {
 ```typescript
 import { ref, shallowRef, triggerRef } from 'vue';
 
-// ❌ ref avec deep reactivity (coûteux pour gros objets)
+/ ❌ ref avec deep reactivity (coûteux pour gros objets)
 const deepData = ref({
   users: [/* 1000 users */],
   metadata: { /* ... */ },
 });
 
-// ✅ shallowRef - réactivité uniquement sur .value
+/ ✅ shallowRef - réactivité uniquement sur .value
 const shallowData = shallowRef({
   users: [/* 1000 users */],
   metadata: { /* ... */ },
 });
 
-// Pour déclencher une update avec shallowRef
+/ Pour déclencher une update avec shallowRef
 function updateUser(index: number, name: string): void {
   shallowData.value.users[index].name = name;
-  triggerRef(shallowData); // Déclencher manuellement
+  triggerRef(shallowData); / Déclencher manuellement
 }
 
-// Ou remplacer l'objet entier
+/ Ou remplacer l'objet entier
 function setUsers(newUsers: User[]): void {
   shallowData.value = {
     ...shallowData.value,
@@ -286,15 +286,15 @@ function setUsers(newUsers: User[]): void {
 ```typescript
 import { shallowReactive } from 'vue';
 
-// ✅ Réactivité uniquement au premier niveau
+/ ✅ Réactivité uniquement au premier niveau
 const state = shallowReactive({
   count: 0,
-  nested: { value: 1 }, // Pas réactif en profondeur
+  nested: { value: 1 }, / Pas réactif en profondeur
 });
 
-state.count++; // ✅ Déclenche une update
-state.nested.value++; // ❌ Ne déclenche PAS d'update
-state.nested = { value: 2 }; // ✅ Déclenche une update
+state.count++; / ✅ Déclenche une update
+state.nested.value++; / ❌ Ne déclenche PAS d'update
+state.nested = { value: 2 }; / ✅ Déclenche une update
 ```
 
 ### Computed avec Cache
@@ -305,17 +305,17 @@ import { computed, ref } from 'vue';
 const items = ref<Item[]>([]);
 const filter = ref('');
 
-// ✅ computed est caché et recalculé seulement si dépendances changent
+/ ✅ computed est caché et recalculé seulement si dépendances changent
 const filteredItems = computed(() => {
-  console.log('Filtering...'); // Appelé seulement quand items ou filter change
+  console.log('Filtering...'); / Appelé seulement quand items ou filter change
   return items.value.filter(item => 
     item.name.toLowerCase().includes(filter.value.toLowerCase())
   );
 });
 
-// ❌ Méthode recalculée à chaque rendu
+/ ❌ Méthode recalculée à chaque rendu
 function getFilteredItems(): Item[] {
-  console.log('Filtering...'); // Appelé à CHAQUE rendu
+  console.log('Filtering...'); / Appelé à CHAQUE rendu
   return items.value.filter(item => 
     item.name.toLowerCase().includes(filter.value.toLowerCase())
   );
@@ -329,26 +329,26 @@ import { watch, watchEffect, ref } from 'vue';
 
 const user = ref<User | null>(null);
 
-// ❌ MAUVAIS : deep watcher coûteux
+/ ❌ MAUVAIS : deep watcher coûteux
 watch(
   user,
   (newUser) => { /* ... */ },
-  { deep: true } // Observe TOUTES les propriétés
+  { deep: true } / Observe TOUTES les propriétés
 );
 
-// ✅ BON : Observer seulement ce qui est nécessaire
+/ ✅ BON : Observer seulement ce qui est nécessaire
 watch(
   () => user.value?.name,
   (newName) => { /* ... */ }
 );
 
-// ✅ BON : Observer plusieurs propriétés spécifiques
+/ ✅ BON : Observer plusieurs propriétés spécifiques
 watch(
   [() => user.value?.name, () => user.value?.email],
   ([newName, newEmail]) => { /* ... */ }
 );
 
-// ✅ BON : watchEffect avec cleanup
+/ ✅ BON : watchEffect avec cleanup
 watchEffect((onCleanup) => {
   const controller = new AbortController();
   
@@ -383,7 +383,7 @@ const props = withDefaults(defineProps<Props>(), {
 const scrollTop = ref(0);
 const containerRef = ref<HTMLElement | null>(null);
 
-// Calcul des items visibles
+/ Calcul des items visibles
 const visibleRange = computed(() => {
   const start = Math.floor(scrollTop.value / props.itemHeight);
   const visibleCount = Math.ceil(props.containerHeight / props.itemHeight);
@@ -529,7 +529,7 @@ onMounted(() => {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          // Charger l'image réelle
+          / Charger l'image réelle
           const img = new Image();
           img.onload = () => {
             currentSrc.value = props.src;
@@ -611,31 +611,31 @@ let interval: number | null = null;
 let abortController: AbortController | null = null;
 
 onMounted(() => {
-  // Polling avec interval
+  / Polling avec interval
   interval = window.setInterval(fetchData, 5000);
   
-  // Event listener global
+  / Event listener global
   window.addEventListener('resize', handleResize);
   
-  // Fetch initial
+  / Fetch initial
   fetchData();
 });
 
 onUnmounted(() => {
-  // ✅ Nettoyer l'interval
+  / ✅ Nettoyer l'interval
   if (interval) {
     clearInterval(interval);
   }
   
-  // ✅ Annuler les requêtes en cours
+  / ✅ Annuler les requêtes en cours
   if (abortController) {
     abortController.abort();
   }
   
-  // ✅ Retirer les event listeners
+  / ✅ Retirer les event listeners
   window.removeEventListener('resize', handleResize);
   
-  // ✅ Nettoyer les références
+  / ✅ Nettoyer les références
   data.value = null;
 });
 
@@ -655,7 +655,7 @@ async function fetchData(): Promise<void> {
 }
 
 function handleResize(): void {
-  // ...
+  / ...
 }
 </script>
 ```
@@ -663,7 +663,7 @@ function handleResize(): void {
 ### Composable avec Cleanup
 
 ```typescript
-// composables/usePolling.ts
+/ composables/usePolling.ts
 import { ref, onUnmounted, type Ref } from 'vue';
 
 interface UsePollingOptions<T> {
@@ -724,7 +724,7 @@ export function usePolling<T>(options: UsePollingOptions<T>): {
     start();
   }
 
-  // ✅ Cleanup automatique
+  / ✅ Cleanup automatique
   onUnmounted(stop);
 
   return { data, error, isLoading, start, stop };
@@ -738,7 +738,7 @@ export function usePolling<T>(options: UsePollingOptions<T>): {
 ```typescript
 import { onMounted, onUpdated } from 'vue';
 
-// Markers pour DevTools Performance
+/ Markers pour DevTools Performance
 onMounted(() => {
   performance.mark('component-mounted');
 });
@@ -748,11 +748,11 @@ onUpdated(() => {
   performance.measure('update-duration', 'component-mounted', 'component-updated');
 });
 
-// Mesurer une opération coûteuse
+/ Mesurer une opération coûteuse
 function expensiveOperation(): void {
   performance.mark('operation-start');
   
-  // ... opération ...
+  / ... opération ...
   
   performance.mark('operation-end');
   performance.measure('operation-duration', 'operation-start', 'operation-end');
@@ -765,7 +765,7 @@ function expensiveOperation(): void {
 ### Custom Performance Hook
 
 ```typescript
-// composables/usePerformance.ts
+/ composables/usePerformance.ts
 import { onMounted, onUpdated, onUnmounted, getCurrentInstance } from 'vue';
 
 export function usePerformanceMonitor(componentName?: string): void {
@@ -798,17 +798,17 @@ export function usePerformanceMonitor(componentName?: string): void {
 ### Vite Configuration
 
 ```typescript
-// vite.config.ts
+/ vite.config.ts
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
   plugins: [vue()],
   build: {
-    // Activer le tree-shaking
+    / Activer le tree-shaking
     treeshake: true,
     
-    // Minification
+    / Minification
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -817,11 +817,11 @@ export default defineConfig({
       },
     },
     
-    // Code splitting
+    / Code splitting
     rollupOptions: {
       output: {
         manualChunks: {
-          // Séparer les vendors
+          / Séparer les vendors
           'vendor-vue': ['vue', 'vue-router', 'pinia'],
           'vendor-ui': ['primevue'],
           'vendor-utils': ['lodash-es', 'date-fns'],
@@ -829,11 +829,11 @@ export default defineConfig({
       },
     },
     
-    // Taille des chunks
+    / Taille des chunks
     chunkSizeWarningLimit: 500,
   },
   
-  // Optimisation des dépendances
+  / Optimisation des dépendances
   optimizeDeps: {
     include: ['vue', 'vue-router', 'pinia'],
   },

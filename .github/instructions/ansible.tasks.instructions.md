@@ -121,7 +121,7 @@ Une task idempotente peut être exécutée plusieurs fois sans changer le résul
   changed_when: "'migrations applied' in migration_result.stdout"
 
 - name: Check disk space
-  shell: df -h / | tail -1 | awk '{print $5}' | sed 's/%//'
+  shell: df -h / | tail -1 | awk '{print $5}' | sed 's/%/'
   register: disk_usage
   changed_when: false
   failed_when: disk_usage.stdout | int > 90
@@ -177,12 +177,12 @@ Une task idempotente peut être exécutée plusieurs fois sans changer le résul
 
 # ❌ MAUVAIS - Utilise curl en shell
 - name: Download file
-  shell: curl -o /tmp/file.tar.gz https://example.com/file.tar.gz
+  shell: curl -o /tmp/file.tar.gz https:/example.com/file.tar.gz
 
 # ✅ BON - Module natif
 - name: Ensure file is downloaded
   get_url:
-    url: https://example.com/file.tar.gz
+    url: https:/example.com/file.tar.gz
     dest: /tmp/file.tar.gz
     checksum: sha256:abc123...
 ```
@@ -252,7 +252,7 @@ Utiliser `command` ou `shell` **uniquement** quand aucun module n'existe.
     
     - name: Wait for application health check
       uri:
-        url: http://localhost:8080/health
+        url: http:/localhost:8080/health
         status_code: 200
         timeout: 5
       retries: 30
@@ -318,7 +318,7 @@ Utiliser `command` ou `shell` **uniquement** quand aucun module n'existe.
 ---
 - name: Wait for service to be ready
   uri:
-    url: http://localhost:8080/health
+    url: http:/localhost:8080/health
     status_code: 200
     timeout: 5
   register: health_check
@@ -344,7 +344,7 @@ Utiliser `command` ou `shell` **uniquement** quand aucun module n'existe.
 
 - name: Poll external API until ready
   uri:
-    url: "https://api.example.com/status"
+    url: "https:/api.example.com/status"
     return_content: true
   register: api_status
   retries: 20
@@ -529,9 +529,9 @@ Utiliser `command` ou `shell` **uniquement** quand aucun module n'existe.
     url: "{{ item }}/package.tar.gz"
     dest: /tmp/package.tar.gz
   loop:
-    - https://mirror1.example.com
-    - https://mirror2.example.com
-    - https://mirror3.example.com
+    - https:/mirror1.example.com
+    - https:/mirror2.example.com
+    - https:/mirror3.example.com
   register: download_result
   until: download_result is success
   retries: 3

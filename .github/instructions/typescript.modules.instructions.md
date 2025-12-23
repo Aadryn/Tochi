@@ -1,7 +1,7 @@
 ---
 description: TypeScript Modules - Import/Export, Namespaces, Declaration files, Barrel exports
 name: TypeScript_Modules
-applyTo: "**/frontend/**/*.ts,**/frontend/**/*.d.ts"
+applyTo: "**/*.ts,**/*.d.ts"
 ---
 
 # TypeScript Modules
@@ -29,35 +29,35 @@ Guide complet pour l'organisation des modules et imports en TypeScript.
 ### Ordre des Imports
 
 ```typescript
-// ✅ BON : Imports organisés par catégorie
+/ ✅ BON : Imports organisés par catégorie
 
-// 1. Imports Node.js built-in
+/ 1. Imports Node.js built-in
 import { readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 
-// 2. Imports de frameworks/librairies externes
+/ 2. Imports de frameworks/librairies externes
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { z } from 'zod';
 
-// 3. Imports internes avec alias (@/)
+/ 3. Imports internes avec alias (@/)
 import { useAuth } from '@/composables/useAuth';
 import { UserService } from '@/services/UserService';
 import type { User, UserRole } from '@/types/user.types';
 
-// 4. Imports relatifs (même feature/module)
+/ 4. Imports relatifs (même feature/module)
 import { validateEmail } from './validators';
 import { formatUserName } from './formatters';
 import type { FormState } from './types';
 
-// 5. Imports de styles (si applicable)
+/ 5. Imports de styles (si applicable)
 import './UserForm.css';
 ```
 
 ### Configuration des Path Aliases
 
 ```json
-// tsconfig.json
+/ tsconfig.json
 {
   "compilerOptions": {
     "baseUrl": ".",
@@ -77,7 +77,7 @@ import './UserForm.css';
 ```
 
 ```typescript
-// vite.config.ts
+/ vite.config.ts
 import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
 
@@ -96,39 +96,39 @@ export default defineConfig({
 ### Named Exports (Recommandé)
 
 ```typescript
-// ✅ BON : Named exports
-// services/UserService.ts
+/ ✅ BON : Named exports
+/ services/UserService.ts
 export class UserService {
   async findById(id: string): Promise<User | null> {
-    // ...
+    / ...
   }
 }
 
-// Exports multiples
+/ Exports multiples
 export function validateUser(user: User): boolean {
-  // ...
+  / ...
 }
 
 export const USER_ROLES = ['admin', 'user', 'moderator'] as const;
 
 export type UserRole = (typeof USER_ROLES)[number];
 
-// Import côté consommateur
+/ Import côté consommateur
 import { UserService, validateUser, USER_ROLES, type UserRole } from '@/services/UserService';
 ```
 
 ### Export Default (Cas Spécifiques)
 
 ```typescript
-// ✅ Acceptable pour les composants Vue
-// components/UserCard.vue
+/ ✅ Acceptable pour les composants Vue
+/ components/UserCard.vue
 export default defineComponent({
   name: 'UserCard',
-  // ...
+  / ...
 });
 
-// ✅ Acceptable pour la configuration
-// config/database.config.ts
+/ ✅ Acceptable pour la configuration
+/ config/database.config.ts
 const databaseConfig = {
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
@@ -137,38 +137,38 @@ const databaseConfig = {
 
 export default databaseConfig;
 
-// ❌ MAUVAIS : Export default pour utilitaires
-// utils/format.ts
+/ ❌ MAUVAIS : Export default pour utilitaires
+/ utils/format.ts
 export default function formatDate(date: Date): string {
-  // Difficile à refactorer, pas d'auto-import intelligent
+  / Difficile à refactorer, pas d'auto-import intelligent
 }
 
-// ✅ BON : Named export
+/ ✅ BON : Named export
 export function formatDate(date: Date): string {
-  // Facile à refactorer, auto-import intelligent
+  / Facile à refactorer, auto-import intelligent
 }
 ```
 
 ### Re-exports et Barrel Files
 
 ```typescript
-// ✅ Barrel file pour exports publics
-// types/index.ts
+/ ✅ Barrel file pour exports publics
+/ types/index.ts
 export type { User, UserRole, UserStatus } from './user.types';
 export type { Product, ProductCategory } from './product.types';
 export type { Order, OrderStatus, OrderItem } from './order.types';
 export type { ApiResponse, PaginatedResponse, ApiError } from './api.types';
 
-// ✅ Re-export avec renommage
+/ ✅ Re-export avec renommage
 export { UserService as UserRepository } from './UserService';
 export { default as config } from './config';
 
-// ✅ Re-export de tout un module (à utiliser avec parcimonie)
+/ ✅ Re-export de tout un module (à utiliser avec parcimonie)
 export * from './constants';
 
-// ❌ MAUVAIS : Re-export de * depuis plusieurs modules (conflits possibles)
+/ ❌ MAUVAIS : Re-export de * depuis plusieurs modules (conflits possibles)
 export * from './user.types';
-export * from './product.types'; // Risque de conflits de noms
+export * from './product.types'; / Risque de conflits de noms
 ```
 
 ### Structure de Feature Module
@@ -197,21 +197,21 @@ src/
 ```
 
 ```typescript
-// features/users/index.ts (Barrel file principal)
+/ features/users/index.ts (Barrel file principal)
 
-// Types publics
+/ Types publics
 export type { User, UserRole, CreateUserDTO, UpdateUserDTO } from './types';
 
-// Composables publics
+/ Composables publics
 export { useUsers, useUserForm } from './composables';
 
-// Composants publics
+/ Composants publics
 export { UserList, UserCard, UserForm } from './components';
 
-// Store public
+/ Store public
 export { useUserStore } from './store';
 
-// API publique (si nécessaire)
+/ API publique (si nécessaire)
 export { userApi } from './api';
 ```
 
@@ -220,9 +220,9 @@ export { userApi } from './api';
 ### Déclarations de Types Globaux
 
 ```typescript
-// types/global.d.ts
+/ types/global.d.ts
 declare global {
-  // Étendre Window
+  / Étendre Window
   interface Window {
     __APP_VERSION__: string;
     __APP_CONFIG__: {
@@ -231,11 +231,11 @@ declare global {
     };
   }
 
-  // Variables globales
+  / Variables globales
   const __DEV__: boolean;
   const __PROD__: boolean;
 
-  // Types utilitaires globaux
+  / Types utilitaires globaux
   type Nullable<T> = T | null;
   type Optional<T> = T | undefined;
   type Maybe<T> = T | null | undefined;
@@ -247,9 +247,9 @@ export {};
 ### Déclarations pour Modules sans Types
 
 ```typescript
-// types/modules.d.ts
+/ types/modules.d.ts
 
-// Module sans types natifs
+/ Module sans types natifs
 declare module 'some-untyped-library' {
   export function doSomething(value: string): number;
   export const VERSION: string;
@@ -265,7 +265,7 @@ declare module 'some-untyped-library' {
   }
 }
 
-// Fichiers non-TypeScript
+/ Fichiers non-TypeScript
 declare module '*.vue' {
   import type { DefineComponent } from 'vue';
   const component: DefineComponent<object, object, unknown>;
@@ -312,7 +312,7 @@ declare module '*.module.css' {
 ### Augmentation de Modules Existants
 
 ```typescript
-// types/vue-router.d.ts
+/ types/vue-router.d.ts
 import 'vue-router';
 
 declare module 'vue-router' {
@@ -337,7 +337,7 @@ declare module 'vue-router' {
   }
 }
 
-// types/pinia.d.ts
+/ types/pinia.d.ts
 import 'pinia';
 
 declare module 'pinia' {
@@ -350,7 +350,7 @@ declare module 'pinia' {
   }
 }
 
-// types/axios.d.ts
+/ types/axios.d.ts
 import 'axios';
 
 declare module 'axios' {
@@ -370,8 +370,8 @@ declare module 'axios' {
 ### Déclarations de Types Ambient
 
 ```typescript
-// types/env.d.ts
-/// <reference types="vite/client" />
+/ types/env.d.ts
+// <reference types="vite/client" />
 
 interface ImportMetaEnv {
   /** URL de base de l'API */
@@ -400,23 +400,23 @@ interface ImportMeta {
 ### Détection des Cycles
 
 ```typescript
-// ❌ MAUVAIS : Dépendance circulaire
-// services/UserService.ts
+/ ❌ MAUVAIS : Dépendance circulaire
+/ services/UserService.ts
 import { OrderService } from './OrderService';
 
 export class UserService {
   constructor(private orderService: OrderService) {}
 }
 
-// services/OrderService.ts
-import { UserService } from './UserService'; // Cycle!
+/ services/OrderService.ts
+import { UserService } from './UserService'; / Cycle!
 
 export class OrderService {
   constructor(private userService: UserService) {}
 }
 
-// ✅ BON : Extraire l'interface commune
-// interfaces/services.interfaces.ts
+/ ✅ BON : Extraire l'interface commune
+/ interfaces/services.interfaces.ts
 export interface IUserService {
   findById(id: string): Promise<User | null>;
 }
@@ -425,14 +425,14 @@ export interface IOrderService {
   findByUserId(userId: string): Promise<Order[]>;
 }
 
-// services/UserService.ts
+/ services/UserService.ts
 import type { IOrderService } from '@/interfaces/services.interfaces';
 
 export class UserService implements IUserService {
   constructor(private orderService: IOrderService) {}
 }
 
-// services/OrderService.ts
+/ services/OrderService.ts
 import type { IUserService } from '@/interfaces/services.interfaces';
 
 export class OrderService implements IOrderService {
@@ -443,13 +443,13 @@ export class OrderService implements IOrderService {
 ### Pattern d'Injection Tardive
 
 ```typescript
-// ✅ Injection tardive pour éviter les cycles
-// services/ServiceContainer.ts
+/ ✅ Injection tardive pour éviter les cycles
+/ services/ServiceContainer.ts
 class ServiceContainer {
   private services = new Map<string, unknown>();
 
   register<T>(key: string, factory: () => T): void {
-    // Lazy instantiation
+    / Lazy instantiation
     Object.defineProperty(this, key, {
       get: () => {
         if (!this.services.has(key)) {
@@ -466,7 +466,7 @@ class ServiceContainer {
   }
 }
 
-// Configuration
+/ Configuration
 const container = new ServiceContainer();
 
 container.register('userService', () => new UserService(container.get('orderService')));
@@ -476,8 +476,8 @@ container.register('orderService', () => new OrderService(container.get('userSer
 ### Séparation des Couches
 
 ```typescript
-// ✅ Architecture en couches pour éviter les cycles
-// domain/entities/User.ts
+/ ✅ Architecture en couches pour éviter les cycles
+/ domain/entities/User.ts
 export class User {
   constructor(
     public readonly id: string,
@@ -486,17 +486,17 @@ export class User {
   ) {}
 }
 
-// domain/entities/Order.ts
+/ domain/entities/Order.ts
 export class Order {
   constructor(
     public readonly id: string,
-    public readonly userId: string, // Référence par ID, pas par instance
+    public readonly userId: string, / Référence par ID, pas par instance
     public readonly items: OrderItem[],
   ) {}
 }
 
-// application/services/UserApplicationService.ts
-// Dépend uniquement de la couche domain et infrastructure
+/ application/services/UserApplicationService.ts
+/ Dépend uniquement de la couche domain et infrastructure
 import type { User } from '@/domain/entities/User';
 import type { IUserRepository } from '@/domain/repositories/IUserRepository';
 
@@ -546,7 +546,7 @@ src/
 ### Types Partagés
 
 ```typescript
-// types/common/api.types.ts
+/ types/common/api.types.ts
 export interface ApiResponse<T> {
   data: T;
   success: boolean;
@@ -570,7 +570,7 @@ export interface PaginatedResponse<T> {
   hasPrevious: boolean;
 }
 
-// types/common/result.types.ts
+/ types/common/result.types.ts
 export type Result<T, E = Error> =
   | { success: true; data: T }
   | { success: false; error: E };
@@ -595,7 +595,7 @@ export function isErr<T, E>(result: Result<T, E>): result is { success: false; e
 ### Types de Domaine
 
 ```typescript
-// types/domain/user.types.ts
+/ types/domain/user.types.ts
 
 /** Statuts possibles d'un utilisateur */
 export const UserStatus = {
@@ -639,7 +639,7 @@ export type UserFormData = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
 ### DTOs
 
 ```typescript
-// types/dto/user.dto.ts
+/ types/dto/user.dto.ts
 import type { User, UserRole, UserStatus } from '../domain/user.types';
 
 /** DTO pour la création d'un utilisateur */
@@ -691,18 +691,18 @@ export function mapUserResponseToUser(dto: UserResponseDTO): User {
 ### Lazy Loading de Modules
 
 ```typescript
-// ✅ Import dynamique pour code splitting
+/ ✅ Import dynamique pour code splitting
 async function loadAnalytics(): Promise<typeof import('@/services/analytics')> {
   return import('@/services/analytics');
 }
 
-// Usage conditionnel
+/ Usage conditionnel
 if (shouldTrackAnalytics()) {
   const analytics = await loadAnalytics();
   analytics.track('page_view', { page: '/home' });
 }
 
-// ✅ Avec gestion d'erreur
+/ ✅ Avec gestion d'erreur
 async function loadHeavyModule(): Promise<void> {
   try {
     const { HeavyProcessor } = await import('@/services/HeavyProcessor');
@@ -710,11 +710,11 @@ async function loadHeavyModule(): Promise<void> {
     await processor.process(data);
   } catch (error) {
     console.error('Failed to load HeavyProcessor:', error);
-    // Fallback ou notification utilisateur
+    / Fallback ou notification utilisateur
   }
 }
 
-// ✅ Chargement parallèle de modules
+/ ✅ Chargement parallèle de modules
 async function initializeApp(): Promise<void> {
   const [
     { AuthService },
@@ -730,14 +730,14 @@ async function initializeApp(): Promise<void> {
   const api = new ApiService();
   const storage = new StorageService();
   
-  // Initialize...
+  / Initialize...
 }
 ```
 
 ### Factory avec Import Dynamique
 
 ```typescript
-// ✅ Factory pattern avec lazy loading
+/ ✅ Factory pattern avec lazy loading
 type ModuleName = 'stripe' | 'paypal' | 'mollie';
 
 async function getPaymentProvider(name: ModuleName): Promise<PaymentProvider> {
@@ -759,7 +759,7 @@ async function getPaymentProvider(name: ModuleName): Promise<PaymentProvider> {
   }
 }
 
-// Usage
+/ Usage
 const provider = await getPaymentProvider('stripe');
 await provider.processPayment(amount);
 ```
@@ -767,15 +767,15 @@ await provider.processPayment(amount);
 ### Preloading de Modules
 
 ```typescript
-// ✅ Preload modules qui seront probablement utilisés
+/ ✅ Preload modules qui seront probablement utilisés
 function preloadModules(): void {
-  // Utiliser webpackPrefetch ou import() selon le bundler
+  / Utiliser webpackPrefetch ou import() selon le bundler
   const modules = [
     () => import('@/features/dashboard'),
     () => import('@/features/settings'),
   ];
 
-  // Preload après le chargement initial
+  / Preload après le chargement initial
   if ('requestIdleCallback' in window) {
     window.requestIdleCallback(() => {
       modules.forEach(loadModule => loadModule());
@@ -787,7 +787,7 @@ function preloadModules(): void {
   }
 }
 
-// Dans Vue Router
+/ Dans Vue Router
 const routes = [
   {
     path: '/dashboard',
@@ -803,14 +803,14 @@ const routes = [
 ```json
 {
   "compilerOptions": {
-    // Modules
+    / Modules
     "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     
-    // Types
+    / Types
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -821,18 +821,18 @@ const routes = [
     "useUnknownInCatchVariables": true,
     "noUncheckedIndexedAccess": true,
     
-    // Imports/Exports
+    / Imports/Exports
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
     
-    // Path aliases
+    / Path aliases
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
     
-    // Types
+    / Types
     "types": ["vite/client", "node"],
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
@@ -844,7 +844,7 @@ const routes = [
 ### Project References
 
 ```json
-// tsconfig.json (racine)
+/ tsconfig.json (racine)
 {
   "files": [],
   "references": [
@@ -854,7 +854,7 @@ const routes = [
   ]
 }
 
-// packages/core/tsconfig.json
+/ packages/core/tsconfig.json
 {
   "compilerOptions": {
     "composite": true,
@@ -864,7 +864,7 @@ const routes = [
   "include": ["src/**/*"]
 }
 
-// packages/ui/tsconfig.json
+/ packages/ui/tsconfig.json
 {
   "compilerOptions": {
     "composite": true,

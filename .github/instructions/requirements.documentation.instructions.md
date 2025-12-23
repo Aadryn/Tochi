@@ -1754,11 +1754,11 @@ Ce requirement vise à permettre aux utilisateurs de marquer leurs prompts favor
 
 ## 🔗 Références
 
-- [User Story Mapping - Jeff Patton](https://www.jpattonassociates.com/user-story-mapping/)
-- [Writing Effective Use Cases - Alistair Cockburn](https://www.amazon.com/Writing-Effective-Cases-Alistair-Cockburn/dp/0201702258)
-- [Specification by Example - Gojko Adzic](https://www.amazon.com/Specification-Example-Successful-Deliver-Software/dp/1617290084)
-- [IEEE 29148 - Requirements Engineering Standard](https://standards.ieee.org/standard/29148-2018.html)
-- [BABOK Guide - Business Analysis Body of Knowledge](https://www.iiba.org/business-analysis-certifications/babok/)
-- [RFC 2119 - Key words for use in RFCs (MUST, SHOULD, MAY)](https://www.ietf.org/rfc/rfc2119.txt)
-- [Gherkin Language - Given-When-Then](https://cucumber.io/docs/gherkin/reference/)
+- [User Story Mapping - Jeff Patton](https:/www.jpattonassociates.com/user-story-mapping/)
+- [Writing Effective Use Cases - Alistair Cockburn](https:/www.amazon.com/Writing-Effective-Cases-Alistair-Cockburn/dp/0201702258)
+- [Specification by Example - Gojko Adzic](https:/www.amazon.com/Specification-Example-Successful-Deliver-Software/dp/1617290084)
+- [IEEE 29148 - Requirements Engineering Standard](https:/standards.ieee.org/standard/29148-2018.html)
+- [BABOK Guide - Business Analysis Body of Knowledge](https:/www.iiba.org/business-analysis-certifications/babok/)
+- [RFC 2119 - Key words for use in RFCs (MUST, SHOULD, MAY)](https:/www.ietf.org/rfc/rfc2119.txt)
+- [Gherkin Language - Given-When-Then](https:/cucumber.io/docs/gherkin/reference/)
 - Copilot instructions: `.github/copilot-instructions.md` (section Documentation Fonctionnelle)

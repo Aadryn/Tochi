@@ -1,7 +1,7 @@
 ---
 description: TypeScript Async - Promises, async/await, error handling, concurrency patterns
 name: TypeScript_Async_Patterns
-applyTo: "**/frontend/**/*.ts"
+applyTo: "**/*.ts"
 ---
 
 # TypeScript - Programmation Asynchrone
@@ -33,7 +33,7 @@ Guide complet pour la programmation asynchrone en TypeScript.
 ### Syntaxe de Base
 
 ```typescript
-// ✅ BON : Fonction async typée
+/ ✅ BON : Fonction async typée
 async function fetchUser(id: string): Promise<User> {
   const response = await fetch(`/api/users/${id}`)
   
@@ -44,13 +44,13 @@ async function fetchUser(id: string): Promise<User> {
   return response.json() as Promise<User>
 }
 
-// ✅ BON : Arrow function async
+/ ✅ BON : Arrow function async
 const fetchUsers = async (): Promise<User[]> => {
   const response = await fetch('/api/users')
   return response.json()
 }
 
-// ✅ BON : Méthode async dans une classe
+/ ✅ BON : Méthode async dans une classe
 class UserService {
   async getById(id: string): Promise<User | null> {
     try {
@@ -65,7 +65,7 @@ class UserService {
 ### Gestion d'Erreurs
 
 ```typescript
-// ✅ BON : Try/catch avec type d'erreur
+/ ✅ BON : Try/catch avec type d'erreur
 async function safelyFetchUser(id: string): Promise<Result<User, Error>> {
   try {
     const user = await fetchUser(id)
@@ -76,7 +76,7 @@ async function safelyFetchUser(id: string): Promise<Result<User, Error>> {
   }
 }
 
-// ✅ BON : Fonction utilitaire pour wrapper les erreurs
+/ ✅ BON : Fonction utilitaire pour wrapper les erreurs
 async function tryCatch<T>(
   promise: Promise<T>
 ): Promise<[T, null] | [null, Error]> {
@@ -89,7 +89,7 @@ async function tryCatch<T>(
   }
 }
 
-// Utilisation
+/ Utilisation
 const [user, error] = await tryCatch(fetchUser('123'))
 if (error) {
   console.error('Failed to fetch user:', error.message)
@@ -103,7 +103,7 @@ console.log('User:', user.name)
 ### Promise.all - Exécution Parallèle
 
 ```typescript
-// ✅ BON : Opérations indépendantes en parallèle
+/ ✅ BON : Opérations indépendantes en parallèle
 async function fetchUserWithDetails(userId: string): Promise<UserWithDetails> {
   const [user, orders, preferences] = await Promise.all([
     fetchUser(userId),
@@ -114,7 +114,7 @@ async function fetchUserWithDetails(userId: string): Promise<UserWithDetails> {
   return { ...user, orders, preferences }
 }
 
-// ✅ BON : Avec typage explicite
+/ ✅ BON : Avec typage explicite
 interface FetchResult {
   users: User[]
   products: Product[]
@@ -135,7 +135,7 @@ async function fetchDashboardData(): Promise<FetchResult> {
 ### Promise.allSettled - Tolérance aux Erreurs
 
 ```typescript
-// ✅ BON : Toutes les promesses s'exécutent même si certaines échouent
+/ ✅ BON : Toutes les promesses s'exécutent même si certaines échouent
 async function fetchAllUsers(ids: string[]): Promise<(User | null)[]> {
   const results = await Promise.allSettled(
     ids.map(id => fetchUser(id))
@@ -146,7 +146,7 @@ async function fetchAllUsers(ids: string[]): Promise<(User | null)[]> {
   )
 }
 
-// ✅ BON : Avec rapport d'erreurs
+/ ✅ BON : Avec rapport d'erreurs
 interface BatchResult<T> {
   successful: T[]
   failed: Array<{ index: number; error: Error }>
@@ -181,7 +181,7 @@ async function batchProcess<T, R>(
 ### Promise.race - Premier Arrivé
 
 ```typescript
-// ✅ BON : Timeout avec Promise.race
+/ ✅ BON : Timeout avec Promise.race
 function withTimeout<T>(
   promise: Promise<T>,
   timeoutMs: number,
@@ -194,14 +194,14 @@ function withTimeout<T>(
   return Promise.race([promise, timeout])
 }
 
-// Utilisation
+/ Utilisation
 const user = await withTimeout(
   fetchUser('123'),
   5000,
   'Failed to fetch user within 5 seconds'
 )
 
-// ✅ BON : Premier résultat réussi
+/ ✅ BON : Premier résultat réussi
 async function fetchFromFastestMirror<T>(urls: string[]): Promise<T> {
   return Promise.race(
     urls.map(url => fetch(url).then(r => r.json()))
@@ -214,7 +214,7 @@ async function fetchFromFastestMirror<T>(urls: string[]): Promise<T> {
 ### Pattern de Base
 
 ```typescript
-// ✅ BON : Requête annulable
+/ ✅ BON : Requête annulable
 async function fetchWithAbort(
   url: string,
   signal?: AbortSignal
@@ -228,7 +228,7 @@ async function fetchWithAbort(
   return response
 }
 
-// Utilisation dans un composant Vue
+/ Utilisation dans un composant Vue
 import { ref, onUnmounted } from 'vue'
 
 export function useFetch<T>(url: string) {
@@ -238,7 +238,7 @@ export function useFetch<T>(url: string) {
   const controller = ref<AbortController | null>(null)
   
   async function execute(): Promise<void> {
-    // Annuler la requête précédente
+    / Annuler la requête précédente
     controller.value?.abort()
     controller.value = new AbortController()
     
@@ -274,7 +274,7 @@ export function useFetch<T>(url: string) {
 ### Annulation de Plusieurs Opérations
 
 ```typescript
-// ✅ BON : Groupe d'opérations annulables
+/ ✅ BON : Groupe d'opérations annulables
 class CancellableOperations {
   private controller: AbortController
   
@@ -297,14 +297,14 @@ class CancellableOperations {
   }
 }
 
-// Utilisation
+/ Utilisation
 const ops = new CancellableOperations()
 
-// Ces requêtes peuvent être annulées ensemble
+/ Ces requêtes peuvent être annulées ensemble
 const userPromise = ops.fetch<User>('/api/user')
 const ordersPromise = ops.fetch<Order[]>('/api/orders')
 
-// Annuler toutes les requêtes en cours
+/ Annuler toutes les requêtes en cours
 ops.cancelAll()
 ```
 
@@ -313,7 +313,7 @@ ops.cancelAll()
 ### for await...of
 
 ```typescript
-// ✅ BON : Itérer sur un async iterable
+/ ✅ BON : Itérer sur un async iterable
 async function* fetchUsersInBatches(
   ids: string[],
   batchSize: number
@@ -325,7 +325,7 @@ async function* fetchUsersInBatches(
   }
 }
 
-// Utilisation
+/ Utilisation
 async function processAllUsers(ids: string[]): Promise<void> {
   for await (const batch of fetchUsersInBatches(ids, 10)) {
     console.log(`Processing batch of ${batch.length} users`)
@@ -337,22 +337,22 @@ async function processAllUsers(ids: string[]): Promise<void> {
 ### Séquentiel vs Parallèle
 
 ```typescript
-// ❌ MAUVAIS : Exécution séquentielle involontaire
+/ ❌ MAUVAIS : Exécution séquentielle involontaire
 async function fetchUsersSequential(ids: string[]): Promise<User[]> {
   const users: User[] = []
   for (const id of ids) {
-    const user = await fetchUser(id) // Attend chaque requête
+    const user = await fetchUser(id) / Attend chaque requête
     users.push(user)
   }
-  return users // Très lent!
+  return users / Très lent!
 }
 
-// ✅ BON : Exécution parallèle
+/ ✅ BON : Exécution parallèle
 async function fetchUsersParallel(ids: string[]): Promise<User[]> {
   return Promise.all(ids.map(id => fetchUser(id)))
 }
 
-// ✅ BON : Parallèle avec limite de concurrence
+/ ✅ BON : Parallèle avec limite de concurrence
 async function fetchUsersWithLimit(
   ids: string[],
   concurrencyLimit: number
@@ -372,7 +372,7 @@ async function fetchUsersWithLimit(
 ## 🔄 Retry Pattern
 
 ```typescript
-// ✅ BON : Retry avec backoff exponentiel
+/ ✅ BON : Retry avec backoff exponentiel
 interface RetryOptions {
   maxRetries: number
   initialDelayMs: number
@@ -415,12 +415,12 @@ async function withRetry<T>(
   throw lastError
 }
 
-// Fonction utilitaire sleep
+/ Fonction utilitaire sleep
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-// Utilisation
+/ Utilisation
 const user = await withRetry(
   () => fetchUser('123'),
   {
@@ -429,7 +429,7 @@ const user = await withRetry(
     maxDelayMs: 10000,
     backoffFactor: 2,
     shouldRetry: (error) => {
-      // Retry uniquement pour les erreurs réseau
+      / Retry uniquement pour les erreurs réseau
       return error instanceof Error && 
              error.message.includes('network')
     }
@@ -440,7 +440,7 @@ const user = await withRetry(
 ## 📊 Queue de Tâches
 
 ```typescript
-// ✅ BON : Queue avec limite de concurrence
+/ ✅ BON : Queue avec limite de concurrence
 class AsyncQueue<T> {
   private queue: Array<() => Promise<T>> = []
   private running = 0
@@ -492,8 +492,8 @@ class AsyncQueue<T> {
   }
 }
 
-// Utilisation
-const queue = new AsyncQueue<User>(3) // Max 3 requêtes simultanées
+/ Utilisation
+const queue = new AsyncQueue<User>(3) / Max 3 requêtes simultanées
 
 const userPromises = userIds.map(id =>
   queue.add(() => fetchUser(id))
@@ -505,40 +505,40 @@ const users = await Promise.all(userPromises)
 ## ⚠️ Anti-Patterns à Éviter
 
 ```typescript
-// ❌ MAUVAIS : Promise non retournée
+/ ❌ MAUVAIS : Promise non retournée
 async function badExample(): Promise<void> {
-  fetchUser('123') // Promise ignorée!
+  fetchUser('123') / Promise ignorée!
 }
 
-// ✅ BON : Toujours retourner ou await
+/ ✅ BON : Toujours retourner ou await
 async function goodExample(): Promise<void> {
   await fetchUser('123')
 }
 
-// ❌ MAUVAIS : Catch vide
+/ ❌ MAUVAIS : Catch vide
 try {
   await fetchUser('123')
 } catch {
-  // Erreur silencieuse!
+  / Erreur silencieuse!
 }
 
-// ✅ BON : Logger ou propager l'erreur
+/ ✅ BON : Logger ou propager l'erreur
 try {
   await fetchUser('123')
 } catch (error) {
   console.error('Failed to fetch user:', error)
-  throw error // ou gérer explicitement
+  throw error / ou gérer explicitement
 }
 
-// ❌ MAUVAIS : await dans une boucle forEach
+/ ❌ MAUVAIS : await dans une boucle forEach
 userIds.forEach(async (id) => {
-  await fetchUser(id) // Ne marche pas comme attendu!
+  await fetchUser(id) / Ne marche pas comme attendu!
 })
 
-// ✅ BON : for...of ou Promise.all
+/ ✅ BON : for...of ou Promise.all
 for (const id of userIds) {
   await fetchUser(id)
 }
-// ou
+/ ou
 await Promise.all(userIds.map(id => fetchUser(id)))
 ```

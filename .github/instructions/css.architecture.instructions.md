@@ -1,7 +1,7 @@
 ---
 description: Architecture CSS - Classes composables, hiérarchie de styling et conventions de nommage
 name: CSS_Architecture
-applyTo: "**/frontend/assets/**/*.css,**/backend/**/*.razor.css,**/wwwroot/css/**/*.css"
+applyTo: "**/assets/**/*.css,**/*.razor.css,**/wwwroot/css/**/*.css"
 ---
 
 # Instructions CSS - Architecture et Composabilité
@@ -81,13 +81,13 @@ applyTo: "**/frontend/assets/**/*.css,**/backend/**/*.razor.css,**/wwwroot/css/*
 
 **✅ Pour les styles globaux de l'application :**
 ```csharp
-// Program.cs ou Startup
+/ Program.cs ou Startup
 services.AddMudServices(config =>
 {
     config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
 });
 
-// Theme customization
+/ Theme customization
 var theme = new MudTheme()
 {
     Palette = new PaletteLight()
@@ -852,7 +852,7 @@ public partial class StatsCard
 #### Components/Charts/ProgressBar.razor
 ```razor
 @code {
-    [Parameter] public double Progress { get; set; } = 0.0; // 0.0 à 1.0
+    [Parameter] public double Progress { get; set; } = 0.0; / 0.0 à 1.0
     [Parameter] public string Color { get; set; } = "#0288d1";
     
     private string ProgressBarStyle => $"width: {Progress * 100}%; background-color: {Color};";
@@ -995,19 +995,19 @@ Get-ChildItem -Recurse -Filter "*.razor.css" |
 ### Validation Automatique
 
 ```javascript
-// Script de validation (intégrer en CI/CD si nécessaire)
+/ Script de validation (intégrer en CI/CD si nécessaire)
 const razorFiles = getAllRazorFiles();
 const violations = [];
 
 razorFiles.forEach(file => {
     const content = readFile(file);
     
-    // Détecter Style="" statiques
+    / Détecter Style="" statiques
     if (/Style="[^@]/.test(content)) {
         violations.push({ file, issue: 'Static Style attribute found' });
     }
     
-    // Détecter classes Bootstrap
+    / Détecter classes Bootstrap
     if (/class="[^"]*\b(d-flex|pa-\d|mb-\d)/.test(content)) {
         violations.push({ file, issue: 'Bootstrap classes found' });
     }
@@ -1022,15 +1022,15 @@ if (violations.length > 0) {
 ## 📚 Ressources
 
 ### Documentation Officielle
-- [MudBlazor Styles & Colors](https://mudblazor.com/features/colors)
-- [CSS Variables (MDN)](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
-- [BEM Methodology](http://getbem.com/)
-- [WCAG 2.1 (Accessibilité)](https://www.w3.org/WAI/WCAG21/quickref/)
+- [MudBlazor Styles & Colors](https:/mudblazor.com/features/colors)
+- [CSS Variables (MDN)](https:/developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
+- [BEM Methodology](http:/getbem.com/)
+- [WCAG 2.1 (Accessibilité)](https:/www.w3.org/WAI/WCAG21/quickref/)
 
 ### Outils
-- [Contrast Checker](https://webaim.org/resources/contrastchecker/)
-- [CSS Validator](https://jigsaw.w3.org/css-validator/)
-- [PurgeCSS](https://purgecss.com/) - Éliminer CSS non utilisé
+- [Contrast Checker](https:/webaim.org/resources/contrastchecker/)
+- [CSS Validator](https:/jigsaw.w3.org/css-validator/)
+- [PurgeCSS](https:/purgecss.com/) - Éliminer CSS non utilisé
 
 ### Conventions
 - Variables CSS : `--{category}-{property}-{variant}`

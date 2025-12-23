@@ -105,8 +105,8 @@ applyTo: "**/ansible/playbooks/**/*.yml,**/ansible/playbooks/**/*.yaml"
         url: "{{ item }}"
         timeout: 5
       loop:
-        - "https://{{ artifact_repository }}"
-        - "https://{{ monitoring_endpoint }}"
+        - "https:/{{ artifact_repository }}"
+        - "https:/{{ monitoring_endpoint }}"
       tags: preflight
     
     - name: Update package cache (Debian/Ubuntu)
@@ -176,7 +176,7 @@ applyTo: "**/ansible/playbooks/**/*.yml,**/ansible/playbooks/**/*.yaml"
   post_tasks:
     - name: Wait for application to be ready
       uri:
-        url: "http://{{ ansible_default_ipv4.address }}:8080/health"
+        url: "http:/{{ ansible_default_ipv4.address }}:8080/health"
         status_code: 200
         timeout: 5
       retries: 30
@@ -186,7 +186,7 @@ applyTo: "**/ansible/playbooks/**/*.yml,**/ansible/playbooks/**/*.yaml"
     
     - name: Verify application version
       uri:
-        url: "http://{{ ansible_default_ipv4.address }}:8080/version"
+        url: "http:/{{ ansible_default_ipv4.address }}:8080/version"
         return_content: true
       register: version_check
       failed_when: deployment_version not in version_check.content
@@ -259,7 +259,7 @@ applyTo: "**/ansible/playbooks/**/*.yml,**/ansible/playbooks/**/*.yaml"
   post_tasks:
     - name: Wait for application to be healthy
       uri:
-        url: "http://localhost:8080/health"
+        url: "http:/localhost:8080/health"
         status_code: 200
       retries: 30
       delay: 2
@@ -301,7 +301,7 @@ applyTo: "**/ansible/playbooks/**/*.yml,**/ansible/playbooks/**/*.yaml"
     
     - name: Run smoke tests on target environment
       uri:
-        url: "http://{{ target_color }}.example.com/health"
+        url: "http:/{{ target_color }}.example.com/health"
         status_code: 200
       retries: 10
       delay: 5
@@ -370,7 +370,7 @@ applyTo: "**/ansible/playbooks/**/*.yml,**/ansible/playbooks/**/*.yaml"
         
         - name: Wait for application health check
           uri:
-            url: "http://localhost:8080/health"
+            url: "http:/localhost:8080/health"
             status_code: 200
           retries: 30
           delay: 2
@@ -403,7 +403,7 @@ applyTo: "**/ansible/playbooks/**/*.yml,**/ansible/playbooks/**/*.yaml"
         
         - name: Verify rollback successful
           uri:
-            url: "http://localhost:8080/health"
+            url: "http:/localhost:8080/health"
             status_code: 200
           retries: 10
           delay: 2
@@ -702,7 +702,7 @@ applyTo: "**/ansible/playbooks/**/*.yml,**/ansible/playbooks/**/*.yaml"
     
     - name: Run health checks
       uri:
-        url: "http://localhost:8080/health"
+        url: "http:/localhost:8080/health"
       tags:
         - verify
         - health-check
@@ -780,7 +780,7 @@ ansible-playbook playbook.yml --tags "health-check"
   post_tasks:
     - name: Verify application is healthy
       uri:
-        url: "http://localhost:8080/health"
+        url: "http:/localhost:8080/health"
         status_code: 200
   
   handlers:

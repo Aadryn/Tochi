@@ -3,6 +3,7 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 using LLMProxy.Application.LLMProviders.Services;
+using LLMProxy.Application.LLMProviders.Services.Failover;
 using LLMProxy.Application.LLMProviders.Services.Orchestration;
 using LLMProxy.Application.LLMProviders.Services.Selection;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,7 +1,7 @@
 ---
 description: TypeScript Patterns - Design patterns, SOLID, Factory, Repository, Singleton, Observer
 name: TypeScript_Patterns
-applyTo: "**/frontend/**/*.ts"
+applyTo: "**/*.ts"
 ---
 
 # TypeScript Design Patterns
@@ -29,7 +29,7 @@ Guide complet des design patterns en TypeScript avec typage fort.
 ### Factory Pattern
 
 ```typescript
-// types/product.types.ts
+/ types/product.types.ts
 interface Product {
   readonly id: string;
   readonly name: string;
@@ -39,7 +39,7 @@ interface Product {
 
 type ProductType = 'physical' | 'digital' | 'subscription';
 
-// factories/product.factory.ts
+/ factories/product.factory.ts
 class PhysicalProduct implements Product {
   constructor(
     public readonly id: string,
@@ -62,7 +62,7 @@ class DigitalProduct implements Product {
   ) {}
 
   calculateDiscount(percentage: number): number {
-    // Les produits digitaux ont une réduction max de 50%
+    / Les produits digitaux ont une réduction max de 50%
     const maxDiscount = Math.min(percentage, 50);
     return this.price * (1 - maxDiscount / 100);
   }
@@ -77,12 +77,12 @@ class SubscriptionProduct implements Product {
   ) {}
 
   calculateDiscount(percentage: number): number {
-    // Pas de réduction sur les abonnements
+    / Pas de réduction sur les abonnements
     return this.price;
   }
 }
 
-// ✅ Factory avec type guards et validation
+/ ✅ Factory avec type guards et validation
 interface ProductDTO {
   id: string;
   name: string;
@@ -120,20 +120,20 @@ class ProductFactory {
   }
 }
 
-// Usage
+/ Usage
 const product = ProductFactory.create({
   id: '123',
   name: 'E-book TypeScript',
   price: 29.99,
   type: 'digital',
-  downloadUrl: 'https://example.com/download/123',
+  downloadUrl: 'https:/example.com/download/123',
 });
 ```
 
 ### Abstract Factory
 
 ```typescript
-// interfaces/ui.interfaces.ts
+/ interfaces/ui.interfaces.ts
 interface Button {
   render(): string;
   onClick(handler: () => void): void;
@@ -151,14 +151,14 @@ interface Modal {
   setContent(content: string): void;
 }
 
-// ✅ Abstract Factory Interface
+/ ✅ Abstract Factory Interface
 interface UIFactory {
   createButton(label: string): Button;
   createInput(placeholder: string): Input;
   createModal(title: string): Modal;
 }
 
-// Material Design Implementation
+/ Material Design Implementation
 class MaterialButton implements Button {
   constructor(private label: string) {}
 
@@ -167,7 +167,7 @@ class MaterialButton implements Button {
   }
 
   onClick(handler: () => void): void {
-    // Material click implementation
+    / Material click implementation
   }
 }
 
@@ -222,7 +222,7 @@ class MaterialUIFactory implements UIFactory {
   }
 }
 
-// Bootstrap Implementation
+/ Bootstrap Implementation
 class BootstrapUIFactory implements UIFactory {
   createButton(label: string): Button {
     return new BootstrapButton(label);
@@ -237,7 +237,7 @@ class BootstrapUIFactory implements UIFactory {
   }
 }
 
-// Usage avec injection
+/ Usage avec injection
 class FormBuilder {
   constructor(private uiFactory: UIFactory) {}
 
@@ -260,7 +260,7 @@ class FormBuilder {
 ### Builder Pattern
 
 ```typescript
-// types/query.types.ts
+/ types/query.types.ts
 interface QueryConfig {
   readonly table: string;
   readonly columns: readonly string[];
@@ -288,7 +288,7 @@ interface OrderClause {
   direction: 'ASC' | 'DESC';
 }
 
-// ✅ Builder avec fluent interface
+/ ✅ Builder avec fluent interface
 class QueryBuilder {
   private config: Partial<QueryConfig> = {
     columns: [],
@@ -370,12 +370,12 @@ class QueryBuilder {
 
     let sql = `SELECT ${config.columns.join(', ')} FROM ${config.table}`;
 
-    // Joins
+    / Joins
     for (const join of config.joins) {
       sql += ` ${join.type} JOIN ${join.table} ON ${join.on}`;
     }
 
-    // Where
+    / Where
     if (config.conditions.length > 0) {
       const whereClauses = config.conditions.map(c => {
         if (c.operator === 'IN') {
@@ -387,13 +387,13 @@ class QueryBuilder {
       sql += ` WHERE ${whereClauses.join(' AND ')}`;
     }
 
-    // Order By
+    / Order By
     if (config.orderBy.length > 0) {
       const orderClauses = config.orderBy.map(o => `${o.column} ${o.direction}`);
       sql += ` ORDER BY ${orderClauses.join(', ')}`;
     }
 
-    // Limit & Offset
+    / Limit & Offset
     if (config.limit !== undefined) {
       sql += ` LIMIT ${config.limit}`;
     }
@@ -406,7 +406,7 @@ class QueryBuilder {
   }
 }
 
-// Usage
+/ Usage
 const query = new QueryBuilder()
   .from('users')
   .select('id', 'name', 'email')
@@ -418,7 +418,7 @@ const query = new QueryBuilder()
   .offset(20)
   .toSQL();
 
-// SELECT id, name, email FROM users LEFT JOIN orders ON orders.user_id = users.id WHERE status = 'active' AND role IN ('admin', 'moderator') ORDER BY created_at DESC LIMIT 10 OFFSET 20
+/ SELECT id, name, email FROM users LEFT JOIN orders ON orders.user_id = users.id WHERE status = 'active' AND role IN ('admin', 'moderator') ORDER BY created_at DESC LIMIT 10 OFFSET 20
 ```
 
 ## 🏗️ Structural Patterns
@@ -426,7 +426,7 @@ const query = new QueryBuilder()
 ### Adapter Pattern
 
 ```typescript
-// interfaces/payment.interfaces.ts
+/ interfaces/payment.interfaces.ts
 interface PaymentProcessor {
   processPayment(amount: number, currency: string): Promise<PaymentResult>;
   refund(transactionId: string): Promise<RefundResult>;
@@ -443,7 +443,7 @@ interface RefundResult {
   refundId: string;
 }
 
-// External Stripe SDK (simulé)
+/ External Stripe SDK (simulé)
 interface StripeChargeResponse {
   id: string;
   status: 'succeeded' | 'failed';
@@ -456,7 +456,7 @@ class StripeSDK {
     amount: number;
     currency: string;
   }): Promise<StripeChargeResponse> {
-    // Appel à l'API Stripe
+    / Appel à l'API Stripe
     return {
       id: `ch_${Date.now()}`,
       status: 'succeeded',
@@ -473,14 +473,14 @@ class StripeSDK {
   }
 }
 
-// ✅ Adapter pour Stripe
+/ ✅ Adapter pour Stripe
 class StripePaymentAdapter implements PaymentProcessor {
   constructor(private stripe: StripeSDK) {}
 
   async processPayment(amount: number, currency: string): Promise<PaymentResult> {
     try {
       const charge = await this.stripe.createCharge({
-        amount: Math.round(amount * 100), // Stripe utilise les centimes
+        amount: Math.round(amount * 100), / Stripe utilise les centimes
         currency: currency.toLowerCase(),
       });
 
@@ -507,7 +507,7 @@ class StripePaymentAdapter implements PaymentProcessor {
   }
 }
 
-// ✅ Adapter pour PayPal
+/ ✅ Adapter pour PayPal
 class PayPalPaymentAdapter implements PaymentProcessor {
   constructor(private paypal: PayPalSDK) {}
 
@@ -532,12 +532,12 @@ class PayPalPaymentAdapter implements PaymentProcessor {
   }
 }
 
-// Service utilisant l'interface
+/ Service utilisant l'interface
 class PaymentService {
   constructor(private processor: PaymentProcessor) {}
 
   async checkout(amount: number, currency: string = 'EUR'): Promise<PaymentResult> {
-    // Validation, logging, etc.
+    / Validation, logging, etc.
     return this.processor.processPayment(amount, currency);
   }
 }
@@ -546,7 +546,7 @@ class PaymentService {
 ### Decorator Pattern
 
 ```typescript
-// interfaces/logger.interfaces.ts
+/ interfaces/logger.interfaces.ts
 interface Logger {
   log(message: string): void;
   error(message: string, error?: Error): void;
@@ -554,7 +554,7 @@ interface Logger {
   debug(message: string): void;
 }
 
-// Base implementation
+/ Base implementation
 class ConsoleLogger implements Logger {
   log(message: string): void {
     console.log(message);
@@ -573,7 +573,7 @@ class ConsoleLogger implements Logger {
   }
 }
 
-// ✅ Decorator de base
+/ ✅ Decorator de base
 abstract class LoggerDecorator implements Logger {
   constructor(protected logger: Logger) {}
 
@@ -594,7 +594,7 @@ abstract class LoggerDecorator implements Logger {
   }
 }
 
-// ✅ Decorator pour ajouter un timestamp
+/ ✅ Decorator pour ajouter un timestamp
 class TimestampLoggerDecorator extends LoggerDecorator {
   private formatMessage(message: string): string {
     const timestamp = new Date().toISOString();
@@ -618,7 +618,7 @@ class TimestampLoggerDecorator extends LoggerDecorator {
   }
 }
 
-// ✅ Decorator pour ajouter un contexte
+/ ✅ Decorator pour ajouter un contexte
 class ContextLoggerDecorator extends LoggerDecorator {
   constructor(
     logger: Logger,
@@ -648,7 +648,7 @@ class ContextLoggerDecorator extends LoggerDecorator {
   }
 }
 
-// ✅ Decorator pour filtrer par niveau
+/ ✅ Decorator pour filtrer par niveau
 type LogLevel = 'debug' | 'log' | 'warn' | 'error';
 
 class FilteredLoggerDecorator extends LoggerDecorator {
@@ -697,7 +697,7 @@ class FilteredLoggerDecorator extends LoggerDecorator {
   }
 }
 
-// Usage - Composition de decorators
+/ Usage - Composition de decorators
 const logger: Logger = new FilteredLoggerDecorator(
   new TimestampLoggerDecorator(
     new ContextLoggerDecorator(
@@ -705,17 +705,17 @@ const logger: Logger = new FilteredLoggerDecorator(
       'UserService',
     ),
   ),
-  'log', // Minimum level
+  'log', / Minimum level
 );
 
-logger.debug('Debug message'); // Filtré (niveau trop bas)
-logger.log('Info message'); // [2024-01-15T10:30:00.000Z] [UserService] Info message
+logger.debug('Debug message'); / Filtré (niveau trop bas)
+logger.log('Info message'); / [2024-01-15T10:30:00.000Z] [UserService] Info message
 ```
 
 ### Facade Pattern
 
 ```typescript
-// ✅ Facade pour un système de notifications complexe
+/ ✅ Facade pour un système de notifications complexe
 interface NotificationOptions {
   userId: string;
   message: string;
@@ -723,24 +723,24 @@ interface NotificationOptions {
   data?: Record<string, unknown>;
 }
 
-// Sous-systèmes complexes
+/ Sous-systèmes complexes
 class EmailService {
   async send(to: string, subject: string, body: string): Promise<boolean> {
-    // Logique email complexe
+    / Logique email complexe
     return true;
   }
 }
 
 class PushNotificationService {
   async send(deviceToken: string, title: string, body: string, data?: object): Promise<boolean> {
-    // Logique push complexe
+    / Logique push complexe
     return true;
   }
 }
 
 class SMSService {
   async send(phoneNumber: string, message: string): Promise<boolean> {
-    // Logique SMS complexe
+    / Logique SMS complexe
     return true;
   }
 }
@@ -754,7 +754,7 @@ class UserPreferencesRepository {
     pushEnabled: boolean;
     smsEnabled: boolean;
   }> {
-    // Récupérer les préférences utilisateur
+    / Récupérer les préférences utilisateur
     return {
       email: 'user@example.com',
       phone: '+33600000000',
@@ -774,11 +774,11 @@ class NotificationLogRepository {
     success: boolean;
     timestamp: Date;
   }): Promise<void> {
-    // Enregistrer le log
+    / Enregistrer le log
   }
 }
 
-// ✅ Facade - Interface simplifiée
+/ ✅ Facade - Interface simplifiée
 class NotificationFacade {
   constructor(
     private emailService: EmailService,
@@ -795,7 +795,7 @@ class NotificationFacade {
   }> {
     const { userId, message, title = 'Notification', data } = options;
 
-    // Récupérer les préférences
+    / Récupérer les préférences
     const prefs = await this.preferencesRepo.getPreferences(userId);
 
     const results = {
@@ -804,19 +804,19 @@ class NotificationFacade {
       sms: false,
     };
 
-    // Envoyer par email si activé
+    / Envoyer par email si activé
     if (prefs.emailEnabled && prefs.email) {
       results.email = await this.emailService.send(prefs.email, title, message);
       await this.logNotification(userId, 'email', message, results.email);
     }
 
-    // Envoyer en push si activé
+    / Envoyer en push si activé
     if (prefs.pushEnabled && prefs.deviceToken) {
       results.push = await this.pushService.send(prefs.deviceToken, title, message, data);
       await this.logNotification(userId, 'push', message, results.push);
     }
 
-    // Envoyer par SMS si activé
+    / Envoyer par SMS si activé
     if (prefs.smsEnabled && prefs.phone) {
       results.sms = await this.smsService.send(prefs.phone, message);
       await this.logNotification(userId, 'sms', message, results.sms);
@@ -841,7 +841,7 @@ class NotificationFacade {
   }
 }
 
-// Usage simple
+/ Usage simple
 const notificationService = new NotificationFacade(
   new EmailService(),
   new PushNotificationService(),
@@ -863,13 +863,13 @@ await notificationService.notify({
 ### Strategy Pattern
 
 ```typescript
-// interfaces/pricing.interfaces.ts
+/ interfaces/pricing.interfaces.ts
 interface PricingStrategy {
   calculatePrice(basePrice: number, quantity: number): number;
   getName(): string;
 }
 
-// ✅ Stratégies concrètes
+/ ✅ Stratégies concrètes
 class RegularPricingStrategy implements PricingStrategy {
   calculatePrice(basePrice: number, quantity: number): number {
     return basePrice * quantity;
@@ -936,7 +936,7 @@ class LoyaltyPricingStrategy implements PricingStrategy {
   }
 }
 
-// ✅ Contexte utilisant la stratégie
+/ ✅ Contexte utilisant la stratégie
 class ShoppingCart {
   private items: Array<{ productId: string; price: number; quantity: number }> = [];
   private strategy: PricingStrategy = new RegularPricingStrategy();
@@ -960,26 +960,26 @@ class ShoppingCart {
   }
 }
 
-// Usage
+/ Usage
 const cart = new ShoppingCart();
 cart.addItem('product-1', 100, 5);
 cart.addItem('product-2', 50, 3);
 
-// Stratégie par défaut
-console.log(cart.calculateTotal()); // 650
+/ Stratégie par défaut
+console.log(cart.calculateTotal()); / 650
 
-// Changer de stratégie
+/ Changer de stratégie
 cart.setStrategy(new BulkPricingStrategy(5, 10));
-console.log(cart.calculateTotal()); // 585 (10% de réduction)
+console.log(cart.calculateTotal()); / 585 (10% de réduction)
 
 cart.setStrategy(new LoyaltyPricingStrategy('gold'));
-console.log(cart.calculateTotal()); // 552.5 (15% de réduction)
+console.log(cart.calculateTotal()); / 552.5 (15% de réduction)
 ```
 
 ### Observer Pattern
 
 ```typescript
-// types/event.types.ts
+/ types/event.types.ts
 type EventCallback<T = unknown> = (data: T) => void;
 
 interface Observer<T = unknown> {
@@ -992,7 +992,7 @@ interface Subject<T = unknown> {
   notify(data: T): void;
 }
 
-// ✅ Implementation Type-Safe avec EventEmitter
+/ ✅ Implementation Type-Safe avec EventEmitter
 class TypedEventEmitter<TEvents extends Record<string, unknown>> {
   private listeners = new Map<keyof TEvents, Set<EventCallback<unknown>>>();
 
@@ -1003,7 +1003,7 @@ class TypedEventEmitter<TEvents extends Record<string, unknown>> {
 
     this.listeners.get(event)!.add(callback as EventCallback<unknown>);
 
-    // Retourner une fonction de désinscription
+    / Retourner une fonction de désinscription
     return () => this.off(event, callback);
   }
 
@@ -1038,7 +1038,7 @@ class TypedEventEmitter<TEvents extends Record<string, unknown>> {
   }
 }
 
-// ✅ Usage avec types d'événements définis
+/ ✅ Usage avec types d'événements définis
 interface CartEvents {
   'item:added': { productId: string; quantity: number };
   'item:removed': { productId: string };
@@ -1081,22 +1081,22 @@ class CartStore extends TypedEventEmitter<CartEvents> {
     const total = this.calculateTotal();
     this.emit('checkout:started', { total });
     
-    // Simulation de checkout
+    / Simulation de checkout
     const orderId = `order-${Date.now()}`;
     this.emit('checkout:completed', { orderId, total });
     this.clear();
   }
 
   private calculateTotal(): number {
-    // Simulation
+    / Simulation
     return Array.from(this.items.values()).reduce((sum, qty) => sum + qty * 10, 0);
   }
 }
 
-// Usage
+/ Usage
 const cart = new CartStore();
 
-// Type-safe listeners
+/ Type-safe listeners
 const unsubscribe = cart.on('item:added', ({ productId, quantity }) => {
   console.log(`Added ${quantity} of ${productId}`);
 });
@@ -1109,21 +1109,21 @@ cart.addItem('product-1', 2);
 cart.addItem('product-2', 1);
 cart.checkout();
 
-// Cleanup
+/ Cleanup
 unsubscribe();
 ```
 
 ### Command Pattern
 
 ```typescript
-// interfaces/command.interfaces.ts
+/ interfaces/command.interfaces.ts
 interface Command {
   execute(): Promise<void>;
   undo(): Promise<void>;
   canUndo(): boolean;
 }
 
-// ✅ Commandes concrètes
+/ ✅ Commandes concrètes
 class AddTodoCommand implements Command {
   private addedTodo: Todo | null = null;
 
@@ -1196,7 +1196,7 @@ class ToggleTodoCommand implements Command {
   }
 }
 
-// ✅ Command Manager avec historique
+/ ✅ Command Manager avec historique
 class CommandManager {
   private history: Command[] = [];
   private undoneCommands: Command[] = [];
@@ -1210,9 +1210,9 @@ class CommandManager {
     await command.execute();
     
     this.history.push(command);
-    this.undoneCommands = []; // Clear redo stack
+    this.undoneCommands = []; / Clear redo stack
     
-    // Limiter l'historique
+    / Limiter l'historique
     if (this.history.length > this.maxHistory) {
       this.history.shift();
     }
@@ -1258,25 +1258,25 @@ class CommandManager {
   }
 }
 
-// Usage
+/ Usage
 const todoStore = new TodoStore();
 const commandManager = new CommandManager();
 
-// Exécuter des commandes
+/ Exécuter des commandes
 await commandManager.execute(new AddTodoCommand(todoStore, { title: 'Task 1' }));
 await commandManager.execute(new AddTodoCommand(todoStore, { title: 'Task 2' }));
 await commandManager.execute(new ToggleTodoCommand(todoStore, 'todo-1'));
 
-// Undo/Redo
-await commandManager.undo(); // Annule le toggle
-await commandManager.undo(); // Annule l'ajout de Task 2
-await commandManager.redo(); // Refait l'ajout de Task 2
+/ Undo/Redo
+await commandManager.undo(); / Annule le toggle
+await commandManager.undo(); / Annule l'ajout de Task 2
+await commandManager.redo(); / Refait l'ajout de Task 2
 ```
 
 ## 🔌 Repository Pattern
 
 ```typescript
-// interfaces/repository.interfaces.ts
+/ interfaces/repository.interfaces.ts
 interface Entity {
   id: string;
 }
@@ -1296,7 +1296,7 @@ interface FindOptions<T> {
   pagination?: { page: number; limit: number };
 }
 
-// ✅ Implementation générique
+/ ✅ Implementation générique
 class BaseRepository<T extends Entity> implements Repository<T> {
   constructor(protected collection: Map<string, T> = new Map()) {}
 
@@ -1307,7 +1307,7 @@ class BaseRepository<T extends Entity> implements Repository<T> {
   async findAll(options?: FindOptions<T>): Promise<T[]> {
     let items = Array.from(this.collection.values());
 
-    // Filtrage
+    / Filtrage
     if (options?.filter) {
       items = items.filter(item => {
         return Object.entries(options.filter!).every(([key, value]) => {
@@ -1316,7 +1316,7 @@ class BaseRepository<T extends Entity> implements Repository<T> {
       });
     }
 
-    // Tri
+    / Tri
     if (options?.sort) {
       const { field, order } = options.sort;
       items.sort((a, b) => {
@@ -1327,7 +1327,7 @@ class BaseRepository<T extends Entity> implements Repository<T> {
       });
     }
 
-    // Pagination
+    / Pagination
     if (options?.pagination) {
       const { page, limit } = options.pagination;
       const start = (page - 1) * limit;
@@ -1373,7 +1373,7 @@ class BaseRepository<T extends Entity> implements Repository<T> {
   }
 }
 
-// ✅ Repository spécifique avec méthodes métier
+/ ✅ Repository spécifique avec méthodes métier
 interface User extends Entity {
   id: string;
   email: string;
@@ -1406,7 +1406,7 @@ class UserRepository extends BaseRepository<User> {
   }
 }
 
-// Usage
+/ Usage
 const userRepo = new UserRepository();
 
 const newUser = await userRepo.create({
@@ -1424,7 +1424,7 @@ const activeCount = await userRepo.count({ active: true } as Partial<User>);
 ## 🎯 Dependency Injection
 
 ```typescript
-// ✅ Container DI simple
+/ ✅ Container DI simple
 type Constructor<T = unknown> = new (...args: unknown[]) => T;
 type Factory<T = unknown> = () => T;
 
@@ -1452,12 +1452,12 @@ class Container {
   }
 
   resolve<T>(token: string): T {
-    // Vérifier si instance existe déjà (singleton)
+    / Vérifier si instance existe déjà (singleton)
     if (this.instances.has(token)) {
       return this.instances.get(token) as T;
     }
 
-    // Créer l'instance
+    / Créer l'instance
     const factory = this.factories.get(token);
     if (!factory) {
       throw new Error(`No factory registered for token: ${token}`);
@@ -1465,7 +1465,7 @@ class Container {
 
     const instance = factory() as T;
 
-    // Stocker si singleton
+    / Stocker si singleton
     if (this.singletons.has(token)) {
       this.instances.set(token, instance);
     }
@@ -1474,7 +1474,7 @@ class Container {
   }
 }
 
-// ✅ Usage avec interfaces
+/ ✅ Usage avec interfaces
 interface ILogger {
   log(message: string): void;
 }
@@ -1487,7 +1487,7 @@ interface IUserService {
   getUser(id: string): Promise<User | null>;
 }
 
-// Implémentations
+/ Implémentations
 class ConsoleLogger implements ILogger {
   log(message: string): void {
     console.log(`[LOG] ${message}`);
@@ -1514,7 +1514,7 @@ class UserService implements IUserService {
   }
 }
 
-// Configuration du container
+/ Configuration du container
 const container = new Container();
 
 container
@@ -1530,6 +1530,6 @@ container
     true,
   );
 
-// Résolution
+/ Résolution
 const userService = container.resolve<IUserService>('IUserService');
 ```

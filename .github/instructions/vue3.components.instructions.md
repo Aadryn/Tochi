@@ -1,7 +1,7 @@
 ---
 description: Composants Vue 3 - Structure SFC, Props, Emits, Slots, PrimeVue integration
 name: Vue3_Components
-applyTo: "**/frontend/components/**/*.vue,**/frontend/views/**/*.vue,**/frontend/App.vue"
+applyTo: "**/components/**/*.vue,**/views/**/*.vue,**/App.vue"
 ---
 
 # Vue 3 - Guide des Composants
@@ -36,13 +36,13 @@ Guide complet pour créer des composants Vue 3 de qualité avec TypeScript.
 
 ```vue
 <script setup lang="ts">
-// 1. Imports
-// 2. Props et Emits
-// 3. État réactif
-// 4. Computed
-// 5. Watchers
-// 6. Lifecycle hooks
-// 7. Méthodes
+/ 1. Imports
+/ 2. Props et Emits
+/ 3. État réactif
+/ 4. Computed
+/ 5. Watchers
+/ 6. Lifecycle hooks
+/ 7. Méthodes
 </script>
 
 <template>
@@ -58,7 +58,7 @@ Guide complet pour créer des composants Vue 3 de qualité avec TypeScript.
 
 ```vue
 <script setup lang="ts">
-// ✅ BON : Props avec interface TypeScript
+/ ✅ BON : Props avec interface TypeScript
 interface Props {
   /** Identifiant unique de l'utilisateur */
   userId: string
@@ -75,8 +75,8 @@ const props = withDefaults(defineProps<Props>(), {
   readonly: false,
 })
 
-// ❌ MAUVAIS : Props sans typage
-// const props = defineProps(['userId', 'title'])
+/ ❌ MAUVAIS : Props sans typage
+/ const props = defineProps(['userId', 'title'])
 </script>
 ```
 
@@ -84,7 +84,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 ```vue
 <script setup lang="ts">
-// ✅ BON : Emits avec types
+/ ✅ BON : Emits avec types
 interface Emits {
   /** Émis lors de la soumission du formulaire */
   (e: 'submit', data: FormData): void
@@ -96,13 +96,13 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
-// Utilisation
+/ Utilisation
 function handleSubmit(data: FormData) {
   emit('submit', data)
 }
 
-// ❌ MAUVAIS : Emits non typés
-// const emit = defineEmits(['submit', 'cancel'])
+/ ❌ MAUVAIS : Emits non typés
+/ const emit = defineEmits(['submit', 'cancel'])
 </script>
 ```
 
@@ -186,7 +186,7 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
-// ✅ BON : Computed pour v-model bidirectionnel
+/ ✅ BON : Computed pour v-model bidirectionnel
 const inputValue = computed({
   get: () => props.modelValue,
   set: (value: string) => emit('update:modelValue', value),
@@ -230,7 +230,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-// ✅ BON : Slots typés
+/ ✅ BON : Slots typés
 defineSlots<{
   /** Contenu principal */
   default(): any
@@ -282,7 +282,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const visible = ref(false)
 
-// ✅ BON : Expose pour API publique du composant
+/ ✅ BON : Expose pour API publique du composant
 function open() {
   visible.value = true
 }
@@ -321,13 +321,13 @@ defineExpose({
 ### Import des Composants
 
 ```typescript
-// main.ts
+/ main.ts
 import { createApp } from 'vue'
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
 
-// Styles PrimeVue
+/ Styles PrimeVue
 import 'primevue/resources/themes/lara-light-blue/theme.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
@@ -417,11 +417,11 @@ function confirmDelete(user: User) {
 
 ```vue
 <script setup lang="ts">
-// ❌ MAUVAIS : Mutation directe de prop
+/ ❌ MAUVAIS : Mutation directe de prop
 const props = defineProps<{ count: number }>()
-props.count++ // Erreur !
+props.count++ / Erreur !
 
-// ✅ BON : Émettre un événement
+/ ✅ BON : Émettre un événement
 const emit = defineEmits<{
   (e: 'update:count', value: number): void
 }>()

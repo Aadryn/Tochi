@@ -1,7 +1,7 @@
 ---
 description: Performance Blazor - Optimisation du rendu, virtualisation, lazy loading, streaming, memoization
 name: Blazor_Performance_Optimization
-applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.cs"
+applyTo: "**Presentation/**/*.razor,**Presentation/**/*.razor.cs"
 ---
 
 # Blazor - Optimisation des Performances
@@ -31,7 +31,7 @@ applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.
 ### Contrôler les Re-renders avec ShouldRender()
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 public partial class OptimizedComponent
 {
   [Parameter] public string Title { get; set; }
@@ -42,7 +42,7 @@ public partial class OptimizedComponent
   
   protected override bool ShouldRender()
   {
-    // ✅ BON : Rendre seulement si changements réels
+    / ✅ BON : Rendre seulement si changements réels
     var titleChanged = Title != _previousTitle;
     var itemsChanged = Items?.GetHashCode() != _previousItemsHash;
     
@@ -59,7 +59,7 @@ public partial class OptimizedComponent
 ```
 
 ```csharp
-// ✅ BON : ShouldRender avec flag de changement
+/ ✅ BON : ShouldRender avec flag de changement
 public partial class DataGridComponent
 {
   private bool _dataChanged;
@@ -77,7 +77,7 @@ public partial class DataGridComponent
   private async Task LoadDataAsync()
   {
     items = await Service.GetAllAsync();
-    _dataChanged = true; // Marquer pour re-render
+    _dataChanged = true; / Marquer pour re-render
     StateHasChanged();
   }
 }
@@ -131,7 +131,7 @@ public partial class DataGridComponent
 ```
 
 ```csharp
-// ✅ MEILLEUR : Composant dédié avec @key
+/ ✅ MEILLEUR : Composant dédié avec @key
 <MudStack Spacing="2">
   @foreach (var item in items)
   {
@@ -141,7 +141,7 @@ public partial class DataGridComponent
   }
 </MudStack>
 
-// ItemRow.razor.cs - Optimisé avec ShouldRender
+/ ItemRow.razor.cs - Optimisé avec ShouldRender
 public partial class ItemRow
 {
   [Parameter] public ItemDto Item { get; set; }
@@ -228,7 +228,7 @@ public partial class ItemRow
   private async ValueTask<ItemsProviderResult<ItemDto>> LoadItemsAsync(
     ItemsProviderRequest request)
   {
-    // Charger seulement les items visibles
+    / Charger seulement les items visibles
     var items = await Service.GetPagedAsync(
       skip: request.StartIndex,
       take: request.Count,
@@ -258,7 +258,7 @@ public partial class ItemRow
   
   private async Task SearchAsync(string term)
   {
-    // Exécuté 500ms après la dernière frappe
+    / Exécuté 500ms après la dernière frappe
     await LoadResultsAsync(term);
   }
 }
@@ -267,7 +267,7 @@ public partial class ItemRow
 ### Debounce Custom (sans MudBlazor)
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 private System.Timers.Timer _debounceTimer;
 private string searchTerm = string.Empty;
 
@@ -303,7 +303,7 @@ public void Dispose()
 ### Throttle sur Scroll
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 [Inject] private IJSRuntime JS { get; set; }
 
 private DotNetObjectReference<ScrollComponent> objRef;
@@ -324,7 +324,7 @@ public async Task OnScroll(int scrollTop)
 {
   var now = DateTime.UtcNow;
   if (now - _lastScrollTime < _throttleInterval)
-    return; // Throttle
+    return; / Throttle
   
   _lastScrollTime = now;
   await HandleScrollAsync(scrollTop);
@@ -342,13 +342,13 @@ public async ValueTask DisposeAsync()
 ### Lazy Loading d'Assemblies
 
 ```csharp
-// Program.cs
+/ Program.cs
 builder.Services.AddScoped(sp => new HttpClient 
 { 
   BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) 
 });
 
-// Router.razor
+/ Router.razor
 <Router AppAssembly="@typeof(App).Assembly"
         AdditionalAssemblies="@lazyLoadedAssemblies"
         OnNavigateAsync="@OnNavigateAsync">
@@ -408,7 +408,7 @@ builder.Services.AddScoped(sp => new HttpClient
   {
     if (firstRender)
     {
-      await Task.Delay(100); // Simuler chargement
+      await Task.Delay(100); / Simuler chargement
       _loaded = true;
       StateHasChanged();
     }
@@ -478,10 +478,10 @@ else
   
   protected override async Task OnInitializedAsync()
   {
-    // Premier render avec données partielles
+    / Premier render avec données partielles
     title = "Liste des Items";
     
-    // Deuxième render avec données complètes
+    / Deuxième render avec données complètes
     items = await Service.GetAllAsync();
   }
 }
@@ -492,7 +492,7 @@ else
 ### Memoization de Calculs Coûteux
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 private Dictionary<string, string> _formatCache = new();
 
 private string FormatExpensive(string input)
@@ -500,7 +500,7 @@ private string FormatExpensive(string input)
   if (_formatCache.TryGetValue(input, out var cached))
     return cached;
   
-  // Calcul coûteux
+  / Calcul coûteux
   var result = PerformExpensiveOperation(input);
   _formatCache[input] = result;
   
@@ -511,14 +511,14 @@ private string FormatExpensive(string input)
 ### Lazy<T> pour Initialisation Différée
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 private Lazy<ExpensiveObject> _expensiveObject = new(() => 
   new ExpensiveObject()
 );
 
 private void UseExpensiveObject()
 {
-  // Créé seulement au premier accès
+  / Créé seulement au premier accès
   var obj = _expensiveObject.Value;
   obj.DoSomething();
 }
@@ -527,7 +527,7 @@ private void UseExpensiveObject()
 ### Caching avec MemoryCache
 
 ```csharp
-// Service avec MemoryCache
+/ Service avec MemoryCache
 public class CachedPromptService : IPromptService
 {
   private readonly IPromptService _innerService;
@@ -560,7 +560,7 @@ public class CachedPromptService : IPromptService
   }
 }
 
-// Program.cs
+/ Program.cs
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IPromptService, PromptService>();
 builder.Services.Decorate<IPromptService, CachedPromptService>();
@@ -571,20 +571,20 @@ builder.Services.Decorate<IPromptService, CachedPromptService>();
 ### Batch JavaScript Calls
 
 ```csharp
-// ❌ MAUVAIS : Appels JavaScript multiples
+/ ❌ MAUVAIS : Appels JavaScript multiples
 foreach (var id in itemIds)
 {
   await JS.InvokeVoidAsync("highlightElement", id);
 }
 
-// ✅ BON : Appel JavaScript unique avec batch
+/ ✅ BON : Appel JavaScript unique avec batch
 await JS.InvokeVoidAsync("highlightElements", itemIds);
 ```
 
 ```javascript
-// wwwroot/js/app.js
+/ wwwroot/js/app.js
 
-// ✅ BON : Batch processing en JavaScript
+/ ✅ BON : Batch processing en JavaScript
 window.highlightElements = function(ids) {
   ids.forEach(id => {
     const element = document.getElementById(id);
@@ -598,7 +598,7 @@ window.highlightElements = function(ids) {
 ### Module JavaScript avec Disposal
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 private IJSObjectReference _jsModule;
 
 protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -628,7 +628,7 @@ public async ValueTask DisposeAsync()
 ### Mesurer le Temps de Rendu
 
 ```csharp
-// Component.razor.cs
+/ Component.razor.cs
 [Inject] private ILogger<MyComponent> Logger { get; set; }
 
 private System.Diagnostics.Stopwatch _renderStopwatch;
@@ -655,7 +655,7 @@ protected override void OnAfterRender(bool firstRender)
 ### Performance Counters Custom
 
 ```csharp
-// Services/PerformanceMonitor.cs
+/ Services/PerformanceMonitor.cs
 public class PerformanceMonitor
 {
   private readonly ILogger<PerformanceMonitor> _logger;
@@ -707,7 +707,7 @@ public class PerformanceMonitor
 ```
 
 ```csharp
-// Utilisation
+/ Utilisation
 [Inject] private PerformanceMonitor PerfMonitor { get; set; }
 
 private async Task LoadDataAsync()
@@ -789,10 +789,10 @@ Get-ChildItem -Recurse -Filter "*.razor.cs" |
 ## 📚 Ressources
 
 ### Documentation Officielle
-- [Blazor Performance Best Practices](https://learn.microsoft.com/en-us/aspnet/core/blazor/performance)
-- [Virtualization](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/virtualization)
-- [Lazy Loading](https://learn.microsoft.com/en-us/aspnet/core/blazor/webassembly-lazy-load-assemblies)
+- [Blazor Performance Best Practices](https:/learn.microsoft.com/en-us/aspnet/core/blazor/performance)
+- [Virtualization](https:/learn.microsoft.com/en-us/aspnet/core/blazor/components/virtualization)
+- [Lazy Loading](https:/learn.microsoft.com/en-us/aspnet/core/blazor/webassembly-lazy-load-assemblies)
 
 ### Outils
-- [Blazor WebAssembly Performance Profiler](https://learn.microsoft.com/en-us/aspnet/core/blazor/webassembly-performance-best-practices)
-- [Chrome DevTools Performance](https://developer.chrome.com/docs/devtools/performance/)
+- [Blazor WebAssembly Performance Profiler](https:/learn.microsoft.com/en-us/aspnet/core/blazor/webassembly-performance-best-practices)
+- [Chrome DevTools Performance](https:/developer.chrome.com/docs/devtools/performance/)

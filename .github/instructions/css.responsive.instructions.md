@@ -1,7 +1,7 @@
 ---
 description: CSS Responsive - Media queries, mobile-first, breakpoints, container queries, fluid design
 name: CSS_Responsive
-applyTo: "**/frontend/**/*.css,**/frontend/**/*.scss,**/frontend/**/*.vue"
+applyTo: "**/*.css,**/*.scss,**/*.vue"
 ---
 
 # CSS Responsive Design

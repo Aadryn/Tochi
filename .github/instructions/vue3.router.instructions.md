@@ -1,7 +1,7 @@
 ---
 description: Vue 3 Router - Configuration, navigation, guards, lazy loading, meta, transitions
 name: Vue3_Router
-applyTo: "**/frontend/router/index.ts,**/frontend/router/**/*.ts"
+applyTo: "**/router/index.ts,**/router/**/*.ts"
 ---
 
 # Vue 3 Router
@@ -48,7 +48,7 @@ src/
 ### Configuration Principale
 
 ```typescript
-// router/index.ts
+/ router/index.ts
 import { createRouter, createWebHistory, type Router } from 'vue-router';
 import { routes } from './routes';
 import { setupGuards } from './guards';
@@ -62,12 +62,12 @@ export function createAppRouter(): Router {
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
     scrollBehavior(to, from, savedPosition) {
-      // Restaurer la position de scroll si disponible
+      / Restaurer la position de scroll si disponible
       if (savedPosition) {
         return savedPosition;
       }
       
-      // Scroll vers l'ancre si présente
+      / Scroll vers l'ancre si présente
       if (to.hash) {
         return {
           el: to.hash,
@@ -75,12 +75,12 @@ export function createAppRouter(): Router {
         };
       }
       
-      // Scroll en haut pour les nouvelles pages
+      / Scroll en haut pour les nouvelles pages
       return { top: 0, behavior: 'smooth' };
     },
   });
 
-  // Configuration des guards
+  / Configuration des guards
   setupGuards(router);
 
   return router;
@@ -94,7 +94,7 @@ export const router = createAppRouter();
 ### Types pour les Routes
 
 ```typescript
-// router/types.ts
+/ router/types.ts
 import type { RouteRecordRaw, RouteMeta } from 'vue-router';
 
 /**
@@ -153,7 +153,7 @@ export interface RouteQuery {
 ### Définition des Routes
 
 ```typescript
-// router/routes.ts
+/ router/routes.ts
 import type { AppRoute } from './types';
 
 /**
@@ -256,7 +256,7 @@ const protectedRoutes: AppRoute[] = [
         path: ':id',
         name: 'UserDetail',
         component: () => import('@/views/users/UserDetailView.vue'),
-        props: true, // Passe les params comme props
+        props: true, / Passe les params comme props
         meta: {
           title: 'Détail utilisateur',
           breadcrumb: 'Détail',
@@ -358,7 +358,7 @@ export const routes: AppRoute[] = [
 ### Guard d'Authentification
 
 ```typescript
-// router/guards/authGuard.ts
+/ router/guards/authGuard.ts
 import type { NavigationGuardNext, RouteLocationNormalized, Router } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
@@ -374,9 +374,9 @@ export function authGuard(
   const requiresAuth = to.meta.requiresAuth as boolean | undefined;
   const isPublic = to.meta.isPublic as boolean | undefined;
 
-  // Route publique - autoriser
+  / Route publique - autoriser
   if (isPublic) {
-    // Si déjà authentifié et sur login, rediriger vers home
+    / Si déjà authentifié et sur login, rediriger vers home
     if (authStore.isAuthenticated && to.name === 'Login') {
       next({ name: 'Home' });
       return;
@@ -385,9 +385,9 @@ export function authGuard(
     return;
   }
 
-  // Route protégée - vérifier auth
+  / Route protégée - vérifier auth
   if (requiresAuth && !authStore.isAuthenticated) {
-    // Sauvegarder la destination pour redirect après login
+    / Sauvegarder la destination pour redirect après login
     next({
       name: 'Login',
       query: { redirect: to.fullPath },
@@ -409,7 +409,7 @@ export function setupAuthGuard(router: Router): void {
 ### Guard de Rôles
 
 ```typescript
-// router/guards/roleGuard.ts
+/ router/guards/roleGuard.ts
 import type { NavigationGuardNext, RouteLocationNormalized, Router } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
@@ -424,13 +424,13 @@ export function roleGuard(
   const authStore = useAuthStore();
   const requiredRoles = to.meta.roles as string[] | undefined;
 
-  // Pas de rôles requis - autoriser
+  / Pas de rôles requis - autoriser
   if (!requiredRoles || requiredRoles.length === 0) {
     next();
     return;
   }
 
-  // Vérifier si l'utilisateur a au moins un des rôles requis
+  / Vérifier si l'utilisateur a au moins un des rôles requis
   const hasRole = requiredRoles.some((role) => authStore.hasRole(role));
 
   if (!hasRole) {
@@ -452,7 +452,7 @@ export function setupRoleGuard(router: Router): void {
 ### Guard de Permissions
 
 ```typescript
-// router/guards/permissionGuard.ts
+/ router/guards/permissionGuard.ts
 import type { NavigationGuardNext, RouteLocationNormalized, Router } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
@@ -472,7 +472,7 @@ export function permissionGuard(
     return;
   }
 
-  // Vérifier toutes les permissions requises
+  / Vérifier toutes les permissions requises
   const hasAllPermissions = requiredPermissions.every((permission) =>
     authStore.hasPermission(permission)
   );
@@ -489,7 +489,7 @@ export function permissionGuard(
 ### Configuration des Guards
 
 ```typescript
-// router/guards/index.ts
+/ router/guards/index.ts
 import type { Router } from 'vue-router';
 import { setupAuthGuard } from './authGuard';
 import { setupRoleGuard } from './roleGuard';
@@ -498,20 +498,20 @@ import { setupRoleGuard } from './roleGuard';
  * Configure tous les guards sur le router.
  */
 export function setupGuards(router: Router): void {
-  // Ordre important: auth d'abord, puis rôles
+  / Ordre important: auth d'abord, puis rôles
   setupAuthGuard(router);
   setupRoleGuard(router);
   
-  // Guard pour le titre de page
+  / Guard pour le titre de page
   router.afterEach((to) => {
     const title = to.meta.title as string | undefined;
     document.title = title ? `${title} | Mon App` : 'Mon App';
   });
 
-  // Gestion des erreurs de navigation
+  / Gestion des erreurs de navigation
   router.onError((error) => {
     console.error('Navigation error:', error);
-    // Possibilité de rediriger vers une page d'erreur
+    / Possibilité de rediriger vers une page d'erreur
   });
 }
 
@@ -525,7 +525,7 @@ export { permissionGuard } from './permissionGuard';
 ### Composable useRouter
 
 ```typescript
-// composables/useAppRouter.ts
+/ composables/useAppRouter.ts
 import { useRouter, useRoute, type RouteLocationRaw } from 'vue-router';
 import type { RouteParams, RouteQuery } from '@/router/types';
 
@@ -547,7 +547,7 @@ export function useAppRouter() {
     try {
       await router.push({ name, params, query });
     } catch (error) {
-      // Navigation dupliquée ignorée
+      / Navigation dupliquée ignorée
       if ((error as Error).name !== 'NavigationDuplicated') {
         console.error('Navigation failed:', error);
         throw error;
@@ -643,20 +643,20 @@ import { useAppRouter } from '@/composables/useAppRouter';
 
 const { navigateTo, goBack, getParam, updateQuery, isActive } = useAppRouter();
 
-// Navigation simple
+/ Navigation simple
 async function goToUser(id: string): Promise<void> {
   await navigateTo('UserDetail', { id });
 }
 
-// Navigation avec query
+/ Navigation avec query
 async function search(term: string): Promise<void> {
   await updateQuery({ search: term, page: '1' });
 }
 
-// Récupérer un param
+/ Récupérer un param
 const userId = getParam('id');
 
-// Vérifier la route active
+/ Vérifier la route active
 const isHomeActive = isActive('Home');
 </script>
 
@@ -685,7 +685,7 @@ import { computed } from 'vue';
 
 const route = useRoute();
 
-// Transition différente selon la meta
+/ Transition différente selon la meta
 const transitionName = computed(() => {
   return (route.meta.transition as string) || 'fade';
 });
@@ -749,12 +749,12 @@ const transitionName = computed(() => {
 ### Props depuis les Params
 
 ```typescript
-// routes.ts
+/ routes.ts
 {
   path: '/users/:id',
   name: 'UserDetail',
   component: () => import('@/views/users/UserDetailView.vue'),
-  props: true, // Passe automatiquement les params comme props
+  props: true, / Passe automatiquement les params comme props
 }
 ```
 
@@ -767,14 +767,14 @@ interface Props {
 
 const props = defineProps<Props>();
 
-// props.id est directement disponible
+/ props.id est directement disponible
 </script>
 ```
 
 ### Props Fonction
 
 ```typescript
-// routes.ts
+/ routes.ts
 {
   path: '/users/:id',
   name: 'UserDetail',
@@ -789,7 +789,7 @@ const props = defineProps<Props>();
 ### Props Objet Statique
 
 ```typescript
-// routes.ts
+/ routes.ts
 {
   path: '/about',
   name: 'About',
@@ -806,7 +806,7 @@ const props = defineProps<Props>();
 ### Composable Breadcrumb
 
 ```typescript
-// composables/useBreadcrumb.ts
+/ composables/useBreadcrumb.ts
 import { computed } from 'vue';
 import { useRoute, useRouter, type RouteLocationMatched } from 'vue-router';
 
@@ -892,13 +892,13 @@ const { breadcrumbs } = useBreadcrumb();
 ### Lazy Loading
 
 ```typescript
-// ✅ BON : Lazy loading des composants
+/ ✅ BON : Lazy loading des composants
 {
   path: '/dashboard',
   component: () => import('@/views/DashboardView.vue'),
 }
 
-// ✅ BON : Grouper les chunks par feature
+/ ✅ BON : Grouper les chunks par feature
 {
   path: '/admin',
   component: () => import(/* webpackChunkName: "admin" */ '@/views/admin/AdminLayout.vue'),
@@ -910,7 +910,7 @@ const { breadcrumbs } = useBreadcrumb();
   ],
 }
 
-// ❌ MAUVAIS : Import direct (charge tout au démarrage)
+/ ❌ MAUVAIS : Import direct (charge tout au démarrage)
 import DashboardView from '@/views/DashboardView.vue';
 {
   path: '/dashboard',
@@ -921,19 +921,19 @@ import DashboardView from '@/views/DashboardView.vue';
 ### Gestion des Erreurs
 
 ```typescript
-// router/index.ts
+/ router/index.ts
 router.onError((error, to, from) => {
-  // Log l'erreur
+  / Log l'erreur
   console.error('Router error:', error);
   
-  // Erreur de chargement de chunk (lazy loading)
+  / Erreur de chargement de chunk (lazy loading)
   if (error.message.includes('Failed to fetch dynamically imported module')) {
-    // Recharger la page pour obtenir les nouveaux chunks
+    / Recharger la page pour obtenir les nouveaux chunks
     window.location.href = to.fullPath;
     return;
   }
   
-  // Autres erreurs
+  / Autres erreurs
   router.push({ name: 'Error', query: { message: error.message } });
 });
 ```

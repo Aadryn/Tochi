@@ -1,7 +1,7 @@
 ---
 description: CSS Grid - Grid Layout, Templates, Areas, Alignment, Responsive Grids, Subgrid
 name: CSS_Grid
-applyTo: "**/frontend/**/*.css,**/frontend/**/*.scss,**/frontend/**/*.vue"
+applyTo: "**/*.css,**/*.scss,**/*.vue"
 ---
 
 # CSS Grid Layout

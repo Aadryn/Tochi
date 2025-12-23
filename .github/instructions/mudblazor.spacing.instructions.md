@@ -1,7 +1,7 @@
 ---
 description: MudBlazor Spacing Convention - Règles de spacing pour MudGrid, MudStack et layouts
 name: MudBlazor_Spacing_Convention
-applyTo: "**/backend/Presentation/**/*.razor"
+applyTo: "**Presentation/**/*.razor"
 ---
 
 # MudBlazor Spacing Convention - Harmonization Guidelines
@@ -309,7 +309,7 @@ Import-Csv ".tasks\spacing-audit.csv" |
 
 - **Audit complet:** `.tasks/100-spacing-audit.csv`
 - **Analyse distribution:** `.tasks/100-spacing-analysis.md`
-- **MudBlazor Spacing Documentation:** [MudBlazor Spacing API](https://mudblazor.com/components/stack#spacing)
+- **MudBlazor Spacing Documentation:** [MudBlazor Spacing API](https:/mudblazor.com/components/stack#spacing)
 - **Instruction connexe:** `mudblazor.design.principles.instructions.md`
 
 ---

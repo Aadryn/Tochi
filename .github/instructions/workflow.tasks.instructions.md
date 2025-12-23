@@ -584,102 +584,102 @@ L'utilisateur DOIT définir 'service_port' dans l'un des fichiers suivants:
 **Pour une méthode `CalculateDiscount(decimal price, int quantity)` :**
 
 ```csharp
-// ═══════════════════════════════════════════════════════════
-// CAS NOMINAUX (Happy Path)
-// ═══════════════════════════════════════════════════════════
+/ ═══════════════════════════════════════════════════════════
+/ CAS NOMINAUX (Happy Path)
+/ ═══════════════════════════════════════════════════════════
 
 [Fact]
 public void CalculateDiscount_WithStandardPriceAndQuantity_ReturnsExpectedDiscount()
 {
-    // Arrange
+    / Arrange
     var calculator = new PriceCalculator();
     var price = 100m;
     var quantity = 5;
     
-    // Act
+    / Act
     var result = calculator.CalculateDiscount(price, quantity);
     
-    // Assert
-    Assert.Equal(50m, result); // 10% de remise attendue
+    / Assert
+    Assert.Equal(50m, result); / 10% de remise attendue
 }
 
 [Fact]
 public void CalculateDiscount_WithHighQuantity_ReturnsHigherDiscount()
 {
-    // Arrange
+    / Arrange
     var calculator = new PriceCalculator();
     var price = 100m;
-    var quantity = 20; // Quantité élevée
+    var quantity = 20; / Quantité élevée
     
-    // Act
+    / Act
     var result = calculator.CalculateDiscount(price, quantity);
     
-    // Assert
-    Assert.Equal(200m, result); // 20% de remise pour quantité élevée
+    / Assert
+    Assert.Equal(200m, result); / 20% de remise pour quantité élevée
 }
 
-// ═══════════════════════════════════════════════════════════
-// CAS LIMITES (Edge Cases)
-// ═══════════════════════════════════════════════════════════
+/ ═══════════════════════════════════════════════════════════
+/ CAS LIMITES (Edge Cases)
+/ ═══════════════════════════════════════════════════════════
 
 [Fact]
 public void CalculateDiscount_WithZeroPrice_ReturnsZero()
 {
-    // Arrange
+    / Arrange
     var calculator = new PriceCalculator();
     var price = 0m;
     var quantity = 5;
     
-    // Act
+    / Act
     var result = calculator.CalculateDiscount(price, quantity);
     
-    // Assert
+    / Assert
     Assert.Equal(0m, result);
 }
 
 [Fact]
 public void CalculateDiscount_WithOneQuantity_ReturnsMinimalDiscount()
 {
-    // Arrange
+    / Arrange
     var calculator = new PriceCalculator();
     var price = 100m;
-    var quantity = 1; // Quantité minimale
+    var quantity = 1; / Quantité minimale
     
-    // Act
+    / Act
     var result = calculator.CalculateDiscount(price, quantity);
     
-    // Assert
-    Assert.Equal(0m, result); // Pas de remise pour quantité = 1
+    / Assert
+    Assert.Equal(0m, result); / Pas de remise pour quantité = 1
 }
 
 [Fact]
 public void CalculateDiscount_WithMaxDecimalValue_DoesNotOverflow()
 {
-    // Arrange
+    / Arrange
     var calculator = new PriceCalculator();
     var price = decimal.MaxValue;
     var quantity = 1;
     
-    // Act
+    / Act
     var result = calculator.CalculateDiscount(price, quantity);
     
-    // Assert
-    Assert.True(result >= 0); // Pas d'overflow
+    / Assert
+    Assert.True(result >= 0); / Pas d'overflow
 }
 
-// ═══════════════════════════════════════════════════════════
-// CAS D'EXCEPTION (Error Cases)
-// ═══════════════════════════════════════════════════════════
+/ ═══════════════════════════════════════════════════════════
+/ CAS D'EXCEPTION (Error Cases)
+/ ═══════════════════════════════════════════════════════════
 
 [Fact]
 public void CalculateDiscount_WithNegativePrice_ThrowsArgumentException()
 {
-    // Arrange
+    / Arrange
     var calculator = new PriceCalculator();
     var price = -100m;
     var quantity = 5;
     
-    // Act & Assert
+    / Act & Assert
     var exception = Assert.Throws<ArgumentException>(() => 
         calculator.CalculateDiscount(price, quantity));
     Assert.Contains("price", exception.Message, StringComparison.OrdinalIgnoreCase);
@@ -688,12 +688,12 @@ public void CalculateDiscount_WithNegativePrice_ThrowsArgumentException()
 [Fact]
 public void CalculateDiscount_WithNegativeQuantity_ThrowsArgumentException()
 {
-    // Arrange
+    / Arrange
     var calculator = new PriceCalculator();
     var price = 100m;
     var quantity = -5;
     
-    // Act & Assert
+    / Act & Assert
     var exception = Assert.Throws<ArgumentException>(() => 
         calculator.CalculateDiscount(price, quantity));
     Assert.Contains("quantity", exception.Message, StringComparison.OrdinalIgnoreCase);
@@ -702,12 +702,12 @@ public void CalculateDiscount_WithNegativeQuantity_ThrowsArgumentException()
 [Fact]
 public void CalculateDiscount_WithZeroQuantity_ThrowsArgumentException()
 {
-    // Arrange
+    / Arrange
     var calculator = new PriceCalculator();
     var price = 100m;
     var quantity = 0;
     
-    // Act & Assert
+    / Act & Assert
     Assert.Throws<ArgumentException>(() => 
         calculator.CalculateDiscount(price, quantity));
 }

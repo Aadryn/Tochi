@@ -1,7 +1,7 @@
 ---
 description: SCSS Fundamentals - Variables, mixins, functions, nesting, imports, best practices
 name: SCSS_Fundamentals
-applyTo: "**/frontend/**/*.scss,**/backend/**/*.scss"
+applyTo: "**/*.scss,**/*.scss"
 ---
 
 # SCSS - Règles Fondamentales
@@ -95,27 +95,27 @@ scss/
 ### Fichier Principal (main.scss)
 
 ```scss
-// main.scss - Point d'entrée unique
+/ main.scss - Point d'entrée unique
 
-// Abstracts (pas de CSS généré)
+/ Abstracts (pas de CSS généré)
 @use 'abstracts';
 
-// Vendors (overrides tiers)
+/ Vendors (overrides tiers)
 @use 'vendors';
 
-// Base styles
+/ Base styles
 @use 'base';
 
-// Layout
+/ Layout
 @use 'layout';
 
-// Components
+/ Components
 @use 'components';
 
-// Pages
+/ Pages
 @use 'pages';
 
-// Themes
+/ Themes
 @use 'themes';
 ```
 
@@ -124,24 +124,24 @@ scss/
 ### Organisation des Variables
 
 ```scss
-// abstracts/_variables.scss
+/ abstracts/_variables.scss
 
-// ============================================
-// COULEURS
-// ============================================
+/ ============================================
+/ COULEURS
+/ ============================================
 
-// Couleurs de base
+/ Couleurs de base
 $color-primary: #0288d1 !default;
 $color-secondary: #78909c !default;
 $color-accent: #ff5722 !default;
 
-// Couleurs sémantiques
+/ Couleurs sémantiques
 $color-success: #4caf50 !default;
 $color-warning: #ff9800 !default;
 $color-error: #f44336 !default;
 $color-info: #2196f3 !default;
 
-// Couleurs neutres
+/ Couleurs neutres
 $color-white: #ffffff !default;
 $color-black: #000000 !default;
 $color-gray-50: #fafafa !default;
@@ -155,64 +155,64 @@ $color-gray-700: #616161 !default;
 $color-gray-800: #424242 !default;
 $color-gray-900: #212121 !default;
 
-// Couleurs de texte
+/ Couleurs de texte
 $color-text-primary: $color-gray-900 !default;
 $color-text-secondary: $color-gray-600 !default;
 $color-text-disabled: $color-gray-400 !default;
 
-// Couleurs de fond
+/ Couleurs de fond
 $color-background: $color-gray-100 !default;
 $color-surface: $color-white !default;
 
-// ============================================
-// TYPOGRAPHIE
-// ============================================
+/ ============================================
+/ TYPOGRAPHIE
+/ ============================================
 
-// Familles de polices
+/ Familles de polices
 $font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !default;
 $font-family-mono: 'Fira Code', 'Consolas', monospace !default;
 
-// Tailles de police
-$font-size-xs: 0.75rem !default;    // 12px
-$font-size-sm: 0.875rem !default;   // 14px
-$font-size-base: 1rem !default;     // 16px
-$font-size-lg: 1.125rem !default;   // 18px
-$font-size-xl: 1.25rem !default;    // 20px
-$font-size-2xl: 1.5rem !default;    // 24px
-$font-size-3xl: 1.875rem !default;  // 30px
-$font-size-4xl: 2.25rem !default;   // 36px
+/ Tailles de police
+$font-size-xs: 0.75rem !default;    / 12px
+$font-size-sm: 0.875rem !default;   / 14px
+$font-size-base: 1rem !default;     / 16px
+$font-size-lg: 1.125rem !default;   / 18px
+$font-size-xl: 1.25rem !default;    / 20px
+$font-size-2xl: 1.5rem !default;    / 24px
+$font-size-3xl: 1.875rem !default;  / 30px
+$font-size-4xl: 2.25rem !default;   / 36px
 
-// Poids de police
+/ Poids de police
 $font-weight-light: 300 !default;
 $font-weight-normal: 400 !default;
 $font-weight-medium: 500 !default;
 $font-weight-semibold: 600 !default;
 $font-weight-bold: 700 !default;
 
-// Hauteurs de ligne
+/ Hauteurs de ligne
 $line-height-tight: 1.25 !default;
 $line-height-normal: 1.5 !default;
 $line-height-relaxed: 1.75 !default;
 
-// ============================================
-// ESPACEMENTS
-// ============================================
+/ ============================================
+/ ESPACEMENTS
+/ ============================================
 
-$spacing-unit: 0.25rem !default; // 4px
+$spacing-unit: 0.25rem !default; / 4px
 
 $spacing-0: 0 !default;
-$spacing-1: $spacing-unit !default;       // 4px
-$spacing-2: $spacing-unit * 2 !default;   // 8px
-$spacing-3: $spacing-unit * 3 !default;   // 12px
-$spacing-4: $spacing-unit * 4 !default;   // 16px
-$spacing-5: $spacing-unit * 5 !default;   // 20px
-$spacing-6: $spacing-unit * 6 !default;   // 24px
-$spacing-8: $spacing-unit * 8 !default;   // 32px
-$spacing-10: $spacing-unit * 10 !default; // 40px
-$spacing-12: $spacing-unit * 12 !default; // 48px
-$spacing-16: $spacing-unit * 16 !default; // 64px
+$spacing-1: $spacing-unit !default;       / 4px
+$spacing-2: $spacing-unit * 2 !default;   / 8px
+$spacing-3: $spacing-unit * 3 !default;   / 12px
+$spacing-4: $spacing-unit * 4 !default;   / 16px
+$spacing-5: $spacing-unit * 5 !default;   / 20px
+$spacing-6: $spacing-unit * 6 !default;   / 24px
+$spacing-8: $spacing-unit * 8 !default;   / 32px
+$spacing-10: $spacing-unit * 10 !default; / 40px
+$spacing-12: $spacing-unit * 12 !default; / 48px
+$spacing-16: $spacing-unit * 16 !default; / 64px
 
-// Map pour les itérations
+/ Map pour les itérations
 $spacings: (
   0: $spacing-0,
   1: $spacing-1,
@@ -227,9 +227,9 @@ $spacings: (
   16: $spacing-16
 ) !default;
 
-// ============================================
-// BREAKPOINTS
-// ============================================
+/ ============================================
+/ BREAKPOINTS
+/ ============================================
 
 $breakpoint-xs: 0 !default;
 $breakpoint-sm: 576px !default;
@@ -247,14 +247,14 @@ $breakpoints: (
   2xl: $breakpoint-2xl
 ) !default;
 
-// ============================================
-// BORDURES ET OMBRES
-// ============================================
+/ ============================================
+/ BORDURES ET OMBRES
+/ ============================================
 
-$border-radius-sm: 0.25rem !default;  // 4px
-$border-radius-md: 0.375rem !default; // 6px
-$border-radius-lg: 0.5rem !default;   // 8px
-$border-radius-xl: 0.75rem !default;  // 12px
+$border-radius-sm: 0.25rem !default;  / 4px
+$border-radius-md: 0.375rem !default; / 6px
+$border-radius-lg: 0.5rem !default;   / 8px
+$border-radius-xl: 0.75rem !default;  / 12px
 $border-radius-full: 9999px !default;
 
 $border-width: 1px !default;
@@ -265,9 +265,9 @@ $shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%) !default;
 $shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%) !default;
 $shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 10%) !default;
 
-// ============================================
-// TRANSITIONS
-// ============================================
+/ ============================================
+/ TRANSITIONS
+/ ============================================
 
 $transition-duration-fast: 150ms !default;
 $transition-duration-base: 200ms !default;
@@ -275,9 +275,9 @@ $transition-duration-slow: 300ms !default;
 
 $transition-timing: ease-in-out !default;
 
-// ============================================
-// Z-INDEX
-// ============================================
+/ ============================================
+/ Z-INDEX
+/ ============================================
 
 $z-index-dropdown: 1000 !default;
 $z-index-sticky: 1020 !default;
@@ -293,15 +293,15 @@ $z-index-tooltip: 1070 !default;
 ### Mixins Essentiels
 
 ```scss
-// abstracts/_mixins.scss
+/ abstracts/_mixins.scss
 @use 'variables' as *;
 
-// ============================================
-// RESPONSIVE
-// ============================================
+/ ============================================
+/ RESPONSIVE
+/ ============================================
 
-/// Media query pour écran minimum
-/// @param {String} $breakpoint - Nom du breakpoint (sm, md, lg, xl, 2xl)
+// Media query pour écran minimum
+// @param {String} $breakpoint - Nom du breakpoint (sm, md, lg, xl, 2xl)
 @mixin media-up($breakpoint) {
   $value: map-get($breakpoints, $breakpoint);
   @if $value {
@@ -313,8 +313,8 @@ $z-index-tooltip: 1070 !default;
   }
 }
 
-/// Media query pour écran maximum
-/// @param {String} $breakpoint - Nom du breakpoint
+// Media query pour écran maximum
+// @param {String} $breakpoint - Nom du breakpoint
 @mixin media-down($breakpoint) {
   $value: map-get($breakpoints, $breakpoint);
   @if $value {
@@ -324,9 +324,9 @@ $z-index-tooltip: 1070 !default;
   }
 }
 
-/// Media query entre deux breakpoints
-/// @param {String} $lower - Breakpoint minimum
-/// @param {String} $upper - Breakpoint maximum
+// Media query entre deux breakpoints
+// @param {String} $lower - Breakpoint minimum
+// @param {String} $upper - Breakpoint maximum
 @mixin media-between($lower, $upper) {
   $min: map-get($breakpoints, $lower);
   $max: map-get($breakpoints, $upper);
@@ -337,36 +337,36 @@ $z-index-tooltip: 1070 !default;
   }
 }
 
-// ============================================
-// FLEXBOX
-// ============================================
+/ ============================================
+/ FLEXBOX
+/ ============================================
 
-/// Conteneur flex centré
+// Conteneur flex centré
 @mixin flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/// Conteneur flex avec espacement entre éléments
+// Conteneur flex avec espacement entre éléments
 @mixin flex-between {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/// Conteneur flex colonne
+// Conteneur flex colonne
 @mixin flex-column {
   display: flex;
   flex-direction: column;
 }
 
-// ============================================
-// TYPOGRAPHY
-// ============================================
+/ ============================================
+/ TYPOGRAPHY
+/ ============================================
 
-/// Style de titre
-/// @param {Number} $level - Niveau du titre (1-6)
+// Style de titre
+// @param {Number} $level - Niveau du titre (1-6)
 @mixin heading($level: 1) {
   font-family: $font-family-base;
   font-weight: $font-weight-semibold;
@@ -387,15 +387,15 @@ $z-index-tooltip: 1070 !default;
   }
 }
 
-/// Texte tronqué avec ellipsis
+// Texte tronqué avec ellipsis
 @mixin text-truncate {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/// Texte tronqué multi-lignes
-/// @param {Number} $lines - Nombre de lignes max
+// Texte tronqué multi-lignes
+// @param {Number} $lines - Nombre de lignes max
 @mixin text-clamp($lines: 2) {
   display: -webkit-box;
   -webkit-line-clamp: $lines;
@@ -403,30 +403,30 @@ $z-index-tooltip: 1070 !default;
   overflow: hidden;
 }
 
-// ============================================
-// TRANSITIONS
-// ============================================
+/ ============================================
+/ TRANSITIONS
+/ ============================================
 
-/// Transition standard
-/// @param {List} $properties - Propriétés à animer (all par défaut)
+// Transition standard
+// @param {List} $properties - Propriétés à animer (all par défaut)
 @mixin transition($properties: all) {
   transition-property: $properties;
   transition-duration: $transition-duration-base;
   transition-timing-function: $transition-timing;
 }
 
-/// Transition rapide
+// Transition rapide
 @mixin transition-fast($properties: all) {
   transition-property: $properties;
   transition-duration: $transition-duration-fast;
   transition-timing-function: $transition-timing;
 }
 
-// ============================================
-// ÉTATS INTERACTIFS
-// ============================================
+/ ============================================
+/ ÉTATS INTERACTIFS
+/ ============================================
 
-/// États hover et focus
+// États hover et focus
 @mixin interactive {
   cursor: pointer;
   @include transition(background-color, color, border-color, box-shadow);
@@ -446,11 +446,11 @@ $z-index-tooltip: 1070 !default;
   }
 }
 
-// ============================================
-// POSITION
-// ============================================
+/ ============================================
+/ POSITION
+/ ============================================
 
-/// Position absolute centrée
+// Position absolute centrée
 @mixin absolute-center {
   position: absolute;
   top: 50%;
@@ -458,7 +458,7 @@ $z-index-tooltip: 1070 !default;
   transform: translate(-50%, -50%);
 }
 
-/// Position absolute plein écran
+// Position absolute plein écran
 @mixin absolute-fill {
   position: absolute;
   top: 0;
@@ -467,11 +467,11 @@ $z-index-tooltip: 1070 !default;
   left: 0;
 }
 
-// ============================================
-// ACCESSIBILITÉ
-// ============================================
+/ ============================================
+/ ACCESSIBILITÉ
+/ ============================================
 
-/// Masquer visuellement mais garder accessible
+// Masquer visuellement mais garder accessible
 @mixin visually-hidden {
   position: absolute;
   width: 1px;
@@ -484,7 +484,7 @@ $z-index-tooltip: 1070 !default;
   border: 0;
 }
 
-/// Focus visible pour accessibilité
+// Focus visible pour accessibilité
 @mixin focus-ring {
   &:focus-visible {
     outline: 2px solid $color-primary;
@@ -496,47 +496,47 @@ $z-index-tooltip: 1070 !default;
 ## 📐 Fonctions SCSS
 
 ```scss
-// abstracts/_functions.scss
+/ abstracts/_functions.scss
 @use 'sass:math';
 @use 'sass:color';
 @use 'sass:map';
 @use 'variables' as *;
 
-// ============================================
-// COULEURS
-// ============================================
+/ ============================================
+/ COULEURS
+/ ============================================
 
-/// Éclaircir une couleur
-/// @param {Color} $color - Couleur de base
-/// @param {Number} $amount - Pourcentage (0-100)
-/// @return {Color}
+// Éclaircir une couleur
+// @param {Color} $color - Couleur de base
+// @param {Number} $amount - Pourcentage (0-100)
+// @return {Color}
 @function lighten-color($color, $amount) {
   @return color.mix(white, $color, $amount);
 }
 
-/// Assombrir une couleur
-/// @param {Color} $color - Couleur de base
-/// @param {Number} $amount - Pourcentage (0-100)
-/// @return {Color}
+// Assombrir une couleur
+// @param {Color} $color - Couleur de base
+// @param {Number} $amount - Pourcentage (0-100)
+// @return {Color}
 @function darken-color($color, $amount) {
   @return color.mix(black, $color, $amount);
 }
 
-/// Obtenir une couleur avec transparence
-/// @param {Color} $color - Couleur de base
-/// @param {Number} $alpha - Opacité (0-1)
-/// @return {Color}
+// Obtenir une couleur avec transparence
+// @param {Color} $color - Couleur de base
+// @param {Number} $alpha - Opacité (0-1)
+// @return {Color}
 @function alpha-color($color, $alpha) {
   @return color.change($color, $alpha: $alpha);
 }
 
-// ============================================
-// ESPACEMENTS
-// ============================================
+/ ============================================
+/ ESPACEMENTS
+/ ============================================
 
-/// Obtenir une valeur d'espacement
-/// @param {Number} $key - Clé de l'espacement
-/// @return {Length}
+// Obtenir une valeur d'espacement
+// @param {Number} $key - Clé de l'espacement
+// @return {Length}
 @function spacing($key) {
   @if map.has-key($spacings, $key) {
     @return map.get($spacings, $key);
@@ -545,33 +545,33 @@ $z-index-tooltip: 1070 !default;
   @return 0;
 }
 
-// ============================================
-// CONVERSIONS
-// ============================================
+/ ============================================
+/ CONVERSIONS
+/ ============================================
 
-/// Convertir pixels en rem
-/// @param {Number} $px - Valeur en pixels
-/// @param {Number} $base - Taille de base (16px par défaut)
-/// @return {Length}
+// Convertir pixels en rem
+// @param {Number} $px - Valeur en pixels
+// @param {Number} $base - Taille de base (16px par défaut)
+// @return {Length}
 @function px-to-rem($px, $base: 16) {
   @return math.div($px, $base) * 1rem;
 }
 
-/// Convertir rem en pixels
-/// @param {Number} $rem - Valeur en rem
-/// @param {Number} $base - Taille de base (16px par défaut)
-/// @return {Length}
+// Convertir rem en pixels
+// @param {Number} $rem - Valeur en rem
+// @param {Number} $base - Taille de base (16px par défaut)
+// @return {Length}
 @function rem-to-px($rem, $base: 16) {
   @return math.div($rem, 1rem) * $base * 1px;
 }
 
-// ============================================
-// BREAKPOINTS
-// ============================================
+/ ============================================
+/ BREAKPOINTS
+/ ============================================
 
-/// Obtenir une valeur de breakpoint
-/// @param {String} $name - Nom du breakpoint
-/// @return {Length}
+// Obtenir une valeur de breakpoint
+// @param {String} $name - Nom du breakpoint
+// @return {Length}
 @function breakpoint($name) {
   @if map.has-key($breakpoints, $name) {
     @return map.get($breakpoints, $name);
@@ -584,13 +584,13 @@ $z-index-tooltip: 1070 !default;
 ## 🎨 Placeholders
 
 ```scss
-// abstracts/_placeholders.scss
+/ abstracts/_placeholders.scss
 @use 'variables' as *;
 @use 'mixins' as *;
 
-// ============================================
-// LAYOUTS COMMUNS
-// ============================================
+/ ============================================
+/ LAYOUTS COMMUNS
+/ ============================================
 
 %flex-center {
   @include flex-center;
@@ -604,9 +604,9 @@ $z-index-tooltip: 1070 !default;
   @include flex-column;
 }
 
-// ============================================
-// CARDS
-// ============================================
+/ ============================================
+/ CARDS
+/ ============================================
 
 %card-base {
   background-color: $color-surface;
@@ -619,9 +619,9 @@ $z-index-tooltip: 1070 !default;
   box-shadow: $shadow-md;
 }
 
-// ============================================
-// BUTTONS
-// ============================================
+/ ============================================
+/ BUTTONS
+/ ============================================
 
 %button-reset {
   appearance: none;
@@ -646,9 +646,9 @@ $z-index-tooltip: 1070 !default;
   @include focus-ring;
 }
 
-// ============================================
-// INPUTS
-// ============================================
+/ ============================================
+/ INPUTS
+/ ============================================
 
 %input-base {
   width: 100%;
@@ -670,9 +670,9 @@ $z-index-tooltip: 1070 !default;
   }
 }
 
-// ============================================
-// ACCESSIBILITÉ
-// ============================================
+/ ============================================
+/ ACCESSIBILITÉ
+/ ============================================
 
 %visually-hidden {
   @include visually-hidden;
@@ -684,7 +684,7 @@ $z-index-tooltip: 1070 !default;
 ### Nesting (Maximum 3 niveaux)
 
 ```scss
-// ✅ BON : 3 niveaux max
+/ ✅ BON : 3 niveaux max
 .card {
   padding: $spacing-4;
   
@@ -697,14 +697,14 @@ $z-index-tooltip: 1070 !default;
   }
 }
 
-// ❌ MAUVAIS : Trop de niveaux
+/ ❌ MAUVAIS : Trop de niveaux
 .page {
   .section {
     .container {
       .card {
         .header {
           .title {
-            // 6 niveaux = trop profond!
+            / 6 niveaux = trop profond!
           }
         }
       }
@@ -716,12 +716,12 @@ $z-index-tooltip: 1070 !default;
 ### BEM avec SCSS
 
 ```scss
-// ✅ BON : BEM avec parent selector
+/ ✅ BON : BEM avec parent selector
 .button {
-  // Block
+  / Block
   @extend %button-base;
   
-  // Element
+  / Element
   &__icon {
     width: 1.25em;
     height: 1.25em;
@@ -731,7 +731,7 @@ $z-index-tooltip: 1070 !default;
     font-weight: $font-weight-medium;
   }
   
-  // Modifier
+  / Modifier
   &--primary {
     background-color: $color-primary;
     color: $color-white;
@@ -752,7 +752,7 @@ $z-index-tooltip: 1070 !default;
     font-size: $font-size-lg;
   }
   
-  // États
+  / États
   &:disabled,
   &--disabled {
     opacity: 0.5;

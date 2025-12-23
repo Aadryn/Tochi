@@ -336,7 +336,7 @@ log_retention_days: 30
 
 # Monitoring
 monitoring_agent_enabled: true
-monitoring_endpoint: "https://monitoring.example.com"
+monitoring_endpoint: "https:/monitoring.example.com"
 ```
 
 ### group_vars/production.yml
@@ -351,7 +351,7 @@ domain: example.com
 # Backup configuration
 backup_enabled: true
 backup_retention_days: 90
-backup_destination: "s3://backups-production"
+backup_destination: "s3:/backups-production"
 
 # Security
 firewall_enabled: true
@@ -363,7 +363,7 @@ ssl_cert_path: /etc/ssl/certs/example.com.crt
 ssl_key_path: /etc/ssl/private/example.com.key
 
 # External services
-api_endpoint: "https://api.production.example.com"
+api_endpoint: "https:/api.production.example.com"
 database_host: "db01.example.com"
 
 # Alerting
@@ -394,7 +394,7 @@ nginx_vhosts:
     ssl: false
     locations:
       - path: /
-        proxy_pass: http://app_backend
+        proxy_pass: http:/app_backend
   
   - server_name: www.example.com
     listen: 443
@@ -403,7 +403,7 @@ nginx_vhosts:
     ssl_certificate_key: "{{ ssl_key_path }}"
     locations:
       - path: /
-        proxy_pass: http://app_backend
+        proxy_pass: http:/app_backend
 
 # Logging
 nginx_access_log: /var/log/nginx/access.log

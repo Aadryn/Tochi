@@ -1,7 +1,7 @@
 ---
 description: Règles fondamentales Vue 3 - Architecture, ADR, Folder Structure, Composition API, Lifecycle, TypeScript
 name: Vue3_Fundamentals
-applyTo: "**/frontend/**/*.vue"
+applyTo: "**/*.vue"
 ---
 
 # Vue 3 - Règles Fondamentales
@@ -172,34 +172,34 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import type { User } from '@/types'
 import { useApi } from '@/composables/useApi'
 
-// Props typées
+/ Props typées
 interface Props {
   userId: string
 }
 const props = defineProps<Props>()
 
-// État réactif
+/ État réactif
 const user = ref<User | null>(null)
 const isLoading = ref(true)
 
-// Composables
+/ Composables
 const { get } = useApi()
 
-// ✅ BON : Chargement initial dans onMounted
+/ ✅ BON : Chargement initial dans onMounted
 onMounted(async () => {
   await loadUser()
 })
 
-// ✅ BON : Watch pour réagir aux changements de props
+/ ✅ BON : Watch pour réagir aux changements de props
 watch(() => props.userId, async (newId) => {
   if (newId) {
     await loadUser()
   }
 })
 
-// ✅ BON : Nettoyage dans onUnmounted
+/ ✅ BON : Nettoyage dans onUnmounted
 onUnmounted(() => {
-  // Annuler abonnements, timers, etc.
+  / Annuler abonnements, timers, etc.
 })
 
 async function loadUser() {
@@ -217,14 +217,14 @@ async function loadUser() {
 
 ```vue
 <script setup lang="ts">
-// ❌ MAUVAIS : Appel API directement dans setup (pas async/await géré)
-const user = await fetchUser() // Ne pas faire ça !
+/ ❌ MAUVAIS : Appel API directement dans setup (pas async/await géré)
+const user = await fetchUser() / Ne pas faire ça !
 
-// ❌ MAUVAIS : Accès au DOM dans setup
-const element = document.getElementById('myElement') // null !
+/ ❌ MAUVAIS : Accès au DOM dans setup
+const element = document.getElementById('myElement') / null !
 
-// ❌ MAUVAIS : Oublier le nettoyage
-const interval = setInterval(() => {}, 1000) // Memory leak !
+/ ❌ MAUVAIS : Oublier le nettoyage
+const interval = setInterval(() => {}, 1000) / Memory leak !
 </script>
 ```
 
@@ -233,44 +233,44 @@ const interval = setInterval(() => {}, 1000) // Memory leak !
 ### Organisation des Imports
 
 ```typescript
-// 1. Imports Vue/bibliothèques tierces
+/ 1. Imports Vue/bibliothèques tierces
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
-// 2. Imports stores
+/ 2. Imports stores
 import { useAuthStore } from '@/stores/auth'
 import { useSettingsStore } from '@/stores/settings'
 
-// 3. Imports composables
+/ 3. Imports composables
 import { useApi } from '@/composables/useApi'
 import { useNotification } from '@/composables/useNotification'
 
-// 4. Imports composants
+/ 4. Imports composants
 import BaseButton from '@/components/shared/BaseButton.vue'
 import UserCard from '@/components/users/UserCard.vue'
 
-// 5. Imports types
+/ 5. Imports types
 import type { User, ApiResponse } from '@/types'
 
-// 6. Imports utilitaires
+/ 6. Imports utilitaires
 import { formatDate, formatCurrency } from '@/utils/formatters'
 ```
 
 ### Exports Centralisés (Barrel Exports)
 
 ```typescript
-// types/index.ts
+/ types/index.ts
 export * from './user.types'
 export * from './api.types'
 export * from './tenant.types'
 
-// composables/index.ts
+/ composables/index.ts
 export { useApi } from './useApi'
 export { useAuth } from './useAuth'
 export { useForm } from './useForm'
 
-// stores/index.ts
+/ stores/index.ts
 export { useAuthStore } from './auth'
 export { useSettingsStore } from './settings'
 ```

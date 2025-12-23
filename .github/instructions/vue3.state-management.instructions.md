@@ -1,7 +1,7 @@
 ---
 description: Vue 3 State Management - Pinia stores, actions, getters, composition, persistence
 name: Vue3_State_Management
-applyTo: "**/frontend/stores/use*Store.ts,**/frontend/stores/*.ts"
+applyTo: "**/stores/use*Store.ts,**/stores/*.ts"
 ---
 
 # Vue 3 - State Management avec Pinia
@@ -51,7 +51,7 @@ src/stores/
 ### Export Centralisé
 
 ```typescript
-// stores/index.ts
+/ stores/index.ts
 export { useAuthStore } from './auth'
 export { useSettingsStore } from './settings'
 export { useNotificationsStore } from './notifications'
@@ -62,7 +62,7 @@ export { useNotificationsStore } from './notifications'
 ### Setup Store (Recommandé)
 
 ```typescript
-// stores/auth.ts
+/ stores/auth.ts
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { User, LoginCredentials } from '@/types'
@@ -72,18 +72,18 @@ import { authApi } from '@/api'
  * Store pour la gestion de l'authentification
  */
 export const useAuthStore = defineStore('auth', () => {
-  // ============================================================
-  // STATE
-  // ============================================================
+  / ============================================================
+  / STATE
+  / ============================================================
   
   const user = ref<User | null>(null)
   const token = ref<string | null>(localStorage.getItem('token'))
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
-  // ============================================================
-  // GETTERS (Computed)
-  // ============================================================
+  / ============================================================
+  / GETTERS (Computed)
+  / ============================================================
   
   /** Vérifie si l'utilisateur est authentifié */
   const isAuthenticated = computed(() => Boolean(token.value && user.value))
@@ -96,9 +96,9 @@ export const useAuthStore = defineStore('auth', () => {
     user.value ? `${user.value.firstName} ${user.value.lastName}` : ''
   )
 
-  // ============================================================
-  // ACTIONS
-  // ============================================================
+  / ============================================================
+  / ACTIONS
+  / ============================================================
   
   /**
    * Connexion utilisateur
@@ -127,7 +127,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await authApi.logout()
     } finally {
-      // Toujours nettoyer même en cas d'erreur
+      / Toujours nettoyer même en cas d'erreur
       user.value = null
       token.value = null
       localStorage.removeItem('token')
@@ -146,7 +146,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = await authApi.getCurrentUser()
       return true
     } catch {
-      // Token invalide, nettoyer
+      / Token invalide, nettoyer
       await logout()
       return false
     } finally {
@@ -165,23 +165,23 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('token')
   }
 
-  // ============================================================
-  // RETURN
-  // ============================================================
+  / ============================================================
+  / RETURN
+  / ============================================================
   
   return {
-    // State
+    / State
     user,
     token,
     isLoading,
     error,
     
-    // Getters
+    / Getters
     isAuthenticated,
     isAdmin,
     fullName,
     
-    // Actions
+    / Actions
     login,
     logout,
     checkAuth,
@@ -193,7 +193,7 @@ export const useAuthStore = defineStore('auth', () => {
 ### Options Store (Alternative)
 
 ```typescript
-// stores/settings.ts
+/ stores/settings.ts
 import { defineStore } from 'pinia'
 
 interface SettingsState {
@@ -239,7 +239,7 @@ export const useSettingsStore = defineStore('settings', {
     },
   },
 
-  // Persistence avec plugin
+  / Persistence avec plugin
   persist: {
     key: 'app-settings',
     storage: localStorage,
@@ -259,10 +259,10 @@ import { useAuthStore } from '@/stores'
 
 const authStore = useAuthStore()
 
-// ✅ BON : storeToRefs pour garder la réactivité des states/getters
+/ ✅ BON : storeToRefs pour garder la réactivité des states/getters
 const { user, isAuthenticated, isLoading } = storeToRefs(authStore)
 
-// ✅ BON : Actions directement depuis le store
+/ ✅ BON : Actions directement depuis le store
 const { login, logout } = authStore
 
 async function handleLogin(credentials: LoginCredentials) {
@@ -282,15 +282,15 @@ async function handleLogin(credentials: LoginCredentials) {
 ### ❌ Anti-Pattern : Destructuration Sans storeToRefs
 
 ```typescript
-// ❌ MAUVAIS : Perd la réactivité !
+/ ❌ MAUVAIS : Perd la réactivité !
 const { user, isAuthenticated } = useAuthStore()
 
-// ✅ BON : Utiliser storeToRefs
+/ ✅ BON : Utiliser storeToRefs
 const { user, isAuthenticated } = storeToRefs(useAuthStore())
 
-// ✅ BON : Ou accéder directement
+/ ✅ BON : Ou accéder directement
 const store = useAuthStore()
-// Dans le template : {{ store.user }}
+/ Dans le template : {{ store.user }}
 ```
 
 ## 🧩 Composition de Stores
@@ -298,7 +298,7 @@ const store = useAuthStore()
 ### Store qui Dépend d'un Autre
 
 ```typescript
-// stores/notifications.ts
+/ stores/notifications.ts
 import { defineStore, storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
 import { useAuthStore } from './auth'
@@ -307,11 +307,11 @@ export const useNotificationsStore = defineStore('notifications', () => {
   const notifications = ref<Notification[]>([])
   const unreadCount = ref(0)
 
-  // Utiliser un autre store
+  / Utiliser un autre store
   const authStore = useAuthStore()
   const { isAuthenticated, user } = storeToRefs(authStore)
 
-  // Réagir aux changements d'auth
+  / Réagir aux changements d'auth
   watch(isAuthenticated, async (authenticated) => {
     if (authenticated) {
       await fetchNotifications()
@@ -324,7 +324,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
   async function fetchNotifications() {
     if (!user.value) return
     
-    // Charger les notifications...
+    / Charger les notifications...
   }
 
   return {
@@ -338,7 +338,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
 ### Composition Pattern
 
 ```typescript
-// stores/composables/useLoadable.ts
+/ stores/composables/useLoadable.ts
 import { ref, type Ref } from 'vue'
 
 export interface Loadable<T> {
@@ -374,7 +374,7 @@ export function useLoadable<T>(
 ```
 
 ```typescript
-// stores/users.ts - Utilisation du composable
+/ stores/users.ts - Utilisation du composable
 import { defineStore } from 'pinia'
 import { useLoadable } from './composables/useLoadable'
 import { usersApi } from '@/api'
@@ -402,7 +402,7 @@ export const useUsersStore = defineStore('users', () => {
 ### Avec pinia-plugin-persistedstate
 
 ```typescript
-// main.ts
+/ main.ts
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
@@ -411,7 +411,7 @@ pinia.use(piniaPluginPersistedstate)
 ```
 
 ```typescript
-// stores/cart.ts
+/ stores/cart.ts
 import { defineStore } from 'pinia'
 
 export const useCartStore = defineStore('cart', {
@@ -419,11 +419,11 @@ export const useCartStore = defineStore('cart', {
     items: [] as CartItem[],
   }),
   
-  // Configuration de persistence
+  / Configuration de persistence
   persist: {
     key: 'shopping-cart',
     storage: localStorage,
-    paths: ['items'], // Uniquement persister 'items'
+    paths: ['items'], / Uniquement persister 'items'
     beforeRestore: (ctx) => {
       console.log('Restoring cart...')
     },
@@ -437,15 +437,15 @@ export const useCartStore = defineStore('cart', {
 ### Persistence Manuelle
 
 ```typescript
-// stores/auth.ts
+/ stores/auth.ts
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
-  // Charger depuis localStorage au démarrage
+  / Charger depuis localStorage au démarrage
   const token = ref<string | null>(localStorage.getItem('auth_token'))
   
-  // Synchroniser avec localStorage
+  / Synchroniser avec localStorage
   watch(token, (newToken) => {
     if (newToken) {
       localStorage.setItem('auth_token', newToken)
@@ -461,7 +461,7 @@ export const useAuthStore = defineStore('auth', () => {
 ## 🧪 Tests des Stores
 
 ```typescript
-// stores/__tests__/auth.spec.ts
+/ stores/__tests__/auth.spec.ts
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useAuthStore } from '../auth'
@@ -482,7 +482,7 @@ describe('useAuthStore', () => {
   it('should login successfully', async () => {
     const store = useAuthStore()
     
-    // Mock API si nécessaire
+    / Mock API si nécessaire
     vi.mock('@/api', () => ({
       authApi: {
         login: vi.fn().mockResolvedValue({

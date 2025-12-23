@@ -6,7 +6,7 @@ applyTo: "**/.github/agents/*.agent.md"
 
 # Custom Agents Copilot - Guide Expert
 
-Guide pour créer des agents personnalisés dans `.github/agents/` conformément à la [documentation officielle Microsoft](https://code.visualstudio.com/docs/copilot/customization/custom-agents).
+Guide pour créer des agents personnalisés dans `.github/agents/` conformément à la [documentation officielle Microsoft](https:/code.visualstudio.com/docs/copilot/customization/custom-agents).
 
 ## ⛔ À NE PAS FAIRE
 
@@ -567,7 +567,7 @@ For each vulnerability identified:
 - **Remediation**: Step-by-step fix
 - **Secure Code Example**:
 ```language
-// Secure implementation
+/ Secure implementation
 ```
 
 ## Constraints
@@ -762,20 +762,20 @@ For each test file:
 
 ```typescript
 describe('[Component/Function Name]', () => {
-  // Setup
+  / Setup
   beforeEach(() => {
-    // Initialize test environment
+    / Initialize test environment
   });
 
   afterEach(() => {
-    // Cleanup
+    / Cleanup
   });
 
   describe('Nominal Cases', () => {
     it('should [expected behavior]', () => {
-      // Arrange
-      // Act
-      // Assert
+      / Arrange
+      / Act
+      / Assert
     });
   });
 
@@ -984,14 +984,14 @@ Avant de committer un agent personnalisé :
 ## Ressources
 
 ### Documentation Officielle Microsoft
-- [Custom Agents - VS Code](https://code.visualstudio.com/docs/copilot/customization/custom-agents)
-- [Customize AI Responses - Overview](https://code.visualstudio.com/docs/copilot/customization/overview)
-- [Custom Instructions](https://code.visualstudio.com/docs/copilot/customization/custom-instructions)
-- [Prompt Files](https://code.visualstudio.com/docs/copilot/customization/prompt-files)
-- [Chat Tools](https://code.visualstudio.com/docs/copilot/chat/chat-tools)
+- [Custom Agents - VS Code](https:/code.visualstudio.com/docs/copilot/customization/custom-agents)
+- [Customize AI Responses - Overview](https:/code.visualstudio.com/docs/copilot/customization/overview)
+- [Custom Instructions](https:/code.visualstudio.com/docs/copilot/customization/custom-instructions)
+- [Prompt Files](https:/code.visualstudio.com/docs/copilot/customization/prompt-files)
+- [Chat Tools](https:/code.visualstudio.com/docs/copilot/chat/chat-tools)
 
 ### Exemples Communautaires
-- [Awesome Copilot - Custom Agents](https://github.com/github/awesome-copilot/tree/main)
+- [Awesome Copilot - Custom Agents](https:/github.com/github/awesome-copilot/tree/main)
 
 ### Configuration VS Code
 - Commande : `Chat: New Custom Agent`

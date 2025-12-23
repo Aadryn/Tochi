@@ -110,7 +110,7 @@ vault_mysql_root_password: "MySQLRoot789!"
 vault_github_api_token: "ghp_xxxxxxxxxxx"
 vault_aws_access_key: "AKIAXXXXX"
 vault_aws_secret_key: "xxxxxxxxx"
-vault_slack_webhook_url: "https://hooks.slack.com/services/xxx"
+vault_slack_webhook_url: "https:/hooks.slack.com/services/xxx"
 
 # ============================================================================
 # CERTIFICATES ET KEYS
@@ -454,7 +454,7 @@ ssh_args = -o KexAlgorithms=curve25519-sha256@libssh.org -o Ciphers=chacha20-pol
     
     - name: Query external API with credentials
       uri:
-        url: "https://api.example.com/data"
+        url: "https:/api.example.com/data"
         headers:
           Authorization: "Bearer {{ api_token }}"
         method: GET

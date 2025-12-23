@@ -1,7 +1,7 @@
 ---
 description: CSS Animations - Transitions, keyframes, motion design, performance, accessibilité
 name: CSS_Animations
-applyTo: "**/frontend/**/*.css,**/frontend/**/*.scss,**/frontend/**/*.vue"
+applyTo: "**/*.css,**/*.scss,**/*.vue"
 ---
 
 # CSS Animations et Transitions

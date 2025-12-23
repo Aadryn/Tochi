@@ -1,7 +1,7 @@
 ---
 description: Vue 3 PrimeVue - Composants UI, theming, DataTable, formulaires, dialogues
 name: Vue3_PrimeVue
-applyTo: "**/frontend/components/**/*.vue,**/frontend/views/**/*.vue"
+applyTo: "**/components/**/*.vue,**/views/**/*.vue"
 ---
 
 # Vue 3 PrimeVue
@@ -29,16 +29,16 @@ Guide complet pour l'intégration et l'utilisation de PrimeVue 3 avec Vue 3.
 ### Installation et Setup
 
 ```typescript
-// main.ts
+/ main.ts
 import { createApp } from 'vue';
 import PrimeVue from 'primevue/config';
 import App from './App.vue';
 
-// Thème et styles
+/ Thème et styles
 import 'primevue/resources/themes/lara-light-blue/theme.css';
 import 'primeicons/primeicons.css';
 
-// Services
+/ Services
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
@@ -47,9 +47,9 @@ const app = createApp(App);
 
 app.use(PrimeVue, {
   ripple: true,
-  inputStyle: 'outlined', // 'filled' | 'outlined'
+  inputStyle: 'outlined', / 'filled' | 'outlined'
   locale: {
-    // Traductions françaises
+    / Traductions françaises
     startsWith: 'Commence par',
     contains: 'Contient',
     notContains: 'Ne contient pas',
@@ -85,7 +85,7 @@ app.use(PrimeVue, {
     monthNamesShort: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
     today: 'Aujourd\'hui',
     weekHeader: 'Sm',
-    firstDayOfWeek: 1, // Lundi
+    firstDayOfWeek: 1, / Lundi
     dateFormat: 'dd/mm/yy',
     weak: 'Faible',
     medium: 'Moyen',
@@ -116,7 +116,7 @@ app.mount('#app');
 ### Auto-Import avec unplugin
 
 ```typescript
-// vite.config.ts
+/ vite.config.ts
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
@@ -206,7 +206,7 @@ import { ref } from 'vue';
 
 const value = ref('');
 
-// Configuration PassThrough pour personnalisation avancée
+/ Configuration PassThrough pour personnalisation avancée
 const inputTextPT = {
   root: {
     class: 'custom-input',
@@ -251,7 +251,7 @@ const buttonPT = {
 ### Global PassThrough
 
 ```typescript
-// primevue.config.ts
+/ primevue.config.ts
 import type { PrimeVuePTOptions } from 'primevue/config';
 
 export const globalPT: PrimeVuePTOptions = {
@@ -278,7 +278,7 @@ export const globalPT: PrimeVuePTOptions = {
   },
 };
 
-// main.ts
+/ main.ts
 import { globalPT } from './primevue.config';
 
 app.use(PrimeVue, {
@@ -311,15 +311,15 @@ const products = ref<Product[]>([]);
 const selectedProducts = ref<Product[]>([]);
 const loading = ref(false);
 
-// Pagination
+/ Pagination
 const first = ref(0);
 const rows = ref(10);
 const totalRecords = ref(0);
 
-// Tri
+/ Tri
 const multiSortMeta = ref<DataTableSortMeta[]>([]);
 
-// Filtres
+/ Filtres
 const filters = ref<DataTableFilterMeta>({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   name: { 
@@ -369,7 +369,7 @@ function onSort(event: { sortField: string; sortOrder: number }): void {
 }
 
 function exportCSV(): void {
-  // Export handled by DataTable ref
+  / Export handled by DataTable ref
 }
 
 function getStatusSeverity(status: string): string {
@@ -807,7 +807,7 @@ async function handleSubmit(): Promise<void> {
   try {
     await new Promise(resolve => setTimeout(resolve, 1000));
     console.log('Form submitted:', formData);
-    // Reset form
+    / Reset form
     resetForm();
   } finally {
     loading.value = false;
@@ -1075,7 +1075,7 @@ function openEdit(data: Product): void {
 }
 
 function save(): void {
-  // Validation et sauvegarde
+  / Validation et sauvegarde
   visible.value = false;
 }
 </script>
@@ -1146,7 +1146,7 @@ function confirmDelete(product: Product): void {
     acceptLabel: 'Supprimer',
     rejectLabel: 'Annuler',
     accept: () => {
-      // Supprimer le produit
+      / Supprimer le produit
       toast.add({
         severity: 'success',
         summary: 'Succès',

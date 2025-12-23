@@ -103,7 +103,7 @@ FORCE=false
 
 # Afficher un message d'aide
 show_help() {
-    sed -n '/^# Usage:/,/^################################################################################$/p' "$0" | sed 's/^# \?//'
+    sed -n '/^# Usage:/,/^################################################################################$/p' "$0" | sed 's/^# \?/'
 }
 
 # Logger un message
@@ -370,7 +370,7 @@ fi
         3 - Required resource not found
 
 .LINK
-    https://your-documentation-url.com
+    https:/your-documentation-url.com
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]

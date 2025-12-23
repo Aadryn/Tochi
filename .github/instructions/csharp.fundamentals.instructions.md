@@ -1,7 +1,7 @@
 ---
 description: C# Fundamentals - ADR compliance, solution structure, project organization, Clean Architecture
 name: CSharp_Fundamentals
-applyTo: "**/backend/**/*.cs,**/*.csproj"
+applyTo: "**/*.cs,**/*.csproj"
 ---
 
 # C# - Règles Fondamentales
@@ -170,36 +170,36 @@ Guide des principes fondamentaux pour le développement C# et .NET.
 ### Un Type Par Fichier (ADR-001)
 
 ```csharp
-// ✅ BON : Un seul type par fichier
-// Fichier: User.cs
+/ ✅ BON : Un seul type par fichier
+/ Fichier: User.cs
 namespace MyApp.Domain.Entities;
 
 public class User
 {
     public Guid Id { get; private set; }
     public string Email { get; private set; }
-    // ...
+    / ...
 }
 
-// Fichier: UserCreatedEvent.cs
+/ Fichier: UserCreatedEvent.cs
 namespace MyApp.Domain.Events;
 
 public record UserCreatedEvent(Guid UserId, string Email) : IDomainEvent;
 
-// ❌ MAUVAIS : Plusieurs types dans le même fichier
-// public class User { }
-// public class UserRole { }
-// public record UserCreatedEvent { }
+/ ❌ MAUVAIS : Plusieurs types dans le même fichier
+/ public class User { }
+/ public class UserRole { }
+/ public record UserCreatedEvent { }
 ```
 
 ### Organisation des Namespaces
 
 ```csharp
-// ✅ BON : Namespace = chemin du dossier
-// Fichier: src/Core/MyApp.Domain/Entities/User.cs
+/ ✅ BON : Namespace = chemin du dossier
+/ Fichier: src/Core/MyApp.Domain/Entities/User.cs
 namespace MyApp.Domain.Entities;
 
-// Fichier: src/Core/MyApp.Application/Features/Users/Commands/CreateUser/CreateUserCommand.cs
+/ Fichier: src/Core/MyApp.Application/Features/Users/Commands/CreateUser/CreateUserCommand.cs
 namespace MyApp.Application.Features.Users.Commands.CreateUser;
 ```
 
@@ -208,12 +208,12 @@ namespace MyApp.Application.Features.Users.Commands.CreateUser;
 ### Entity (Domain)
 
 ```csharp
-// Domain/Entities/User.cs
+/ Domain/Entities/User.cs
 namespace MyApp.Domain.Entities;
 
-/// <summary>
-/// Entité représentant un utilisateur du système.
-/// </summary>
+// <summary>
+// Entité représentant un utilisateur du système.
+// </summary>
 public class User : BaseEntity, IAggregateRoot
 {
     public string Email { get; private set; } = string.Empty;
@@ -224,10 +224,10 @@ public class User : BaseEntity, IAggregateRoot
     private readonly List<UserRole> _roles = [];
     public IReadOnlyCollection<UserRole> Roles => _roles.AsReadOnly();
 
-    // Constructeur privé pour EF Core
+    / Constructeur privé pour EF Core
     private User() { }
 
-    // Factory method
+    / Factory method
     public static User Create(string email, string firstName, string lastName)
     {
         Guard.Against.NullOrEmpty(email, nameof(email));
@@ -271,12 +271,12 @@ public class User : BaseEntity, IAggregateRoot
 ### Command (CQRS)
 
 ```csharp
-// Application/Features/Users/Commands/CreateUser/CreateUserCommand.cs
+/ Application/Features/Users/Commands/CreateUser/CreateUserCommand.cs
 namespace MyApp.Application.Features.Users.Commands.CreateUser;
 
-/// <summary>
-/// Commande pour créer un nouvel utilisateur.
-/// </summary>
+// <summary>
+// Commande pour créer un nouvel utilisateur.
+// </summary>
 public record CreateUserCommand(
     string Email,
     string FirstName,
@@ -287,12 +287,12 @@ public record CreateUserCommand(
 ### Command Handler
 
 ```csharp
-// Application/Features/Users/Commands/CreateUser/CreateUserCommandHandler.cs
+/ Application/Features/Users/Commands/CreateUser/CreateUserCommandHandler.cs
 namespace MyApp.Application.Features.Users.Commands.CreateUser;
 
-/// <summary>
-/// Handler pour la création d'un utilisateur.
-/// </summary>
+// <summary>
+// Handler pour la création d'un utilisateur.
+// </summary>
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<Guid>>
 {
     private readonly IUserRepository _userRepository;
@@ -310,14 +310,14 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Resul
         CreateUserCommand request,
         CancellationToken cancellationToken)
     {
-        // Vérifier l'unicité de l'email
+        / Vérifier l'unicité de l'email
         var existingUser = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
         if (existingUser is not null)
         {
             return Result.Failure<Guid>(UserErrors.EmailAlreadyExists);
         }
 
-        // Créer l'utilisateur
+        / Créer l'utilisateur
         var user = User.Create(
             request.Email,
             request.FirstName,
@@ -334,12 +334,12 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Resul
 ### Repository Interface (Domain)
 
 ```csharp
-// Domain/Interfaces/IUserRepository.cs
+/ Domain/Interfaces/IUserRepository.cs
 namespace MyApp.Domain.Interfaces;
 
-/// <summary>
-/// Interface du repository pour les utilisateurs.
-/// </summary>
+// <summary>
+// Interface du repository pour les utilisateurs.
+// </summary>
 public interface IUserRepository
 {
     Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
@@ -354,12 +354,12 @@ public interface IUserRepository
 ### Repository Implementation (Infrastructure)
 
 ```csharp
-// Infrastructure/Persistence/Repositories/UserRepository.cs
+/ Infrastructure/Persistence/Repositories/UserRepository.cs
 namespace MyApp.Infrastructure.Persistence.Repositories;
 
-/// <summary>
-/// Implémentation du repository utilisateur avec EF Core.
-/// </summary>
+// <summary>
+// Implémentation du repository utilisateur avec EF Core.
+// </summary>
 public class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _context;
@@ -402,12 +402,12 @@ public class UserRepository : IUserRepository
 ### Controller (Presentation)
 
 ```csharp
-// WebApi/Controllers/UsersController.cs
+/ WebApi/Controllers/UsersController.cs
 namespace MyApp.WebApi.Controllers;
 
-/// <summary>
-/// Contrôleur API pour la gestion des utilisateurs.
-/// </summary>
+// <summary>
+// Contrôleur API pour la gestion des utilisateurs.
+// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
@@ -419,9 +419,9 @@ public class UsersController : ControllerBase
         _sender = sender;
     }
 
-    /// <summary>
-    /// Crée un nouvel utilisateur.
-    /// </summary>
+    // <summary>
+    // Crée un nouvel utilisateur.
+    // </summary>
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -441,9 +441,9 @@ public class UsersController : ControllerBase
             failure => Problem(detail: failure.Message, statusCode: 400));
     }
 
-    /// <summary>
-    /// Récupère un utilisateur par son identifiant.
-    /// </summary>
+    // <summary>
+    // Récupère un utilisateur par son identifiant.
+    // </summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -464,12 +464,12 @@ public class UsersController : ControllerBase
 ## 🔌 Dependency Injection
 
 ```csharp
-// Application/DependencyInjection.cs
+/ Application/DependencyInjection.cs
 namespace MyApp.Application;
 
-/// <summary>
-/// Configuration de l'injection de dépendances pour la couche Application.
-/// </summary>
+// <summary>
+// Configuration de l'injection de dépendances pour la couche Application.
+// </summary>
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
@@ -489,12 +489,12 @@ public static class DependencyInjection
     }
 }
 
-// Infrastructure/DependencyInjection.cs
+/ Infrastructure/DependencyInjection.cs
 namespace MyApp.Infrastructure;
 
-/// <summary>
-/// Configuration de l'injection de dépendances pour la couche Infrastructure.
-/// </summary>
+// <summary>
+// Configuration de l'injection de dépendances pour la couche Infrastructure.
+// </summary>
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(

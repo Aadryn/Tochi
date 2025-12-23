@@ -1,7 +1,7 @@
 ---
 description: Règles fondamentales MudBlazor - Composants uniquement, séparation des fichiers, internationalisation obligatoire
 name: MudBlazor_Core_Rules
-applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.cs"
+applyTo: "**Presentation/**/*.razor,**Presentation/**/*.razor.cs"
 ---
 
 # MudBlazor - Règles Fondamentales
@@ -81,14 +81,14 @@ MonComposant.razor.css   <!-- Styles CSS (scoped, DERNIER RECOURS uniquement) --
 ```
 
 ```csharp
-// MonComposant.razor.cs
+/ MonComposant.razor.cs
 namespace MyApp.Components;
 
 public partial class MonComposant
 {
   private void HandleClick()
   {
-    // Logique ici
+    / Logique ici
   }
 }
 ```
@@ -283,7 +283,7 @@ Get-ChildItem -Recurse -Filter "*.razor" |
 ## 📚 Ressources
 
 ### Documentation Officielle
-- [MudBlazor Components](https://mudblazor.com/components)
-- [MudBlazor API Reference](https://mudblazor.com/api)
-- [Blazor Component Basics](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/)
-- [Localization in Blazor](https://learn.microsoft.com/en-us/aspnet/core/blazor/globalization-localization)
+- [MudBlazor Components](https:/mudblazor.com/components)
+- [MudBlazor API Reference](https:/mudblazor.com/api)
+- [Blazor Component Basics](https:/learn.microsoft.com/en-us/aspnet/core/blazor/components/)
+- [Localization in Blazor](https:/learn.microsoft.com/en-us/aspnet/core/blazor/globalization-localization)

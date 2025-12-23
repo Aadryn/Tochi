@@ -115,16 +115,16 @@ private readonly MudTheme _theme = new()
 {
   PaletteLight = new PaletteLight
   {
-    Primary = "#0288d1",        // Bleu clair principal
-    Secondary = "#78909c",      // Gris-bleu secondaire
-    Background = "#f5f5f5",     // Gris très clair
-    Surface = "#ffffff",        // Blanc
-    AppbarBackground = "#ffffff", // Blanc pour AppBar
-    DrawerBackground = "#fafafa", // Gris ultra-clair pour Drawer
-    TextPrimary = "#212121",    // Gris très foncé pour texte principal
-    TextSecondary = "#757575",  // Gris moyen pour texte secondaire
-    Divider = "#e0e0e0",        // Gris clair pour séparateurs
-    LinesDefault = "#e0e0e0"    // Gris clair pour bordures
+    Primary = "#0288d1",        / Bleu clair principal
+    Secondary = "#78909c",      / Gris-bleu secondaire
+    Background = "#f5f5f5",     / Gris très clair
+    Surface = "#ffffff",        / Blanc
+    AppbarBackground = "#ffffff", / Blanc pour AppBar
+    DrawerBackground = "#fafafa", / Gris ultra-clair pour Drawer
+    TextPrimary = "#212121",    / Gris très foncé pour texte principal
+    TextSecondary = "#757575",  / Gris moyen pour texte secondaire
+    Divider = "#e0e0e0",        / Gris clair pour séparateurs
+    LinesDefault = "#e0e0e0"    / Gris clair pour bordures
   }
 };
 ```
@@ -287,14 +287,14 @@ MonComposant.razor.css   <!-- Styles CSS (scoped, DERNIER RECOURS uniquement) --
 ```
 
 ```csharp
-// MonComposant.razor.cs
+/ MonComposant.razor.cs
 namespace MyApp.Components;
 
 public partial class MonComposant
 {
   private void HandleClick()
   {
-    // Logique ici
+    / Logique ici
   }
 }
 ```
@@ -334,7 +334,7 @@ public partial class MonComposant
 
 **2. Thème MudBlazor personnalisé (PRIORITÉ #2)**
 ```csharp
-// MainLayout.razor.cs
+/ MainLayout.razor.cs
 private readonly MudTheme _theme = new()
 {
   PaletteLight = new PaletteLight
@@ -930,7 +930,7 @@ private readonly MudTheme _theme = new()
 ### Snackbar
 
 ```csharp
-// Dans .razor.cs
+/ Dans .razor.cs
 [Inject] private ISnackbar Snackbar { get; set; }
 [Inject] private IStringLocalizer<SharedResources> Localizer { get; set; }
 
@@ -1041,7 +1041,7 @@ Chaque composant partagé DOIT avoir un `README.md` documentant :
 ```
 
 ```csharp
-// Code-behind
+/ Code-behind
 [Inject] private IStringLocalizer<SharedResources> Localizer { get; set; }
 
 private MudForm form;
@@ -1051,25 +1051,25 @@ private async Task SubmitAsync()
 {
   await form.Validate();
   if (!IsFormValid) return;
-  // Traitement
+  / Traitement
 }
 ```
 
 ### EventCallback pour Communication
 ```csharp
-// ✅ TOUJOURS utiliser EventCallback au lieu de Action/Func
+/ ✅ TOUJOURS utiliser EventCallback au lieu de Action/Func
 [Parameter] public EventCallback<string> OnSearchChanged { get; set; }
 
 private async Task HandleSearchAsync(string searchTerm)
 {
-  // InvokeAsync pour contexte Blazor synchrone
+  / InvokeAsync pour contexte Blazor synchrone
   await OnSearchChanged.InvokeAsync(searchTerm);
 }
 ```
 
 ### ViewModels pour États Complexes
 ```csharp
-// Services/ViewModels/PromptListViewModel.cs
+/ Services/ViewModels/PromptListViewModel.cs
 public class PromptListViewModel
 {
   public string SearchTerm { get; set; }
@@ -1078,7 +1078,7 @@ public class PromptListViewModel
   public List<string> SelectedIds { get; set; } = new();
 }
 
-// Composant - Injection scoped
+/ Composant - Injection scoped
 [Inject] private PromptListViewModel ViewModel { get; set; }
 ```
 
@@ -1096,10 +1096,10 @@ public class PromptListViewModel
 
 ### Contrôle des Re-renders
 ```csharp
-// Code-behind
+/ Code-behind
 protected override bool ShouldRender()
 {
-  // Rendre seulement si paramètres critiques ont changé
+  / Rendre seulement si paramètres critiques ont changé
   return _criticalDataChanged;
 }
 ```
@@ -1133,20 +1133,20 @@ protected override bool ShouldRender()
 
 ### Tests avec bUnit
 ```csharp
-// Tests/Components/MyComponentTests.cs
+/ Tests/Components/MyComponentTests.cs
 public class MyComponentTests : TestContext
 {
   [Fact]
   public void Component_ShouldRender_WithCorrectTitle()
   {
-    // Arrange
+    / Arrange
     Services.AddMudServices();
     
-    // Act
+    / Act
     var cut = RenderComponent<MyComponent>(parameters => 
       parameters.Add(p => p.Title, "Test Title"));
     
-    // Assert
+    / Assert
     cut.Find("[data-test='title']").TextContent.Should().Be("Test Title");
   }
 }

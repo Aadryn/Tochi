@@ -1,7 +1,7 @@
 ---
 description: TypeScript Fundamentals - ADR compliance, folder structure, types, interfaces, generics, best practices
 name: TypeScript_Fundamentals
-applyTo: "**/frontend/**/*.ts"
+applyTo: "**/*.ts"
 ---
 
 # TypeScript - Règles Fondamentales
@@ -166,7 +166,7 @@ src/
 ### Types vs Interfaces
 
 ```typescript
-// ✅ Interface : Pour les objets et contrats
+/ ✅ Interface : Pour les objets et contrats
 interface User {
   id: string
   email: string
@@ -174,17 +174,17 @@ interface User {
   lastName: string
 }
 
-// ✅ Interface : Extensible par d'autres modules
+/ ✅ Interface : Extensible par d'autres modules
 interface UserWithRole extends User {
   role: 'admin' | 'user' | 'guest'
 }
 
-// ✅ Type : Pour unions, intersections, types mappés
+/ ✅ Type : Pour unions, intersections, types mappés
 type UserStatus = 'active' | 'inactive' | 'pending'
 type Nullable<T> = T | null
 type AsyncFunction<T> = () => Promise<T>
 
-// ✅ Type : Pour les alias de types complexes
+/ ✅ Type : Pour les alias de types complexes
 type UserResponse = ApiResponse<User>
 type UserCreateDto = Omit<User, 'id'>
 type UserUpdateDto = Partial<UserCreateDto>
@@ -203,45 +203,45 @@ type UserUpdateDto = Partial<UserCreateDto>
 ### Générics
 
 ```typescript
-// ✅ BON : Génériques avec contraintes
+/ ✅ BON : Génériques avec contraintes
 interface Repository<TEntity extends { id: string }> {
   findById(id: string): Promise<TEntity | null>
   save(entity: TEntity): Promise<TEntity>
   delete(id: string): Promise<void>
 }
 
-// ✅ BON : Génériques multiples avec noms descriptifs
+/ ✅ BON : Génériques multiples avec noms descriptifs
 type ApiResponse<TData, TError = Error> = 
   | { success: true; data: TData }
   | { success: false; error: TError }
 
-// ✅ BON : Utility types
+/ ✅ BON : Utility types
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 type RequiredBy<T, K extends keyof T> = T & Required<Pick<T, K>>
 
-// Utilisation
+/ Utilisation
 type UserUpdate = PartialBy<User, 'firstName' | 'lastName'>
 ```
 
 ### Types Stricts
 
 ```typescript
-// ✅ BON : Types stricts, pas de any
+/ ✅ BON : Types stricts, pas de any
 function processUser(user: User): UserResponse {
   return { success: true, data: user }
 }
 
-// ❌ MAUVAIS : any
-function processData(data: any): any { // ❌
+/ ❌ MAUVAIS : any
+function processData(data: any): any { / ❌
   return data
 }
 
-// ✅ BON : unknown pour données inconnues
+/ ✅ BON : unknown pour données inconnues
 function parseJson(json: string): unknown {
   return JSON.parse(json)
 }
 
-// ✅ BON : Type guards pour unknown
+/ ✅ BON : Type guards pour unknown
 function isUser(value: unknown): value is User {
   return (
     typeof value === 'object' &&
@@ -255,27 +255,27 @@ function isUser(value: unknown): value is User {
 ## 🔒 Immutabilité
 
 ```typescript
-// ✅ BON : readonly pour propriétés immuables
+/ ✅ BON : readonly pour propriétés immuables
 interface Config {
   readonly apiUrl: string
   readonly timeout: number
 }
 
-// ✅ BON : Readonly utility type
+/ ✅ BON : Readonly utility type
 type ImmutableUser = Readonly<User>
 
-// ✅ BON : as const pour littéraux immuables
+/ ✅ BON : as const pour littéraux immuables
 const STATUSES = ['active', 'inactive', 'pending'] as const
-type Status = typeof STATUSES[number] // 'active' | 'inactive' | 'pending'
+type Status = typeof STATUSES[number] / 'active' | 'inactive' | 'pending'
 
-// ✅ BON : ReadonlyArray pour tableaux immuables
+/ ✅ BON : ReadonlyArray pour tableaux immuables
 function processItems(items: ReadonlyArray<Item>): void {
-  // items.push(newItem) // ❌ Erreur de compilation
+  / items.push(newItem) / ❌ Erreur de compilation
 }
 
-// ✅ BON : Object.freeze pour runtime
+/ ✅ BON : Object.freeze pour runtime
 const config = Object.freeze({
-  apiUrl: 'https://api.example.com',
+  apiUrl: 'https:/api.example.com',
   timeout: 5000,
 })
 ```
@@ -285,7 +285,7 @@ const config = Object.freeze({
 ### Organisation des Exports
 
 ```typescript
-// types/user.types.ts
+/ types/user.types.ts
 export interface User {
   id: string
   email: string
@@ -298,23 +298,23 @@ export interface UserCreateDto {
 
 export type UserRole = 'admin' | 'user' | 'guest'
 
-// types/index.ts (Barrel export)
+/ types/index.ts (Barrel export)
 export * from './user.types'
 export * from './api.types'
 export * from './order.types'
 
-// Utilisation
+/ Utilisation
 import type { User, UserCreateDto, UserRole } from '@/types'
 ```
 
 ### Import Type-Only
 
 ```typescript
-// ✅ BON : import type pour les types uniquement
+/ ✅ BON : import type pour les types uniquement
 import type { User, ApiResponse } from '@/types'
 import { formatDate } from '@/utils/formatters'
 
-// ✅ BON : Séparation claire types vs valeurs
+/ ✅ BON : Séparation claire types vs valeurs
 import type { AxiosInstance, AxiosRequestConfig } from 'axios'
 import axios from 'axios'
 ```
@@ -324,12 +324,12 @@ import axios from 'axios'
 ### Result Pattern
 
 ```typescript
-// types/result.types.ts
+/ types/result.types.ts
 type Result<T, E = Error> = 
   | { ok: true; value: T }
   | { ok: false; error: E }
 
-// Helpers
+/ Helpers
 function ok<T>(value: T): Result<T, never> {
   return { ok: true, value }
 }
@@ -338,7 +338,7 @@ function err<E>(error: E): Result<never, E> {
   return { ok: false, error }
 }
 
-// Utilisation
+/ Utilisation
 async function findUser(id: string): Promise<Result<User, 'NOT_FOUND' | 'DB_ERROR'>> {
   try {
     const user = await db.users.findUnique({ where: { id } })
@@ -351,19 +351,19 @@ async function findUser(id: string): Promise<Result<User, 'NOT_FOUND' | 'DB_ERRO
   }
 }
 
-// Consommation
+/ Consommation
 const result = await findUser('123')
 if (result.ok) {
   console.log(result.value.email)
 } else {
-  console.error(result.error) // 'NOT_FOUND' | 'DB_ERROR'
+  console.error(result.error) / 'NOT_FOUND' | 'DB_ERROR'
 }
 ```
 
 ### Custom Errors
 
 ```typescript
-// errors/app.errors.ts
+/ errors/app.errors.ts
 export class AppError extends Error {
   constructor(
     message: string,
@@ -390,7 +390,7 @@ export class ValidationError extends AppError {
   }
 }
 
-// Utilisation
+/ Utilisation
 throw new NotFoundError('User', '123')
 throw new ValidationError('Invalid input', {
   email: ['Invalid email format'],
@@ -403,7 +403,7 @@ throw new ValidationError('Invalid input', {
 ### Types pour Tests
 
 ```typescript
-// types/test.types.ts
+/ types/test.types.ts
 import type { Mock } from 'vitest'
 
 export type MockedFunction<T extends (...args: any[]) => any> = Mock<
@@ -411,7 +411,7 @@ export type MockedFunction<T extends (...args: any[]) => any> = Mock<
   ReturnType<T>
 >
 
-// Utilisation dans les tests
+/ Utilisation dans les tests
 import type { MockedFunction } from '@/types/test.types'
 
 const mockFetch: MockedFunction<typeof fetch> = vi.fn()

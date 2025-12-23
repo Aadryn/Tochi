@@ -1,7 +1,7 @@
 ---
 description: Vue 3 Testing - Vitest, Vue Test Utils, Testing Library, MSW mocks, Playwright E2E
 name: Vue3_Testing
-applyTo: "**/frontend/**/*.spec.ts,**/frontend/**/*.test.ts,**/frontend/e2e/**/*.spec.ts"
+applyTo: "**/*.spec.ts,**/*.test.ts,**/e2e/**/*.spec.ts"
 ---
 
 # Vue 3 - Testing Guide
@@ -66,7 +66,7 @@ tests/
 ### Configuration Vitest
 
 ```typescript
-// vitest.config.ts
+/ vitest.config.ts
 import { fileURLToPath } from 'node:url'
 import { defineConfig, mergeConfig } from 'vitest/config'
 import viteConfig from './vite.config'
@@ -92,19 +92,19 @@ export default mergeConfig(
 ### Setup Global
 
 ```typescript
-// tests/setup.ts
+/ tests/setup.ts
 import { config } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 import { vi } from 'vitest'
 
-// Mock global des composants PrimeVue si nécessaire
+/ Mock global des composants PrimeVue si nécessaire
 config.global.stubs = {
-  // Stub des composants lourds
+  / Stub des composants lourds
   DataTable: true,
   Dialog: true,
 }
 
-// Mock de window.matchMedia
+/ Mock de window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation(query => ({
@@ -125,7 +125,7 @@ Object.defineProperty(window, 'matchMedia', {
 ### Test Basique
 
 ```typescript
-// components/__tests__/UserCard.spec.ts
+/ components/__tests__/UserCard.spec.ts
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import UserCard from '../UserCard.vue'
@@ -172,7 +172,7 @@ describe('UserCard', () => {
 ### Test avec Pinia
 
 ```typescript
-// components/__tests__/UserList.spec.ts
+/ components/__tests__/UserList.spec.ts
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
@@ -236,7 +236,7 @@ describe('UserList', () => {
 ### Test avec Vue Router
 
 ```typescript
-// views/__tests__/UserDetail.spec.ts
+/ views/__tests__/UserDetail.spec.ts
 import { describe, it, expect, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createRouter, createMemoryHistory } from 'vue-router'
@@ -268,7 +268,7 @@ describe('UserDetail', () => {
 
     await flushPromises()
 
-    // Vérifier que le bon utilisateur est chargé
+    / Vérifier que le bon utilisateur est chargé
     expect(wrapper.vm.userId).toBe('123')
   })
 })
@@ -277,7 +277,7 @@ describe('UserDetail', () => {
 ### Test avec Slots
 
 ```typescript
-// components/__tests__/BaseCard.spec.ts
+/ components/__tests__/BaseCard.spec.ts
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import BaseCard from '../BaseCard.vue'
@@ -320,12 +320,12 @@ describe('BaseCard', () => {
 ## 🧩 Tests de Composables
 
 ```typescript
-// composables/__tests__/useAuth.spec.ts
+/ composables/__tests__/useAuth.spec.ts
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useAuth } from '../useAuth'
 
-// Mock de l'API
+/ Mock de l'API
 vi.mock('@/api', () => ({
   authApi: {
     login: vi.fn(),
@@ -393,13 +393,13 @@ describe('useAuth', () => {
 ### Configuration MSW
 
 ```typescript
-// tests/mocks/handlers.ts
+/ tests/mocks/handlers.ts
 import { http, HttpResponse } from 'msw'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const API_URL = import.meta.env.VITE_API_URL || 'http:/localhost:3000'
 
 export const handlers = [
-  // GET /api/users
+  / GET /api/users
   http.get(`${API_URL}/api/users`, () => {
     return HttpResponse.json([
       { id: '1', firstName: 'John', lastName: 'Doe' },
@@ -407,7 +407,7 @@ export const handlers = [
     ])
   }),
 
-  // GET /api/users/:id
+  / GET /api/users/:id
   http.get(`${API_URL}/api/users/:id`, ({ params }) => {
     const { id } = params
     return HttpResponse.json({
@@ -417,7 +417,7 @@ export const handlers = [
     })
   }),
 
-  // POST /api/auth/login
+  / POST /api/auth/login
   http.post(`${API_URL}/api/auth/login`, async ({ request }) => {
     const body = await request.json() as { email: string; password: string }
     
@@ -434,7 +434,7 @@ export const handlers = [
     )
   }),
 
-  // Erreur 404 par défaut
+  / Erreur 404 par défaut
   http.get(`${API_URL}/api/*`, () => {
     return HttpResponse.json(
       { message: 'Not found' },
@@ -445,7 +445,7 @@ export const handlers = [
 ```
 
 ```typescript
-// tests/mocks/server.ts
+/ tests/mocks/server.ts
 import { setupServer } from 'msw/node'
 import { handlers } from './handlers'
 
@@ -453,7 +453,7 @@ export const server = setupServer(...handlers)
 ```
 
 ```typescript
-// tests/setup.ts
+/ tests/setup.ts
 import { beforeAll, afterAll, afterEach } from 'vitest'
 import { server } from './mocks/server'
 
@@ -467,7 +467,7 @@ afterEach(() => server.resetHandlers())
 ### Configuration Playwright
 
 ```typescript
-// playwright.config.ts
+/ playwright.config.ts
 import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
@@ -478,7 +478,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http:/localhost:5173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -490,7 +490,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'npm run dev',
-    url: 'http://localhost:5173',
+    url: 'http:/localhost:5173',
     reuseExistingServer: !process.env.CI,
   },
 })
@@ -499,21 +499,21 @@ export default defineConfig({
 ### Test E2E
 
 ```typescript
-// tests/e2e/auth.spec.ts
+/ tests/e2e/auth.spec.ts
 import { test, expect } from '@playwright/test'
 
 test.describe('Authentication', () => {
   test('should login successfully', async ({ page }) => {
     await page.goto('/login')
 
-    // Remplir le formulaire
+    / Remplir le formulaire
     await page.getByLabel('Email').fill('test@example.com')
     await page.getByLabel('Mot de passe').fill('password')
     
-    // Soumettre
+    / Soumettre
     await page.getByRole('button', { name: 'Se connecter' }).click()
 
-    // Vérifier la redirection
+    / Vérifier la redirection
     await expect(page).toHaveURL('/dashboard')
     await expect(page.getByText('Bienvenue')).toBeVisible()
   })
@@ -530,14 +530,14 @@ test.describe('Authentication', () => {
   })
 
   test('should logout successfully', async ({ page }) => {
-    // Login d'abord
+    / Login d'abord
     await page.goto('/login')
     await page.getByLabel('Email').fill('test@example.com')
     await page.getByLabel('Mot de passe').fill('password')
     await page.getByRole('button', { name: 'Se connecter' }).click()
     await expect(page).toHaveURL('/dashboard')
 
-    // Logout
+    / Logout
     await page.getByRole('button', { name: 'Déconnexion' }).click()
     
     await expect(page).toHaveURL('/login')
@@ -548,7 +548,7 @@ test.describe('Authentication', () => {
 ### Page Object Model
 
 ```typescript
-// tests/e2e/pages/LoginPage.ts
+/ tests/e2e/pages/LoginPage.ts
 import { type Page, type Locator } from '@playwright/test'
 
 export class LoginPage {
@@ -579,7 +579,7 @@ export class LoginPage {
 ```
 
 ```typescript
-// tests/e2e/auth-pom.spec.ts
+/ tests/e2e/auth-pom.spec.ts
 import { test, expect } from '@playwright/test'
 import { LoginPage } from './pages/LoginPage'
 

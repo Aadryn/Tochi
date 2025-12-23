@@ -1,7 +1,7 @@
 ---
 description: CSS Flexbox - Flex containers, items, alignment, distribution, responsive patterns
 name: CSS_Flexbox
-applyTo: "**/frontend/**/*.css,**/frontend/**/*.scss,**/frontend/**/*.vue"
+applyTo: "**/*.css,**/*.scss,**/*.vue"
 ---
 
 # CSS Flexbox

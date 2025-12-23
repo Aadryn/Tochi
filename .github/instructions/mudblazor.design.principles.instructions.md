@@ -1,7 +1,7 @@
 ---
 description: Design minimaliste MudBlazor - Palette clair/gris/blanc, espacement, typographie, icônes
 name: MudBlazor_Design_Principles
-applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.cs"
+applyTo: "**Presentation/**/*.razor,**Presentation/**/*.razor.cs"
 ---
 
 # MudBlazor - Principes de Design Minimaliste
@@ -36,16 +36,16 @@ private readonly MudTheme _theme = new()
 {
   PaletteLight = new PaletteLight
   {
-    Primary = "#0288d1",        // Bleu clair principal
-    Secondary = "#78909c",      // Gris-bleu secondaire
-    Background = "#f5f5f5",     // Gris très clair
-    Surface = "#ffffff",        // Blanc
-    AppbarBackground = "#ffffff", // Blanc pour AppBar
-    DrawerBackground = "#fafafa", // Gris ultra-clair pour Drawer
-    TextPrimary = "#212121",    // Gris très foncé pour texte principal
-    TextSecondary = "#757575",  // Gris moyen pour texte secondaire
-    Divider = "#e0e0e0",        // Gris clair pour séparateurs
-    LinesDefault = "#e0e0e0"    // Gris clair pour bordures
+    Primary = "#0288d1",        / Bleu clair principal
+    Secondary = "#78909c",      / Gris-bleu secondaire
+    Background = "#f5f5f5",     / Gris très clair
+    Surface = "#ffffff",        / Blanc
+    AppbarBackground = "#ffffff", / Blanc pour AppBar
+    DrawerBackground = "#fafafa", / Gris ultra-clair pour Drawer
+    TextPrimary = "#212121",    / Gris très foncé pour texte principal
+    TextSecondary = "#757575",  / Gris moyen pour texte secondaire
+    Divider = "#e0e0e0",        / Gris clair pour séparateurs
+    LinesDefault = "#e0e0e0"    / Gris clair pour bordures
   }
 };
 ```
@@ -422,7 +422,7 @@ Get-ChildItem -Recurse -Filter "*.{razor,css}" |
 ## 📚 Ressources
 
 ### Documentation Officielle
-- [MudBlazor Colors](https://mudblazor.com/features/colors)
-- [Material Design Guidelines - Color](https://material.io/design/color)
-- [Material Design Guidelines - Typography](https://material.io/design/typography)
-- [Material Design Icons](https://fonts.google.com/icons)
+- [MudBlazor Colors](https:/mudblazor.com/features/colors)
+- [Material Design Guidelines - Color](https:/material.io/design/color)
+- [Material Design Guidelines - Typography](https:/material.io/design/typography)
+- [Material Design Icons](https:/fonts.google.com/icons)

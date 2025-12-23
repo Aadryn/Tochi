@@ -1,7 +1,7 @@
 ---
 description: Vue 3 Directives - Directives built-in, custom directives, modifiers, lifecycle hooks
 name: Vue3_Directives
-applyTo: "**/frontend/directives/**/*.ts,**/frontend/**/*.vue"
+applyTo: "**/directives/**/*.ts,**/*.vue"
 ---
 
 # Vue 3 Directives
@@ -429,7 +429,7 @@ import { computed } from 'vue';
 const rawHtml = '<span style="color: red;">Red text</span>';
 const userContent = '<script>alert("XSS")</script><p>Safe content</p>';
 
-// ✅ Sanitize HTML before rendering
+/ ✅ Sanitize HTML before rendering
 const sanitizedHtml = computed(() => DOMPurify.sanitize(userContent));
 </script>
 
@@ -454,7 +454,7 @@ const sanitizedHtml = computed(() => DOMPurify.sanitize(userContent));
 ### Structure de Base
 
 ```typescript
-// directives/vFocus.ts
+/ directives/vFocus.ts
 import type { Directive, DirectiveBinding } from 'vue';
 
 /**
@@ -462,42 +462,42 @@ import type { Directive, DirectiveBinding } from 'vue';
  * Usage: v-focus ou v-focus="condition"
  */
 export const vFocus: Directive<HTMLElement, boolean | undefined> = {
-  // Appelé avant que l'élément soit inséré dans le DOM
+  / Appelé avant que l'élément soit inséré dans le DOM
   beforeMount(el: HTMLElement, binding: DirectiveBinding<boolean | undefined>) {
-    // binding.value : valeur passée (v-focus="value")
-    // binding.oldValue : ancienne valeur (dans updated)
-    // binding.arg : argument (v-focus:arg)
-    // binding.modifiers : modifiers (v-focus.modifier)
-    // binding.instance : instance du composant
-    // binding.dir : la directive elle-même
+    / binding.value : valeur passée (v-focus="value")
+    / binding.oldValue : ancienne valeur (dans updated)
+    / binding.arg : argument (v-focus:arg)
+    / binding.modifiers : modifiers (v-focus.modifier)
+    / binding.instance : instance du composant
+    / binding.dir : la directive elle-même
   },
 
-  // Appelé quand l'élément est inséré dans le DOM
+  / Appelé quand l'élément est inséré dans le DOM
   mounted(el: HTMLElement, binding: DirectiveBinding<boolean | undefined>) {
     if (binding.value !== false) {
       el.focus();
     }
   },
 
-  // Appelé quand le VNode parent et ses enfants sont mis à jour
+  / Appelé quand le VNode parent et ses enfants sont mis à jour
   updated(el: HTMLElement, binding: DirectiveBinding<boolean | undefined>) {
     if (binding.value && !binding.oldValue) {
       el.focus();
     }
   },
 
-  // Appelé avant que l'élément soit retiré du DOM
+  / Appelé avant que l'élément soit retiré du DOM
   beforeUnmount(el: HTMLElement) {
-    // Cleanup si nécessaire
+    / Cleanup si nécessaire
   },
 
-  // Appelé quand l'élément est retiré du DOM
+  / Appelé quand l'élément est retiré du DOM
   unmounted(el: HTMLElement) {
-    // Cleanup final
+    / Cleanup final
   },
 };
 
-// Shorthand (si seulement mounted et updated avec même logique)
+/ Shorthand (si seulement mounted et updated avec même logique)
 export const vFocusShort: Directive<HTMLElement, boolean | undefined> = (el, binding) => {
   if (binding.value !== false) {
     el.focus();
@@ -508,7 +508,7 @@ export const vFocusShort: Directive<HTMLElement, boolean | undefined> = (el, bin
 ### Directive Click Outside
 
 ```typescript
-// directives/vClickOutside.ts
+/ directives/vClickOutside.ts
 import type { Directive, DirectiveBinding } from 'vue';
 
 type ClickOutsideHandler = (event: MouseEvent) => void;
@@ -533,13 +533,13 @@ export const vClickOutside: Directive<ClickOutsideElement, ClickOutsideHandler> 
     el.__clickOutsideHandler = (event: MouseEvent) => {
       const target = event.target as Node;
       
-      // Vérifier que le clic est en dehors de l'élément
+      / Vérifier que le clic est en dehors de l'élément
       if (!el.contains(target) && el !== target) {
         handler(event);
       }
     };
 
-    // Utiliser capture pour intercepter avant que l'événement ne bulle
+    / Utiliser capture pour intercepter avant que l'événement ne bulle
     document.addEventListener('click', el.__clickOutsideHandler, true);
   },
 
@@ -555,7 +555,7 @@ export const vClickOutside: Directive<ClickOutsideElement, ClickOutsideHandler> 
 ### Directive Intersection Observer
 
 ```typescript
-// directives/vIntersect.ts
+/ directives/vIntersect.ts
 import type { Directive, DirectiveBinding } from 'vue';
 
 interface IntersectOptions {
@@ -577,7 +577,7 @@ export const vIntersect: Directive<IntersectElement, IntersectOptions | ((isInte
   mounted(el: IntersectElement, binding) {
     const value = binding.value;
     
-    // Normaliser les options
+    / Normaliser les options
     const config: IntersectOptions = typeof value === 'function'
       ? { handler: (isIntersecting) => value(isIntersecting) }
       : value;
@@ -609,7 +609,7 @@ export const vIntersect: Directive<IntersectElement, IntersectOptions | ((isInte
   },
 };
 
-// Usage dans composant
+/ Usage dans composant
 /*
 <template>
   <div v-intersect="handleIntersect">
@@ -633,7 +633,7 @@ export const vIntersect: Directive<IntersectElement, IntersectOptions | ((isInte
 ### Directive Tooltip
 
 ```typescript
-// directives/vTooltip.ts
+/ directives/vTooltip.ts
 import type { Directive, DirectiveBinding } from 'vue';
 
 interface TooltipOptions {
@@ -694,7 +694,7 @@ export const vTooltip: Directive<TooltipElement, string | TooltipOptions> = {
 
     const { text, position = 'top', delay = 200 } = config;
 
-    // Rendre l'élément positionné pour le tooltip
+    / Rendre l'élément positionné pour le tooltip
     if (getComputedStyle(el).position === 'static') {
       el.style.position = 'relative';
     }
@@ -707,7 +707,7 @@ export const vTooltip: Directive<TooltipElement, string | TooltipOptions> = {
       
       el.__tooltipShowTimeout = window.setTimeout(() => {
         el.appendChild(tooltip);
-        // Force reflow pour l'animation
+        / Force reflow pour l'animation
         tooltip.offsetHeight;
         tooltip.style.opacity = '1';
       }, delay);
@@ -755,7 +755,7 @@ export const vTooltip: Directive<TooltipElement, string | TooltipOptions> = {
 ### Directive Ripple Effect
 
 ```typescript
-// directives/vRipple.ts
+/ directives/vRipple.ts
 import type { Directive } from 'vue';
 
 interface RippleElement extends HTMLElement {
@@ -770,7 +770,7 @@ export const vRipple: Directive<RippleElement, { color?: string } | undefined> =
   mounted(el: RippleElement, binding) {
     const color = binding.value?.color ?? 'rgba(0, 0, 0, 0.2)';
     
-    // Style de base pour le conteneur
+    / Style de base pour le conteneur
     el.style.position = 'relative';
     el.style.overflow = 'hidden';
 
@@ -807,7 +807,7 @@ export const vRipple: Directive<RippleElement, { color?: string } | undefined> =
 
     el.addEventListener('click', el.__rippleHandler);
 
-    // Ajouter les keyframes si pas déjà présents
+    / Ajouter les keyframes si pas déjà présents
     if (!document.querySelector('#ripple-keyframes')) {
       const style = document.createElement('style');
       style.id = 'ripple-keyframes';
@@ -834,21 +834,21 @@ export const vRipple: Directive<RippleElement, { color?: string } | undefined> =
 ## 📦 Enregistrement Global
 
 ```typescript
-// directives/index.ts
+/ directives/index.ts
 export { vFocus } from './vFocus';
 export { vClickOutside } from './vClickOutside';
 export { vIntersect } from './vIntersect';
 export { vTooltip } from './vTooltip';
 export { vRipple } from './vRipple';
 
-// main.ts
+/ main.ts
 import { createApp } from 'vue';
 import App from './App.vue';
 import { vFocus, vClickOutside, vIntersect, vTooltip, vRipple } from './directives';
 
 const app = createApp(App);
 
-// Enregistrement global
+/ Enregistrement global
 app.directive('focus', vFocus);
 app.directive('click-outside', vClickOutside);
 app.directive('intersect', vIntersect);
@@ -861,7 +861,7 @@ app.mount('#app');
 ## 🧪 Tests de Directives
 
 ```typescript
-// directives/__tests__/vFocus.spec.ts
+/ directives/__tests__/vFocus.spec.ts
 import { mount } from '@vue/test-utils';
 import { vFocus } from '../vFocus';
 
@@ -891,7 +891,7 @@ describe('vFocus directive', () => {
   });
 });
 
-// directives/__tests__/vClickOutside.spec.ts
+/ directives/__tests__/vClickOutside.spec.ts
 import { mount } from '@vue/test-utils';
 import { vClickOutside } from '../vClickOutside';
 
@@ -909,11 +909,11 @@ describe('vClickOutside directive', () => {
       attachTo: document.body,
     });
 
-    // Click inside - should not trigger
+    / Click inside - should not trigger
     await wrapper.find('button').trigger('click');
     expect(handler).not.toHaveBeenCalled();
 
-    // Click outside - should trigger
+    / Click outside - should trigger
     document.body.click();
     expect(handler).toHaveBeenCalled();
 
@@ -942,7 +942,7 @@ function handleVisible(isVisible: boolean): void {
 }
 
 async function loadMoreItems(): Promise<void> {
-  // Charger plus d'items
+  / Charger plus d'items
 }
 </script>
 

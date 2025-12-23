@@ -1,7 +1,7 @@
 ---
 description: TypeScript Testing - Vitest, Jest, mocking, type-safe assertions, test patterns
 name: TypeScript_Testing
-applyTo: "**/frontend/**/*.spec.ts,**/frontend/**/*.test.ts"
+applyTo: "**/*.spec.ts,**/*.test.ts"
 ---
 
 # TypeScript - Guide de Testing
@@ -67,11 +67,11 @@ export default defineConfig({
 ### Setup File
 
 ```typescript
-// src/test-utils/setup.ts
+/ src/test-utils/setup.ts
 import { vi, beforeEach, afterEach } from 'vitest'
 import { config } from '@vue/test-utils'
 
-// Reset tous les mocks entre les tests
+/ Reset tous les mocks entre les tests
 beforeEach(() => {
   vi.clearAllMocks()
 })
@@ -80,16 +80,16 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
-// Configuration globale Vue Test Utils
+/ Configuration globale Vue Test Utils
 config.global.stubs = {
-  // Stub des composants externes
+  / Stub des composants externes
   teleport: true
 }
 
-// Mock global de fetch
+/ Mock global de fetch
 global.fetch = vi.fn()
 
-// Mock de localStorage
+/ Mock de localStorage
 const localStorageMock = {
   getItem: vi.fn(),
   setItem: vi.fn(),
@@ -104,7 +104,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock })
 ### User Factory
 
 ```typescript
-// src/test-utils/factories/user.factory.ts
+/ src/test-utils/factories/user.factory.ts
 import type { User, CreateUserDto } from '@/types'
 
 let userIdCounter = 1
@@ -140,7 +140,7 @@ export function createUserDto(overrides: Partial<CreateUserDto> = {}): CreateUse
 ### API Response Factory
 
 ```typescript
-// src/test-utils/factories/api.factory.ts
+/ src/test-utils/factories/api.factory.ts
 import type { ApiResponse, PaginatedResponse } from '@/types'
 
 export function createApiResponse<T>(
@@ -185,17 +185,17 @@ export function createErrorResponse(
 ### Mock de Modules
 
 ```typescript
-// ✅ BON : Mock typé de module
+/ ✅ BON : Mock typé de module
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { useAuth } from '@/composables/useAuth'
 import type { User } from '@/types'
 
-// Mock du module
+/ Mock du module
 vi.mock('@/composables/useAuth', () => ({
   useAuth: vi.fn()
 }))
 
-// Type helper pour le mock
+/ Type helper pour le mock
 const mockedUseAuth = vi.mocked(useAuth)
 
 describe('UserProfile', () => {
@@ -209,7 +209,7 @@ describe('UserProfile', () => {
   })
   
   it('should display user name', () => {
-    // Test...
+    / Test...
   })
 })
 ```
@@ -217,7 +217,7 @@ describe('UserProfile', () => {
 ### Mock de Fetch/API
 
 ```typescript
-// ✅ BON : Mock typé de fetch
+/ ✅ BON : Mock typé de fetch
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 
 const mockFetch = vi.fn()
@@ -257,7 +257,7 @@ describe('UserService', () => {
 ### Mock de Services
 
 ```typescript
-// ✅ BON : Service mock avec type complet
+/ ✅ BON : Service mock avec type complet
 import type { UserService } from '@/services/user.service'
 
 function createMockUserService(): jest.Mocked<UserService> {
@@ -296,7 +296,7 @@ describe('UserController', () => {
 ### Test Unitaire - Fonction Pure
 
 ```typescript
-// src/utils/formatters.ts
+/ src/utils/formatters.ts
 export function formatCurrency(amount: number, currency = 'EUR'): string {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -304,7 +304,7 @@ export function formatCurrency(amount: number, currency = 'EUR'): string {
   }).format(amount)
 }
 
-// src/utils/__tests__/formatters.spec.ts
+/ src/utils/__tests__/formatters.spec.ts
 import { describe, it, expect } from 'vitest'
 import { formatCurrency } from '../formatters'
 
@@ -330,7 +330,7 @@ describe('formatCurrency', () => {
 ### Test de Service Async
 
 ```typescript
-// src/services/__tests__/user.service.spec.ts
+/ src/services/__tests__/user.service.spec.ts
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { UserService } from '../user.service'
 import { createUser, createUsers } from '@/test-utils/factories'
@@ -347,17 +347,17 @@ describe('UserService', () => {
   
   describe('getById', () => {
     it('should return user when found', async () => {
-      // Arrange
+      / Arrange
       const expectedUser = createUser({ id: '123' })
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(expectedUser)
       })
       
-      // Act
+      / Act
       const result = await service.getById('123')
       
-      // Assert
+      / Assert
       expect(result).toEqual(expectedUser)
       expect(mockFetch).toHaveBeenCalledWith(
         '/api/users/123',
@@ -366,13 +366,13 @@ describe('UserService', () => {
     })
     
     it('should throw when user not found', async () => {
-      // Arrange
+      / Arrange
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 404
       })
       
-      // Act & Assert
+      / Act & Assert
       await expect(service.getById('999'))
         .rejects
         .toThrow('User not found')
@@ -381,7 +381,7 @@ describe('UserService', () => {
   
   describe('getAll', () => {
     it('should return paginated users', async () => {
-      // Arrange
+      / Arrange
       const users = createUsers(5)
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -393,10 +393,10 @@ describe('UserService', () => {
         })
       })
       
-      // Act
+      / Act
       const result = await service.getAll({ page: 1, pageSize: 10 })
       
-      // Assert
+      / Assert
       expect(result.items).toHaveLength(5)
       expect(result.total).toBe(5)
     })
@@ -407,7 +407,7 @@ describe('UserService', () => {
 ### Test de Composable Vue
 
 ```typescript
-// src/composables/__tests__/useCounter.spec.ts
+/ src/composables/__tests__/useCounter.spec.ts
 import { describe, it, expect } from 'vitest'
 import { useCounter } from '../useCounter'
 
@@ -455,7 +455,7 @@ describe('useCounter', () => {
 ### Test de Composant Vue
 
 ```typescript
-// src/components/__tests__/UserCard.spec.ts
+/ src/components/__tests__/UserCard.spec.ts
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import UserCard from '../UserCard.vue'
@@ -534,8 +534,8 @@ describe('Type Tests', () => {
 ## 📊 Coverage et Assertions
 
 ```typescript
-// Configuration coverage minimum
-// vitest.config.ts
+/ Configuration coverage minimum
+/ vitest.config.ts
 {
   test: {
     coverage: {
@@ -549,7 +549,7 @@ describe('Type Tests', () => {
   }
 }
 
-// Script package.json
+/ Script package.json
 {
   "scripts": {
     "test": "vitest",

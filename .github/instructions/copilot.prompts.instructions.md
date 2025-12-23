@@ -6,7 +6,7 @@ applyTo: "**/.github/prompts/*.prompt.md"
 
 # Prompt Files Copilot - Guide Expert
 
-Guide pour créer des prompt files réutilisables dans `.github/prompts/` conformément à la [documentation officielle Microsoft](https://code.visualstudio.com/docs/copilot/customization/prompt-files).
+Guide pour créer des prompt files réutilisables dans `.github/prompts/` conformément à la [documentation officielle Microsoft](https:/code.visualstudio.com/docs/copilot/customization/prompt-files).
 
 ## ⛔ À NE PAS FAIRE
 
@@ -520,7 +520,7 @@ Pour chaque problème :
 - **Recommandation** : [Action corrective précise]
 - **Code corrigé** :
 ```[language]
-// Code sécurisé proposé
+/ Code sécurisé proposé
 ```
 
 ### Recommandations Générales
@@ -584,20 +584,20 @@ Génère le fichier : `${fileBasenameNoExtension}.test.${fileExtension}`
 
 ```typescript
 describe('[Nom du composant/fonction]', () => {
-  // Setup commun
+  / Setup commun
   beforeEach(() => {
-    // Initialisation
+    / Initialisation
   });
 
   afterEach(() => {
-    // Nettoyage
+    / Nettoyage
   });
 
   describe('Cas nominaux', () => {
     it('should [comportement attendu]', () => {
-      // Arrange
-      // Act
-      // Assert
+      / Arrange
+      / Act
+      / Assert
     });
   });
 
@@ -679,7 +679,7 @@ Workspace : ${workspaceFolder}
 ### Code Refactorisé
 
 ```[language]
-// Code refactorisé avec commentaires explicatifs
+/ Code refactorisé avec commentaires explicatifs
 ```
 
 ### Justifications
@@ -758,7 +758,7 @@ Créer prompt → Tester → Analyser résultat → Affiner → Re-tester
 Configurer les prompts recommandés au démarrage d'une session :
 
 ```json
-// settings.json
+/ settings.json
 {
   "chat.promptFilesRecommendations": [
     "code-review",
@@ -834,13 +834,13 @@ Avant de committer un prompt file :
 ## Ressources
 
 ### Documentation Officielle Microsoft
-- [Prompt Files - VS Code](https://code.visualstudio.com/docs/copilot/customization/prompt-files)
-- [Customize AI Responses - Overview](https://code.visualstudio.com/docs/copilot/customization/overview)
-- [Custom Instructions](https://code.visualstudio.com/docs/copilot/customization/custom-instructions)
-- [Chat Tools](https://code.visualstudio.com/docs/copilot/chat/chat-tools)
+- [Prompt Files - VS Code](https:/code.visualstudio.com/docs/copilot/customization/prompt-files)
+- [Customize AI Responses - Overview](https:/code.visualstudio.com/docs/copilot/customization/overview)
+- [Custom Instructions](https:/code.visualstudio.com/docs/copilot/customization/custom-instructions)
+- [Chat Tools](https:/code.visualstudio.com/docs/copilot/chat/chat-tools)
 
 ### Exemples Communautaires
-- [Awesome Copilot - Prompts](https://github.com/github/awesome-copilot/tree/main)
+- [Awesome Copilot - Prompts](https:/github.com/github/awesome-copilot/tree/main)
 
 ### Configuration VS Code
 - Setting : `chat.promptFiles`

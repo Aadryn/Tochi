@@ -1,7 +1,7 @@
 ---
 description: CSS Variables - Custom properties, theming, dark mode, design tokens
 name: CSS_Variables
-applyTo: "**/frontend/**/*.css,**/frontend/**/*.scss,**/frontend/**/*.vue"
+applyTo: "**/*.css,**/*.scss,**/*.vue"
 ---
 
 # CSS Variables (Custom Properties)
@@ -206,11 +206,11 @@ Guide complet pour l'utilisation des variables CSS et la création de design tok
 ```
 
 ```typescript
-// themeManager.ts
+/ themeManager.ts
 export function setTheme(theme: 'light' | 'dark' | 'system'): void {
   const root = document.documentElement;
   
-  // Ajouter classe de transition
+  / Ajouter classe de transition
   root.setAttribute('data-theme-transitioning', '');
   
   if (theme === 'system') {
@@ -219,16 +219,16 @@ export function setTheme(theme: 'light' | 'dark' | 'system'): void {
     root.setAttribute('data-theme', theme);
   }
   
-  // Retirer classe après transition
+  / Retirer classe après transition
   setTimeout(() => {
     root.removeAttribute('data-theme-transitioning');
   }, 200);
   
-  // Sauvegarder la préférence
+  / Sauvegarder la préférence
   localStorage.setItem('theme', theme);
 }
 
-// Initialisation au chargement
+/ Initialisation au chargement
 export function initTheme(): void {
   const saved = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
   if (saved) {

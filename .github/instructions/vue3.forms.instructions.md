@@ -1,7 +1,7 @@
 ---
 description: Vue 3 Forms - Formulaires, validation, VeeValidate, Zod, composables
 name: Vue3_Forms
-applyTo: "**/frontend/components/**/*Form*.vue,**/frontend/components/**/*Modal*.vue,**/frontend/composables/use*Form*.ts"
+applyTo: "**/components/**/*Form*.vue,**/components/**/*Modal*.vue,**/composables/use*Form*.ts"
 ---
 
 # Vue 3 Formulaires et Validation
@@ -37,12 +37,12 @@ npm install vee-validate @vee-validate/zod zod
 ### Configuration Globale
 
 ```typescript
-// plugins/veeValidate.ts
+/ plugins/veeValidate.ts
 import { configure, defineRule } from 'vee-validate';
 import { localize, setLocale } from '@vee-validate/i18n';
 import fr from '@vee-validate/i18n/dist/locale/fr.json';
 
-// Configuration globale
+/ Configuration globale
 configure({
   generateMessage: localize({
     fr,
@@ -55,7 +55,7 @@ configure({
 
 setLocale('fr');
 
-// Règles personnalisées (optionnel)
+/ Règles personnalisées (optionnel)
 defineRule('phone', (value: string) => {
   if (!value) return true;
   const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
@@ -85,7 +85,7 @@ defineRule('password-strength', (value: string) => {
 ### Schémas de Base
 
 ```typescript
-// schemas/auth.schema.ts
+/ schemas/auth.schema.ts
 import { z } from 'zod';
 
 /**
@@ -141,7 +141,7 @@ export type RegisterFormData = z.infer<typeof registerSchema>;
 ### Schémas Complexes
 
 ```typescript
-// schemas/user.schema.ts
+/ schemas/user.schema.ts
 import { z } from 'zod';
 
 /**
@@ -245,7 +245,7 @@ import FormCheckbox from '@/components/forms/FormCheckbox.vue';
 const authStore = useAuthStore();
 const { navigateTo, route } = useAppRouter();
 
-// Configuration du formulaire avec schéma Zod
+/ Configuration du formulaire avec schéma Zod
 const { handleSubmit, errors, isSubmitting, resetForm, setErrors } = useForm<LoginFormData>({
   validationSchema: toTypedSchema(loginSchema),
   initialValues: {
@@ -255,23 +255,23 @@ const { handleSubmit, errors, isSubmitting, resetForm, setErrors } = useForm<Log
   },
 });
 
-// Soumission du formulaire
+/ Soumission du formulaire
 const onSubmit = handleSubmit(async (values) => {
   try {
     await authStore.login(values.email, values.password, values.rememberMe);
     
-    // Redirection après login
+    / Redirection après login
     const redirect = route.query.redirect as string;
     await navigateTo(redirect || 'Home');
   } catch (error) {
-    // Gérer les erreurs serveur
+    / Gérer les erreurs serveur
     if (error instanceof Error) {
       if (error.message.includes('email')) {
         setErrors({ email: error.message });
       } else if (error.message.includes('password')) {
         setErrors({ password: error.message });
       } else {
-        // Erreur générale
+        / Erreur générale
         setErrors({ email: 'Identifiants incorrects' });
       }
     }
@@ -466,7 +466,7 @@ const { value, errorMessage, handleBlur, handleChange } = useField<string>(
   () => props.name
 );
 
-// Gestion du type password avec toggle
+/ Gestion du type password avec toggle
 const showPassword = ref(false);
 const inputType = computed(() => {
   if (props.type === 'password') {
@@ -564,7 +564,7 @@ function togglePassword(): void {
 ### useFormState
 
 ```typescript
-// composables/useFormState.ts
+/ composables/useFormState.ts
 import { ref, computed, type Ref } from 'vue';
 
 export interface FormState<T> {
@@ -625,7 +625,7 @@ export function useFormState<T extends Record<string, unknown>>(
 ### useAsyncValidation
 
 ```typescript
-// composables/useAsyncValidation.ts
+/ composables/useAsyncValidation.ts
 import { ref, type Ref } from 'vue';
 import { debounce } from 'lodash-es';
 
@@ -671,7 +671,7 @@ export function useAsyncValidation<T>(options: AsyncValidationOptions<T>): {
   };
 }
 
-// Exemple d'utilisation
+/ Exemple d'utilisation
 export function useEmailValidation() {
   return useAsyncValidation({
     validate: async (email: string) => {
@@ -686,7 +686,7 @@ export function useEmailValidation() {
 ### useFormPersistence
 
 ```typescript
-// composables/useFormPersistence.ts
+/ composables/useFormPersistence.ts
 import { watch, onMounted, type Ref } from 'vue';
 
 interface FormPersistenceOptions<T> {
@@ -716,7 +716,7 @@ export function useFormPersistence<T extends Record<string, unknown>>(
   function save(): void {
     const toSave = { ...data.value };
     
-    // Exclure les champs sensibles
+    / Exclure les champs sensibles
     for (const field of exclude) {
       delete toSave[field];
     }
@@ -736,14 +736,14 @@ export function useFormPersistence<T extends Record<string, unknown>>(
     try {
       const { data: savedData, timestamp } = JSON.parse(stored);
       
-      // Vérifier la validité
+      / Vérifier la validité
       const age = (Date.now() - timestamp) / (1000 * 60);
       if (age > ttlMinutes) {
         clear();
         return false;
       }
 
-      // Restaurer les données
+      / Restaurer les données
       Object.assign(data.value, savedData);
       return true;
     } catch {
@@ -756,14 +756,14 @@ export function useFormPersistence<T extends Record<string, unknown>>(
     localStorage.removeItem(storageKey);
   }
 
-  // Auto-save sur changement
+  / Auto-save sur changement
   watch(
     data,
     () => save(),
     { deep: true }
   );
 
-  // Restaurer au montage
+  / Restaurer au montage
   onMounted(() => {
     restore();
   });
@@ -784,7 +784,7 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
-// Schémas par étape
+/ Schémas par étape
 const stepSchemas = {
   1: z.object({
     firstName: z.string().min(2),
@@ -806,7 +806,7 @@ const stepSchemas = {
 const currentStep = ref(1);
 const totalSteps = 3;
 
-// Formulaire avec schéma dynamique
+/ Formulaire avec schéma dynamique
 const currentSchema = computed(() => stepSchemas[currentStep.value as keyof typeof stepSchemas]);
 
 const { handleSubmit, errors, values, validate } = useForm({
@@ -833,10 +833,10 @@ function prevStep(): void {
 
 const onSubmit = handleSubmit(async (values) => {
   console.log('Form submitted:', values);
-  // Submit final
+  / Submit final
 });
 
-// Fournir le contexte aux enfants
+/ Fournir le contexte aux enfants
 provide('multiStepForm', {
   currentStep,
   totalSteps,
@@ -913,7 +913,7 @@ import { useForm, useFieldArray } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
-// Schéma avec tableau dynamique
+/ Schéma avec tableau dynamique
 const schema = z.object({
   title: z.string().min(1, 'Titre requis'),
   items: z.array(z.object({
@@ -933,7 +933,7 @@ const { handleSubmit, errors } = useForm<FormData>({
   },
 });
 
-// Gestion du tableau dynamique
+/ Gestion du tableau dynamique
 const { fields, push, remove, move } = useFieldArray<FormData['items'][0]>('items');
 
 function addItem(): void {
@@ -1055,17 +1055,17 @@ const onSubmit = handleSubmit((values) => {
 ### Sécurité
 
 ```typescript
-// Ne jamais stocker de mots de passe dans le state
+/ Ne jamais stocker de mots de passe dans le state
 const formData = ref({
   email: '',
-  // password: '', // ❌ Éviter de garder en state
+  / password: '', / ❌ Éviter de garder en state
 });
 
-// Utiliser autocomplete approprié
-// autocomplete="new-password" pour création
-// autocomplete="current-password" pour connexion
+/ Utiliser autocomplete approprié
+/ autocomplete="new-password" pour création
+/ autocomplete="current-password" pour connexion
 
-// Nettoyer les données avant soumission
+/ Nettoyer les données avant soumission
 function sanitizeInput(input: string): string {
   return input.trim().replace(/[<>]/g, '');
 }
