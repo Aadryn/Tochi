@@ -1,25 +1,28 @@
 namespace Authorization.Application.Common;
 
 /// <summary>
-/// Résultat d'une opération d'application sans valeur de retour.
+/// Résultat d'une opération d'application avec valeur de retour.
 /// </summary>
+/// <typeparam name="T">Type de la valeur de succès.</typeparam>
 /// <remarks>
-/// Représente soit un succès, soit un échec avec une erreur.
+/// Représente soit un succès avec une valeur, soit un échec avec une erreur.
 /// Permet une gestion des erreurs explicite sans exceptions.
-/// Utilisé pour les opérations qui ne retournent pas de valeur (void).
 /// </remarks>
-public class Result
+public class Result<T>
 {
+    private readonly T? _value;
     private readonly Error? _error;
 
-    private Result()
+    private Result(T value)
     {
+        _value = value;
         _error = null;
         IsSuccess = true;
     }
 
     private Result(Error error)
     {
+        _value = default;
         _error = error;
         IsSuccess = false;
     }
@@ -35,6 +38,14 @@ public class Result
     public bool IsFailure => !IsSuccess;
 
     /// <summary>
+    /// Valeur du résultat (si succès).
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Si le résultat est un échec.</exception>
+    public T Value => IsSuccess
+        ? _value!
+        : throw new InvalidOperationException("Cannot access value of a failed result.");
+
+    /// <summary>
     /// Erreur du résultat (si échec).
     /// </summary>
     /// <exception cref="InvalidOperationException">Si le résultat est un succès.</exception>
@@ -45,15 +56,16 @@ public class Result
     /// <summary>
     /// Crée un résultat de succès.
     /// </summary>
-    /// <returns>Instance de résultat de succès.</returns>
-    public static Result Success() => new();
+    /// <param name="value">Valeur du succès.</param>
+    /// <returns>Résultat de succès contenant la valeur.</returns>
+    public static Result<T> Success(T value) => new(value);
 
     /// <summary>
     /// Crée un résultat d'échec.
     /// </summary>
     /// <param name="error">Erreur du résultat.</param>
     /// <returns>Résultat d'échec contenant l'erreur.</returns>
-    public static Result Failure(Error error) => new(error);
+    public static Result<T> Failure(Error error) => new(error);
 
     /// <summary>
     /// Crée un résultat d'échec avec code et message.
@@ -61,12 +73,18 @@ public class Result
     /// <param name="code">Code d'erreur.</param>
     /// <param name="message">Message d'erreur.</param>
     /// <returns>Résultat d'échec.</returns>
-    public static Result Failure(string code, string message) =>
+    public static Result<T> Failure(string code, string message) =>
         new(new Error(code, message));
+
+    /// <summary>
+    /// Conversion implicite depuis une valeur.
+    /// </summary>
+    /// <param name="value">Valeur à convertir en résultat de succès.</param>
+    public static implicit operator Result<T>(T value) => Success(value);
 
     /// <summary>
     /// Conversion implicite depuis une erreur.
     /// </summary>
     /// <param name="error">Erreur à convertir en résultat d'échec.</param>
-    public static implicit operator Result(Error error) => Failure(error);
+    public static implicit operator Result<T>(Error error) => Failure(error);
 }
