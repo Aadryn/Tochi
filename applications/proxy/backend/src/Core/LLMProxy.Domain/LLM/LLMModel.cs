@@ -36,6 +36,18 @@ public sealed record LLMModel
     public int? ContextLength { get; init; }
 
     /// <summary>
+    /// Longueur de contexte maximale en tokens (alias pour compatibilité).
+    /// </summary>
+    /// <remarks>
+    /// Alias pour <see cref="ContextLength"/> maintenu pour compatibilité avec le code existant.
+    /// </remarks>
+    public int? MaxContextLength
+    {
+        get => ContextLength;
+        init => ContextLength = value;
+    }
+
+    /// <summary>
     /// Dimension des vecteurs d'embeddings (pour les modèles d'embeddings).
     /// </summary>
     public int? OutputDimension { get; init; }
