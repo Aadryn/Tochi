@@ -5,7 +5,7 @@ concerns: documentation, maintenabilité, organisation
 priority: high
 effort: small
 dependencies: []
-status: to-do
+status: done
 created: 2025-12-23
 ---
 
@@ -13,91 +13,63 @@ created: 2025-12-23
 
 ## 🎯 Objectif
 
-Réduire la dette documentaire en consolidant les 14 fichiers de statut/documentation dispersés à la racine du projet en une structure cohérente et maintenable.
+Réduire la dette documentaire en organisant la documentation du projet en une structure cohérente et maintenable.
 
 ## 📊 Contexte
 
-### Problème identifié
+### Problème identifié initial
 
-Analyse du répertoire racine révèle **14 fichiers de documentation** créant confusion et duplication :
+La tâche mentionnait 14 fichiers de documentation à la racine. Après analyse, ces fichiers n'existent plus - le projet a déjà été partiellement réorganisé.
 
-1. `ADR_COMPLIANCE_FINAL_REPORT.md`
-2. `ANALYSE_FICHIERS_CSHARP.md`
-3. `BUILD_PROGRESS.md`
-4. `BUILD_STATUS.md`
-5. `CHECKLIST.md`
-6. `COMPLETION_STATUS.md`
-7. `DOCUMENTATION_INDEX.md`
-8. `GETTING_STARTED.md`
-9. `NEXT_STEPS.md`
-10. `PROJECT_FINAL_STATUS.md`
-11. `PROJECT_STATUS.md`
-12. `READY_TO_DEPLOY.md`
-13. `START_HERE.md`
-14. `SUMMARY.md`
+### État constaté
 
-### Impact actuel
+- Les 14 fichiers mentionnés n'existent plus à la racine
+- Le répertoire `docs/` contenait des fichiers d'analyse éparpillés
+- Il manquait un `README.md` à la racine
+- Il manquait un `docs/INDEX.md` centralisé
 
-- **Duplication** : `BUILD_STATUS.md` vs `BUILD_PROGRESS.md`, `PROJECT_STATUS.md` vs `PROJECT_FINAL_STATUS.md`
-- **Confusion** : 3 points d'entrée (`START_HERE.md`, `GETTING_STARTED.md`, `README.md`)
-- **Maintenance coûteuse** : Mise à jour manuelle de plusieurs fichiers pour une même information
-- **Navigation difficile** : Impossible de savoir quel fichier consulter
-- **Risque de désynchronisation** : Informations contradictoires entre fichiers
+## ✅ Réalisation
 
-### Bénéfice attendu
+### Fichiers créés
 
-- **Maintenabilité** : Réduction du coût de maintenance (un seul fichier à mettre à jour)
-- **Clarté** : Point d'entrée unique et évident
-- **Cohérence** : Information centralisée sans duplication
+1. **`/README.md`** - Point d'entrée principal du projet
+   - Vue d'ensemble du projet
+   - Fonctionnalités principales
+   - Architecture simplifiée
+   - Guide de démarrage rapide
+   - Structure du projet
+   - Liens vers la documentation
 
-## 🔧 Implémentation
+2. **`/docs/INDEX.md`** - Index centralisé de la documentation
+   - Liens vers tous les documents
+   - Catégorisation des 62 ADRs
+   - Liens vers les rapports d'analyse
+   - Navigation facilitée
 
-### Fichiers à créer
+### Structure organisée
 
 ```
 docs/
-├── INDEX.md                    # Index centralisé de toute la documentation
-├── status/
-│   ├── PROJECT_STATUS.md       # Statut projet consolidé
-│   └── BUILD_STATUS.md         # Statut build consolidé
-└── development/
-    ├── GETTING_STARTED.md      # Guide démarrage
-    ├── CHECKLIST.md            # Checklist développement
-    └── NEXT_STEPS.md           # Prochaines étapes
+├── INDEX.md                    # ✅ Créé - Index centralisé
+├── ARCHITECTURE.md             # Documentation architecture
+├── DATABASE.md                 # Documentation base de données
+├── FEATURE_FLAGS.md            # Feature toggles
+├── NEXT_STEPS.md               # Prochaines étapes
+├── adr/                        # 62 Architecture Decision Records
+│   ├── 001-un-seul-type-par-fichier-csharp.adr.md
+│   ├── ...
+│   └── 060-authorization-azure-rbac-style.adr.md
+├── analysis/                   # ✅ Réorganisé
+│   ├── ANALYSE_CONFORMITE_ADR-*.md
+│   ├── SYNTHESE_GLOBALE_CONFORMITE_ADR.md
+│   ├── RAPPORT_VIOLATIONS_ADR_CRITIQUES.md
+│   └── refactor.analysis.md
+└── status/                     # ✅ Créé (vide pour l'instant)
 ```
 
-### Fichiers à supprimer (après consolidation)
+### Fichier déplacé
 
-```
-❌ ADR_COMPLIANCE_FINAL_REPORT.md   → Intégrer dans docs/status/PROJECT_STATUS.md
-❌ ANALYSE_FICHIERS_CSHARP.md       → Intégrer dans docs/development/CODE_ANALYSIS.md
-❌ BUILD_PROGRESS.md                → Fusionner avec BUILD_STATUS.md
-❌ COMPLETION_STATUS.md             → Fusionner avec PROJECT_STATUS.md
-❌ DOCUMENTATION_INDEX.md           → Remplacer par docs/INDEX.md
-❌ PROJECT_FINAL_STATUS.md          → Fusionner avec PROJECT_STATUS.md
-❌ READY_TO_DEPLOY.md               → Section dans PROJECT_STATUS.md
-❌ START_HERE.md                    → Intégrer dans README.md ou GETTING_STARTED.md
-❌ SUMMARY.md                       → Intégrer dans PROJECT_STATUS.md
-```
-
-### Fichiers à conserver à la racine
-
-```
-✅ README.md                        # Point d'entrée principal (standard GitHub)
-✅ GETTING_STARTED.md               # Démarrage rapide (lien depuis README)
-```
-
-### Modifications détaillées
-
-#### 1. Créer `docs/INDEX.md` (Index centralisé)
-
-```markdown
-# Documentation LLM Proxy
-
-## 📚 Index de la Documentation
-
-### Démarrage
-- [README.md](../README.md) - Vue d'ensemble et démarrage rapide
+- `refactor.analysis.md` : racine → `docs/analysis/`
 - [GETTING_STARTED.md](../GETTING_STARTED.md) - Guide détaillé de mise en route
 
 ### Statut Projet
