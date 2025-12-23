@@ -73,6 +73,16 @@ public class LLMProxyDbContext : DbContext
     public DbSet<ClusterDestination> ClusterDestinations => Set<ClusterDestination>();
 
     /// <summary>
+    /// Obtient le DbSet des configurations de rate limiting par tenant.
+    /// </summary>
+    public DbSet<Entities.TenantRateLimitConfigurationEntity> TenantRateLimitConfigurations => Set<Entities.TenantRateLimitConfigurationEntity>();
+
+    /// <summary>
+    /// Obtient le DbSet des limites par endpoint.
+    /// </summary>
+    public DbSet<Entities.EndpointLimitEntity> EndpointLimits => Set<Entities.EndpointLimitEntity>();
+
+    /// <summary>
     /// Configure le modèle de base de données lors de la création.
     /// </summary>
     /// <param name="modelBuilder">Constructeur de modèle EF Core.</param>

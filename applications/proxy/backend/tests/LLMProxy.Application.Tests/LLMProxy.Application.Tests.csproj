@@ -24,6 +24,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Application\LLMProxy.Application\LLMProxy.Application.csproj" />
+    <ProjectReference Include="..\..\src\Core\LLMProxy.Domain\LLMProxy.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\LLMProxy.Infrastructure.PostgreSQL\LLMProxy.Infrastructure.PostgreSQL.csproj" />
   </ItemGroup>
 
 </Project>

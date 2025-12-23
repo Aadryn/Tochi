@@ -1,6 +1,7 @@
 using LLMProxy.Application.Interfaces;
 using LLMProxy.Application.Services.RateLimiting;
 using LLMProxy.Domain.Interfaces;
+using LLMProxy.Infrastructure.PostgreSQL.Repositories;
 using LLMProxy.Infrastructure.Redis.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -95,10 +96,14 @@ public static class RateLimitingServiceCollectionExtensions
         // 2. Enregistrer IRateLimiter → RedisRateLimiter (Scoped)
         services.AddScoped<IRateLimiter, RedisRateLimiter>();
 
-        // 3. Enregistrer IRateLimitConfigurationService → RateLimitConfigurationService (Scoped)
-        services.AddScoped<IRateLimitConfigurationService, RateLimitConfigurationService>();
+        // 3. Enregistrer le repository de configuration rate limiting (Scoped)
+        services.AddScoped<ITenantRateLimitConfigurationRepository, TenantRateLimitConfigurationRepository>();
 
-        // 4. Enregistrer TokenBasedRateLimiter (Scoped)
+        // 4. Enregistrer IRateLimitConfigurationService → DatabaseRateLimitConfigurationService (Scoped)
+        // Utilise PostgreSQL pour la persistance + cache Redis (TTL: 1 min)
+        services.AddScoped<IRateLimitConfigurationService, DatabaseRateLimitConfigurationService>();
+
+        // 5. Enregistrer TokenBasedRateLimiter (Scoped)
         services.AddScoped<TokenBasedRateLimiter>();
 
         return services;
