@@ -90,6 +90,62 @@ public interface IRbacAuthorizationService
         Scope scope,
         Permission? permission = null,
         CancellationToken cancellationToken = default);
+
+    #region Group Membership Management
+
+    /// <summary>
+    /// Ajoute un membre à un groupe.
+    /// </summary>
+    /// <param name="tenantId">Identifiant du tenant.</param>
+    /// <param name="groupId">Identifiant du groupe.</param>
+    /// <param name="memberId">Identifiant du membre à ajouter.</param>
+    /// <param name="memberType">Type du membre (User, Group, ServiceAccount).</param>
+    /// <param name="cancellationToken">Token d'annulation.</param>
+    Task AddGroupMemberAsync(
+        TenantId tenantId,
+        PrincipalId groupId,
+        PrincipalId memberId,
+        PrincipalType memberType,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retire un membre d'un groupe.
+    /// </summary>
+    /// <param name="tenantId">Identifiant du tenant.</param>
+    /// <param name="groupId">Identifiant du groupe.</param>
+    /// <param name="memberId">Identifiant du membre à retirer.</param>
+    /// <param name="cancellationToken">Token d'annulation.</param>
+    Task RemoveGroupMemberAsync(
+        TenantId tenantId,
+        PrincipalId groupId,
+        PrincipalId memberId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Liste les membres d'un groupe.
+    /// </summary>
+    /// <param name="tenantId">Identifiant du tenant.</param>
+    /// <param name="groupId">Identifiant du groupe.</param>
+    /// <param name="cancellationToken">Token d'annulation.</param>
+    /// <returns>Liste des identifiants des membres.</returns>
+    Task<IReadOnlyList<PrincipalId>> GetGroupMembersAsync(
+        TenantId tenantId,
+        PrincipalId groupId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Liste les groupes auxquels appartient un principal.
+    /// </summary>
+    /// <param name="tenantId">Identifiant du tenant.</param>
+    /// <param name="principalId">Identifiant du principal.</param>
+    /// <param name="cancellationToken">Token d'annulation.</param>
+    /// <returns>Liste des identifiants de groupes.</returns>
+    Task<IReadOnlyList<PrincipalId>> GetGroupMembershipsAsync(
+        TenantId tenantId,
+        PrincipalId principalId,
+        CancellationToken cancellationToken = default);
+
+    #endregion
 }
 
 /// <summary>

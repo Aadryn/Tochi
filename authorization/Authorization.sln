@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authorization.Application",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authorization.API", "src\Authorization.API\Authorization.API.csproj", "{798A600D-5989-490A-923F-3975ED4F3B06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authorization.Infrastructure.Idp", "src\Authorization.Infrastructure.Idp\Authorization.Infrastructure.Idp.csproj", "{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,18 @@ Global
 		{798A600D-5989-490A-923F-3975ED4F3B06}.Release|x64.Build.0 = Release|Any CPU
 		{798A600D-5989-490A-923F-3975ED4F3B06}.Release|x86.ActiveCfg = Release|Any CPU
 		{798A600D-5989-490A-923F-3975ED4F3B06}.Release|x86.Build.0 = Release|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Debug|x64.Build.0 = Debug|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Debug|x86.Build.0 = Debug|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Release|x64.ActiveCfg = Release|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Release|x64.Build.0 = Release|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Release|x86.ActiveCfg = Release|Any CPU
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,5 +124,6 @@ Global
 		{D4E5F6A7-B8C9-0123-DEF1-234567890123} = {E5F6A7B8-C9D0-1234-EF12-345678901234}
 		{F2586632-4A32-4E16-9D81-E1C6C5EE1DCA} = {E5F6A7B8-C9D0-1234-EF12-345678901234}
 		{798A600D-5989-490A-923F-3975ED4F3B06} = {E5F6A7B8-C9D0-1234-EF12-345678901234}
+		{DCBA3BBA-A46F-4A90-9F03-B3004B3AC4EE} = {E5F6A7B8-C9D0-1234-EF12-345678901234}
 	EndGlobalSection
 EndGlobal

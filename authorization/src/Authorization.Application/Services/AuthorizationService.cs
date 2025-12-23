@@ -425,4 +425,173 @@ public class AuthorizationService : IRbacAuthorizationService
 
         await _auditRepository.AddAsync(auditLog, cancellationToken);
     }
+
+    #region Group Membership Management
+
+    /// <inheritdoc />
+    public async Task AddGroupMemberAsync(
+        TenantId tenantId,
+        PrincipalId groupId,
+        PrincipalId memberId,
+        PrincipalType memberType,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Créer la relation membre -> groupe dans OpenFGA
+            var user = $"{memberType.ToOpenFgaPrefix()}:{memberId.Value}";
+
+            await _openFgaService.WriteAsync(
+                tenantId,
+                user,
+                "member",
+                "group",
+                groupId.Value.ToString(),
+                cancellationToken);
+
+            // Invalider le cache du membre
+            await _cacheService.InvalidatePrincipalAsync(
+                tenantId,
+                memberId,
+                cancellationToken);
+
+            _logger.LogInformation(
+                "Member {MemberId} added to group {GroupId} in tenant {TenantId}",
+                memberId,
+                groupId,
+                tenantId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Error adding member {MemberId} to group {GroupId}",
+                memberId,
+                groupId);
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task RemoveGroupMemberAsync(
+        TenantId tenantId,
+        PrincipalId groupId,
+        PrincipalId memberId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Supprimer la relation dans OpenFGA
+            await _openFgaService.DeleteAsync(
+                tenantId,
+                $"*:{memberId.Value}",
+                "member",
+                "group",
+                groupId.Value.ToString(),
+                cancellationToken);
+
+            // Invalider le cache du membre
+            await _cacheService.InvalidatePrincipalAsync(
+                tenantId,
+                memberId,
+                cancellationToken);
+
+            _logger.LogInformation(
+                "Member {MemberId} removed from group {GroupId} in tenant {TenantId}",
+                memberId,
+                groupId,
+                tenantId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Error removing member {MemberId} from group {GroupId}",
+                memberId,
+                groupId);
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<PrincipalId>> GetGroupMembersAsync(
+        TenantId tenantId,
+        PrincipalId groupId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Récupérer les utilisateurs membres du groupe
+            var userMembers = await _openFgaService.ListUsersAsync(
+                tenantId,
+                "member",
+                "group",
+                groupId.Value.ToString(),
+                "user",
+                cancellationToken);
+
+            // Récupérer également les groupes membres (groupes imbriqués)
+            var groupMembers = await _openFgaService.ListUsersAsync(
+                tenantId,
+                "member",
+                "group",
+                groupId.Value.ToString(),
+                "group",
+                cancellationToken);
+
+            return userMembers
+                .Concat(groupMembers)
+                .Select(m => PrincipalId.Parse(ExtractPrincipalIdFromOpenFgaUser(m)))
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Error listing members of group {GroupId}",
+                groupId);
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<PrincipalId>> GetGroupMembershipsAsync(
+        TenantId tenantId,
+        PrincipalId principalId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var groups = await _openFgaService.ListObjectsAsync(
+                tenantId,
+                principalId,
+                PrincipalType.User, // Default type for lookup
+                "member",
+                "group",
+                cancellationToken);
+
+            return groups
+                .Select(g => PrincipalId.Parse(g))
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Error listing group memberships for principal {PrincipalId}",
+                principalId);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Extrait l'identifiant du principal depuis le format OpenFGA (type:id).
+    /// </summary>
+    private static string ExtractPrincipalIdFromOpenFgaUser(string openFgaUser)
+    {
+        var parts = openFgaUser.Split(':');
+        return parts.Length > 1 ? parts[1] : openFgaUser;
+    }
+
+    #endregion
 }
