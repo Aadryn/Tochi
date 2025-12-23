@@ -1,3 +1,4 @@
+using Authorization.Domain.Interfaces;
 using Authorization.Infrastructure.PostgreSQL.Configuration;
 using Authorization.Infrastructure.PostgreSQL.Data;
 using Authorization.Infrastructure.PostgreSQL.Repositories;
@@ -41,6 +42,7 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<IExpirationStore, PostgresExpirationStore>();
 
         return services;
     }
@@ -86,6 +88,7 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<IExpirationStore, PostgresExpirationStore>();
 
         return services;
     }

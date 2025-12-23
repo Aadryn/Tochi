@@ -1,6 +1,8 @@
+using Authorization.Application.Jobs;
 using Authorization.Application.Services;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -29,6 +31,42 @@ public static class ServiceCollectionExtensions
 
         // Services
         services.AddScoped<IRbacAuthorizationService, AuthorizationService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Ajoute le job de nettoyage des assignations expirées.
+    /// </summary>
+    /// <param name="services">Collection de services.</param>
+    /// <param name="configuration">Configuration.</param>
+    /// <returns>Collection de services pour chaînage.</returns>
+    /// <remarks>
+    /// <para>
+    /// Ce job s'exécute en arrière-plan et supprime automatiquement
+    /// les assignations de rôles dont la date d'expiration est dépassée.
+    /// </para>
+    /// <para>
+    /// Configuration dans appsettings.json :
+    /// </para>
+    /// <code>
+    /// {
+    ///   "ExpirationCleanup": {
+    ///     "IntervalMinutes": 5,
+    ///     "BatchSize": 100,
+    ///     "Enabled": true
+    ///   }
+    /// }
+    /// </code>
+    /// </remarks>
+    public static IServiceCollection AddExpirationCleanup(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.Configure<ExpirationCleanupOptions>(
+            configuration.GetSection(ExpirationCleanupOptions.SectionName));
+
+        services.AddHostedService<ExpirationCleanupJob>();
 
         return services;
     }

@@ -1,11 +1,12 @@
+using Authorization.Infrastructure.PostgreSQL.Configurations;
 using Authorization.Infrastructure.PostgreSQL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Authorization.Infrastructure.PostgreSQL.Data;
 
 /// <summary>
-/// DbContext pour les données d'audit d'autorisation.
-/// Utilise PostgreSQL pour le stockage persistant des logs.
+/// DbContext pour les données d'audit et d'expiration d'autorisation.
+/// Utilise PostgreSQL pour le stockage persistant.
 /// </summary>
 public class AuthorizationAuditDbContext : DbContext
 {
@@ -23,12 +24,20 @@ public class AuthorizationAuditDbContext : DbContext
     /// </summary>
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
+    /// <summary>
+    /// Table des expirations d'assignations.
+    /// </summary>
+    public DbSet<AssignmentExpirationEntity> AssignmentExpirations => Set<AssignmentExpirationEntity>();
+
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.HasDefaultSchema("authorization");
+
+        // Appliquer les configurations
+        modelBuilder.ApplyConfiguration(new AssignmentExpirationConfiguration());
 
         modelBuilder.Entity<AuditLog>(entity =>
         {
