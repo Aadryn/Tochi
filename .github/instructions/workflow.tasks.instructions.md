@@ -8,6 +8,29 @@ applyTo: "**/.tasks/**/*"
 
 Guide pour structurer, documenter et suivre les fichiers de tâches dans le dossier `.tasks/` du workflow de développement.
 
+## ⛔ À NE PAS FAIRE
+
+- **Ne commence jamais** une tâche sans lire intégralement `.github/copilot-instructions.md`
+- **Ne démarre jamais** une nouvelle tâche si `.tasks/in-progress/` contient déjà un fichier
+- **Ne traite jamais** les tâches dans le désordre (respecte l'ordre numérique 001, 002, 003...)
+- **Ne bloque jamais** une tâche sans argumentation complète et détaillée
+- **Ne marque jamais** une tâche "Done" sans validation de la checklist complète
+- **Ne livre jamais** du code non testé ou sans tests unitaires
+- **Ne produis jamais** du code de POC ou de démonstration inutile
+- **Ne viole jamais** une décision d'ADR sans justification explicite
+- **N'ajoute jamais** de dépendances sans vérification préalable
+
+## ✅ À FAIRE
+
+- **Lis toujours** le fichier de tâche intégralement avant de commencer
+- **Vérifie toujours** les ADR applicables dans `docs/adr/`
+- **Annote toujours** l'heure de début (UTC, ISO 8601) dans le fichier de tâche
+- **Crée toujours** une feature branch Git avant de coder
+- **Commite toujours** de façon atomique après chaque modification logique
+- **Valide toujours** build + tests avant de compléter
+- **Documente toujours** les blocages avec les actions pour débloquer
+- **Déplace toujours** la tâche dans le bon dossier (`in-progress/`, `done/`, `blocked/`)
+
 ## ⚠️ RÈGLES IMPÉRATIVES (NON NÉGOCIABLES)
 
 ### 🚫 INTERDICTIONS ABSOLUES

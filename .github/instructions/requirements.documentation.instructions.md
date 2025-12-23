@@ -8,6 +8,28 @@ applyTo: "**/docs/requirements/**/*.requirements.md"
 
 Guide complet pour créer, structurer et gérer les documents de requirements fonctionnels (spécifications métier).
 
+## ⛔ À NE PAS FAIRE
+
+- **N'écris jamais** de détails techniques dans un requirement (architecture, patterns, BDD)
+- **Ne mélange jamais** fonctionnel et technique dans le même document
+- **N'utilise jamais** de jargon technique incompréhensible par le métier
+- **N'omets jamais** les critères d'acceptation mesurables
+- **Ne crée jamais** de requirement sans identifiant unique (`REQ-XXX`)
+- **N'oublie jamais** de lier les requirements aux ADR techniques associés
+- **Ne duplique jamais** des requirements existants
+- **N'écris jamais** de requirement vague ou non testable
+
+## ✅ À FAIRE
+
+- **Rédige toujours** du point de vue utilisateur/métier
+- **Utilise toujours** le format Given-When-Then pour les critères d'acceptation
+- **Inclus toujours** des seuils quantifiés et mesurables
+- **Organise toujours** par domaine métier (`docs/requirements/{domaine}/`)
+- **Documente toujours** les règles métier avec des exemples concrets
+- **Référence toujours** les ADR techniques liés
+- **Valide toujours** avec le Product Owner avant de finaliser
+- **Mets à jour toujours** le statut du requirement (Draft → Validé → Implémenté)
+
 ## 🎯 Actions Obligatoires (Mandatory)
 
 ### Séparation Fonctionnel/Technique

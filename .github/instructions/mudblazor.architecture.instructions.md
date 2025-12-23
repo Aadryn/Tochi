@@ -1,10 +1,30 @@
 ---
 description: Architecture de composants MudBlazor - Découpage, responsabilité unique, state management, performance
 name: MudBlazor_Architecture
-applyTo: "**/*.razor,**/*.razor.cs"
+applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.cs"
 ---
 
 # MudBlazor - Architecture et Découpage des Composants
+
+## ⛔ À NE PAS FAIRE
+
+- **Ne crée jamais** de composant >150 lignes sans découper
+- **Ne mélange jamais** logique métier et affichage dans un même composant
+- **Ne passe jamais** >5 paramètres à un composant (extraire en objet ou découper)
+- **Ne duplique jamais** le markup MudBlazor - extraire en composant réutilisable
+- **N'utilise jamais** de state global pour des données locales au composant
+- **Ne crée jamais** de composant "God Object" avec multiples responsabilités
+- **N'appelle jamais** des services directement depuis le composant présentation
+
+## ✅ À FAIRE
+
+- **Sépare toujours** Container (logique) et Presenter (affichage)
+- **Crée toujours** des composants petits et focalisés (<150 lignes)
+- **Utilise toujours** `[Parameter]` pour les données descendantes
+- **Utilise toujours** `EventCallback<T>` pour remonter les événements
+- **Extrais toujours** les fragments répétitifs en `RenderFragment` ou composants
+- **Préfère toujours** les composants stateless pour la présentation
+- **Encapsule toujours** la logique métier dans des services injectés
 
 ## 📐 Principe de Responsabilité Unique
 

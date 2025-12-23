@@ -1,0 +1,297 @@
+{
+  "header": {
+    "title": "LLM Proxy Admin",
+    "nav": {
+      "dashboard": "Dashboard",
+      "tenants": "Tenants",
+      "providers": "Providers",
+      "monitoring": "Monitoring",
+      "routes": "Routes",
+      "settings": "Settings"
+    },
+    "language": {
+      "french": "Français",
+      "english": "English"
+    },
+    "theme": {
+      "light": "Light mode",
+      "dark": "Dark mode"
+    },
+    "user": {
+      "profile": "Profile",
+      "logout": "Logout"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "metrics": {
+      "totalRequests": "Total Requests",
+      "activeProviders": "Active Providers",
+      "totalTenants": "Tenants",
+      "averageLatency": "Average Latency"
+    },
+    "charts": {
+      "requestsOverTime": "Requests Over Time",
+      "providerUsage": "Usage by Provider",
+      "errorRate": "Error Rate"
+    }
+  },
+  "tenants": {
+    "title": "Tenant Management",
+    "list": {
+      "name": "Name",
+      "apiKey": "API Key",
+      "status": "Status",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "suspended": "Suspended"
+    },
+    "form": {
+      "create": "Create Tenant",
+      "edit": "Edit Tenant",
+      "name": "Tenant Name",
+      "namePlaceholder": "e.g., Acme Corp",
+      "description": "Description",
+      "descriptionPlaceholder": "Tenant description...",
+      "apiKey": "API Key",
+      "generateApiKey": "Generate New Key",
+      "status": "Status",
+      "submit": "Save",
+      "cancel": "Cancel"
+    },
+    "actions": {
+      "view": "View Details",
+      "edit": "Edit",
+      "delete": "Delete",
+      "regenerateKey": "Regenerate API Key"
+    },
+    "messages": {
+      "createSuccess": "Tenant created successfully",
+      "updateSuccess": "Tenant updated",
+      "deleteSuccess": "Tenant deleted",
+      "deleteConfirm": "Are you sure you want to delete this tenant?",
+      "keyRegenerated": "API key regenerated",
+      "error": "An error occurred"
+    }
+  },
+  "providers": {
+    "title": "LLM Providers",
+    "list": {
+      "name": "Name",
+      "type": "Type",
+      "endpoint": "Endpoint",
+      "status": "Status",
+      "priority": "Priority",
+      "actions": "Actions"
+    },
+    "types": {
+      "openai": "OpenAI",
+      "anthropic": "Anthropic",
+      "azure": "Azure OpenAI",
+      "custom": "Custom"
+    },
+    "status": {
+      "healthy": "Healthy",
+      "degraded": "Degraded",
+      "down": "Down"
+    },
+    "form": {
+      "create": "Add Provider",
+      "edit": "Edit Provider",
+      "name": "Name",
+      "type": "Provider Type",
+      "endpoint": "API URL",
+      "apiKey": "API Key",
+      "priority": "Priority",
+      "timeout": "Timeout (ms)",
+      "maxRetries": "Max Retries",
+      "healthCheckUrl": "Health Check URL",
+      "submit": "Save",
+      "cancel": "Cancel"
+    },
+    "actions": {
+      "test": "Test Connection",
+      "edit": "Edit",
+      "delete": "Delete",
+      "toggleStatus": "Enable/Disable"
+    },
+    "messages": {
+      "createSuccess": "Provider added",
+      "updateSuccess": "Provider updated",
+      "deleteSuccess": "Provider deleted",
+      "testSuccess": "Connection successful",
+      "testFailed": "Connection failed",
+      "error": "Operation error"
+    }
+  },
+  "monitoring": {
+    "title": "Monitoring",
+    "tabs": {
+      "realtime": "Real-time",
+      "history": "History",
+      "alerts": "Alerts"
+    },
+    "metrics": {
+      "requestsPerSecond": "Requests/s",
+      "errorRate": "Error Rate",
+      "avgLatency": "Avg Latency",
+      "p95Latency": "P95 Latency",
+      "p99Latency": "P99 Latency"
+    },
+    "filters": {
+      "timeRange": "Time Range",
+      "last5min": "Last 5 minutes",
+      "last1hour": "Last hour",
+      "last24hours": "Last 24 hours",
+      "last7days": "Last 7 days",
+      "provider": "Provider",
+      "tenant": "Tenant",
+      "status": "Status"
+    },
+    "alerts": {
+      "title": "Active Alerts",
+      "severity": {
+        "critical": "Critical",
+        "warning": "Warning",
+        "info": "Info"
+      },
+      "noAlerts": "No active alerts",
+      "acknowledge": "Acknowledge",
+      "resolve": "Resolve"
+    }
+  },
+  "routes": {
+    "title": "Route Configuration",
+    "list": {
+      "path": "Path",
+      "method": "Method",
+      "provider": "Provider",
+      "rateLimit": "Rate Limit",
+      "caching": "Caching",
+      "actions": "Actions"
+    },
+    "form": {
+      "create": "Create Route",
+      "edit": "Edit Route",
+      "path": "Route Path",
+      "method": "HTTP Method",
+      "provider": "Target Provider",
+      "rateLimitEnabled": "Enable Rate Limiting",
+      "rateLimit": "Requests per Minute",
+      "cachingEnabled": "Enable Caching",
+      "cacheTtl": "Cache TTL (seconds)",
+      "submit": "Save",
+      "cancel": "Cancel"
+    },
+    "caching": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "messages": {
+      "createSuccess": "Route created",
+      "updateSuccess": "Route updated",
+      "deleteSuccess": "Route deleted",
+      "error": "Operation error"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "sections": {
+      "general": "General",
+      "security": "Security",
+      "notifications": "Notifications",
+      "advanced": "Advanced"
+    },
+    "general": {
+      "language": "Language",
+      "theme": "Theme",
+      "timezone": "Timezone",
+      "dateFormat": "Date Format"
+    },
+    "security": {
+      "changePassword": "Change Password",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "apiKeys": "API Keys",
+      "sessions": "Active Sessions"
+    },
+    "notifications": {
+      "email": "Email Notifications",
+      "slack": "Slack Notifications",
+      "webhook": "Custom Webhook",
+      "alertThreshold": "Alert Threshold"
+    },
+    "messages": {
+      "saveSuccess": "Settings saved",
+      "saveError": "Error saving settings"
+    }
+  },
+  "common": {
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "search": "Search",
+      "filter": "Filter",
+      "export": "Export",
+      "import": "Import",
+      "refresh": "Refresh",
+      "close": "Close",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "confirm": "Confirm",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "status": {
+      "loading": "Loading...",
+      "saving": "Saving...",
+      "saved": "Saved",
+      "error": "Error",
+      "success": "Success",
+      "pending": "Pending",
+      "processing": "Processing"
+    },
+    "validation": {
+      "required": "This field is required",
+      "invalidEmail": "Invalid email",
+      "invalidUrl": "Invalid URL",
+      "minLength": "Minimum {min} characters",
+      "maxLength": "Maximum {max} characters",
+      "minValue": "Minimum value: {min}",
+      "maxValue": "Maximum value: {max}",
+      "numeric": "Must be a number",
+      "alphanumeric": "Letters and numbers only"
+    },
+    "messages": {
+      "confirmDelete": "Are you sure you want to delete this item?",
+      "unsavedChanges": "You have unsaved changes. Do you want to continue?",
+      "noData": "No data available",
+      "networkError": "Network error. Please try again.",
+      "unauthorized": "Unauthorized. Please log in again.",
+      "forbidden": "Access denied",
+      "notFound": "Resource not found",
+      "serverError": "Server error. Please contact support."
+    },
+    "time": {
+      "now": "Now",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "lastWeek": "Last week",
+      "lastMonth": "Last month",
+      "seconds": "seconds",
+      "minutes": "minutes",
+      "hours": "hours",
+      "days": "days",
+      "weeks": "weeks",
+      "months": "months",
+      "years": "years"
+    }
+  }
+}

@@ -8,6 +8,26 @@ applyTo: "**/.github/agents/*.agent.md"
 
 Guide pour créer des agents personnalisés dans `.github/agents/` conformément à la [documentation officielle Microsoft](https://code.visualstudio.com/docs/copilot/customization/custom-agents).
 
+## ⛔ À NE PAS FAIRE
+
+- **N'utilise jamais** d'extension autre que `.agent.md`
+- **N'omets jamais** le frontmatter YAML (description, name, tools, model)
+- **Ne crée jamais** d'agent sans description claire de son rôle
+- **N'oublie jamais** de définir les outils disponibles (`tools: []`)
+- **Ne laisse jamais** le champ `model` sans valeur
+- **N'utilise jamais** d'espaces dans le champ `name`
+- **Ne crée jamais** d'agent sans instructions système détaillées
+
+## ✅ À FAIRE
+
+- **Utilise toujours** l'extension `.agent.md`
+- **Définis toujours** le frontmatter YAML complet (description, name, tools, model)
+- **Spécifie toujours** le modèle (`model: claude-sonnet-4.5` ou autre)
+- **Liste toujours** les outils nécessaires dans `tools: ['tool1', 'tool2']`
+- **Décris toujours** clairement le rôle de l'agent dans `description`
+- **Inclus toujours** des instructions système détaillées après le frontmatter
+- **Documente toujours** les limitations et le périmètre de l'agent
+
 ## 🎯 Actions Obligatoires (Mandatory)
 
 **À TOUJOURS respecter lors de la création/modification d'un agent personnalisé :**

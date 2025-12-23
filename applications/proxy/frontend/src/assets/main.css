@@ -1,0 +1,278 @@
+:root {
+  --header-height: 60px;
+  --sidebar-width: 250px;
+  --sidebar-collapsed-width: 64px;
+  
+  /* Light theme custom variables */
+  --app-bg: #f8fafc;
+  --app-sidebar-bg: #ffffff;
+  --app-sidebar-text: #64748b;
+  --app-sidebar-text-active: #3b82f6;
+  --app-sidebar-hover: #f1f5f9;
+  --app-header-bg: #ffffff;
+  --app-card-bg: #ffffff;
+  --app-border: #e2e8f0;
+  --app-text-primary: #1e293b;
+  --app-text-secondary: #64748b;
+  --app-text-muted: #94a3b8;
+}
+
+/* Dark theme variables */
+.dark-theme {
+  --app-bg: #0f172a;
+  --app-sidebar-bg: #1e293b;
+  --app-sidebar-text: #94a3b8;
+  --app-sidebar-text-active: #60a5fa;
+  --app-sidebar-hover: #334155;
+  --app-header-bg: #1e293b;
+  --app-card-bg: #1e293b;
+  --app-border: #334155;
+  --app-text-primary: #f1f5f9;
+  --app-text-secondary: #cbd5e1;
+  --app-text-muted: #64748b;
+  
+  /* Override PrimeVue variables for dark theme */
+  --surface-ground: #0f172a;
+  --surface-section: #1e293b;
+  --surface-card: #1e293b;
+  --surface-overlay: #1e293b;
+  --surface-border: #334155;
+  --surface-hover: #334155;
+  
+  --surface-0: #0f172a;
+  --surface-50: #1e293b;
+  --surface-100: #334155;
+  --surface-200: #475569;
+  --surface-300: #64748b;
+  --surface-400: #94a3b8;
+  --surface-500: #cbd5e1;
+  --surface-600: #e2e8f0;
+  --surface-700: #f1f5f9;
+  --surface-800: #f8fafc;
+  --surface-900: #ffffff;
+  
+  --text-color: #f1f5f9;
+  --text-color-secondary: #94a3b8;
+  
+  --primary-color: #60a5fa;
+  --primary-color-text: #ffffff;
+  
+  --highlight-bg: rgba(96, 165, 250, 0.16);
+  --highlight-text-color: #60a5fa;
+  
+  --focus-ring: 0 0 0 2px #1e293b, 0 0 0 4px #60a5fa;
+}
+
+/* Apply theme to body and main containers */
+body {
+  background-color: var(--app-bg, var(--surface-ground));
+  color: var(--app-text-primary, var(--text-color));
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-theme .app-layout {
+  background-color: var(--app-bg);
+}
+
+.dark-theme .app-sidebar {
+  background-color: var(--app-sidebar-bg);
+  border-color: var(--app-border);
+}
+
+.dark-theme .app-header {
+  background-color: var(--app-header-bg);
+  border-color: var(--app-border);
+}
+
+.dark-theme .page-title,
+.dark-theme .view-title {
+  color: var(--app-text-primary);
+}
+
+.dark-theme .view-description {
+  color: var(--app-text-secondary);
+}
+
+/* Dark theme for cards */
+.dark-theme .app-card,
+.dark-theme .stat-card,
+.dark-theme .provider-card,
+.dark-theme .tenant-card,
+.dark-theme .settings-card {
+  background-color: var(--app-card-bg);
+  border-color: var(--app-border);
+}
+
+.dark-theme .card-title {
+  color: var(--app-text-primary);
+}
+
+/* Dark theme for tables */
+.dark-theme table {
+  background-color: var(--app-card-bg);
+}
+
+.dark-theme th {
+  background-color: var(--surface-100);
+  color: var(--app-text-secondary);
+  border-color: var(--app-border);
+}
+
+.dark-theme td {
+  border-color: var(--app-border);
+  color: var(--app-text-primary);
+}
+
+.dark-theme tr:hover {
+  background-color: var(--surface-hover);
+}
+
+/* Dark theme for inputs */
+.dark-theme input,
+.dark-theme select,
+.dark-theme textarea {
+  background-color: var(--surface-100);
+  border-color: var(--app-border);
+  color: var(--app-text-primary);
+}
+
+.dark-theme input::placeholder,
+.dark-theme textarea::placeholder {
+  color: var(--app-text-muted);
+}
+
+/* Dark theme for buttons */
+.dark-theme .btn-secondary,
+.dark-theme .action-btn {
+  background-color: var(--surface-100);
+  border-color: var(--app-border);
+  color: var(--app-text-primary);
+}
+
+.dark-theme .btn-secondary:hover,
+.dark-theme .action-btn:hover {
+  background-color: var(--surface-hover);
+}
+
+/* Dark theme for sidebar navigation */
+.dark-theme .nav-item {
+  color: var(--app-sidebar-text);
+}
+
+.dark-theme .nav-item:hover {
+  background-color: var(--app-sidebar-hover);
+}
+
+.dark-theme .nav-item.active {
+  background-color: var(--primary-color);
+  color: var(--primary-color-text);
+}
+
+/* Dark theme for dropdowns */
+.dark-theme .user-dropdown,
+.dark-theme .dropdown-menu {
+  background-color: var(--app-card-bg);
+  border-color: var(--app-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dark-theme .dropdown-item:hover {
+  background-color: var(--surface-hover);
+}
+
+/* Dark theme for login page */
+.dark-theme .login-view {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.dark-theme .login-card {
+  background-color: var(--app-card-bg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Dark theme for badges */
+.dark-theme .badge {
+  background-color: var(--surface-100);
+}
+
+/* Dark theme for scrollbar */
+.dark-theme ::-webkit-scrollbar-track {
+  background: var(--surface-100);
+}
+
+.dark-theme ::-webkit-scrollbar-thumb {
+  background: var(--surface-300);
+}
+
+.dark-theme ::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-400);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: var(--font-family);
+}
+
+#app {
+  height: 100%;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-ground);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-400);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-500);
+}
+
+/* Utility classes */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Status colors */
+.status-healthy {
+  color: var(--green-500);
+}
+
+.status-degraded {
+  color: var(--yellow-500);
+}
+
+.status-unhealthy {
+  color: var(--red-500);
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

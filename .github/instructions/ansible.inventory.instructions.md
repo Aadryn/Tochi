@@ -1,10 +1,30 @@
 ---
 description: Static and dynamic inventory management, host groups, and variables
 name: Ansible_Inventory_Management
-applyTo: "**/inventories/**/*.{yml,yaml,ini}"
+applyTo: "**/ansible/inventories/**/*.yml,**/ansible/inventories/**/*.yaml,**/ansible/inventories/**/*.ini"
 ---
 
 # Ansible Inventory - Guide Expert
+
+## ⛔ À NE PAS FAIRE
+
+- **Ne mélange jamais** les environnements dans un même inventaire
+- **Ne stocke jamais** de mots de passe en clair dans les inventaires
+- **N'utilise jamais** d'adresses IP hardcodées sans variable
+- **Ne crée jamais** de groupes sans hiérarchie logique
+- **N'omets jamais** la documentation des groupes complexes
+- **Ne duplique jamais** les variables entre group_vars et host_vars
+- **N'oublie jamais** d'utiliser group_vars/all.yml pour les variables communes
+
+## ✅ À FAIRE
+
+- **Sépare toujours** les inventaires par environnement (production/, staging/, development/)
+- **Organise toujours** les hôtes en groupes logiques hiérarchiques
+- **Utilise toujours** group_vars/ et host_vars/ pour les variables
+- **Documente toujours** les inventaires complexes avec des commentaires
+- **Valide toujours** l'inventaire avec `ansible-inventory --list`
+- **Nomme toujours** les hôtes de façon cohérente et descriptive
+- **Utilise toujours** ansible_host pour les adresses IP
 
 ## 🎯 Actions Obligatoires (Mandatory)
 

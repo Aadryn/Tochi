@@ -1,10 +1,29 @@
 ---
 description: Playbook structure and best practices for orchestration
 name: Ansible_Playbooks_Structure
-applyTo: "**/playbooks/**/*.{yml,yaml}"
+applyTo: "**/ansible/playbooks/**/*.yml,**/ansible/playbooks/**/*.yaml"
 ---
 
 # Ansible Playbooks - Guide Expert
+
+## ⛔ À NE PAS FAIRE
+
+- **N'omets jamais** les sections pre_tasks/post_tasks pour les validations
+- **Ne laisse jamais** become/gather_facts implicites (sois explicite)
+- **Ne crée jamais** de playbook sans nom descriptif
+- **N'oublie jamais** de taguer les sections pour l'exécution sélective
+- **Ne mélange jamais** orchestration et logique métier dans le même playbook
+- **N'exécute jamais** un playbook sans dry-run préalable (`--check --diff`)
+
+## ✅ À FAIRE
+
+- **Structure toujours** avec pre_tasks → roles → tasks → post_tasks
+- **Spécifie toujours** explicitement become: true/false et gather_facts: true/false
+- **Nomme toujours** chaque play et task de façon descriptive
+- **Utilise toujours** des tags pour permettre l'exécution partielle
+- **Valide toujours** les prérequis dans pre_tasks avec assert
+- **Vérifie toujours** le résultat dans post_tasks
+- **Importe toujours** les playbooks avec import_playbook pour la modularité
 
 ## 🎯 Actions Obligatoires (Mandatory)
 

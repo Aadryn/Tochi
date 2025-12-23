@@ -1,10 +1,41 @@
 ---
 description: Règles fondamentales Blazor - Lifecycle, Event Handling, Data Binding, Dependency Injection, JavaScript Interop
 name: Blazor_Fundamentals
-applyTo: "**/*.razor,**/*.razor.cs"
+applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.cs"
 ---
 
 # Blazor - Règles Fondamentales
+
+## � Types de Fichiers à Créer
+
+| Type de fichier | Usage | Nomenclature |
+|----------------|-------|-------------|
+| `*.razor` | Composants Blazor avec markup HTML/MudBlazor | `[Feature].razor` (ex: `UserList.razor`, `LoginForm.razor`) |
+| `*.razor.cs` | Code-behind des composants complexes | `[Feature].razor.cs` (même nom que le `.razor`) |
+| `*.razor.css` | Styles scopés au composant | `[Feature].razor.css` (même nom que le `.razor`) |
+| `*Page.razor` | Pages routables Blazor | `[Feature]Page.razor` (ex: `DashboardPage.razor`, `UsersPage.razor`) |
+| `*Layout.razor` | Layouts de mise en page | `[Context]Layout.razor` (ex: `MainLayout.razor`, `AuthLayout.razor`) |
+| `*Dialog.razor` | Boîtes de dialogue MudBlazor | `[Action][Entity]Dialog.razor` (ex: `CreateUserDialog.razor`) |
+
+## ⛔ À NE PAS FAIRE
+
+- **N'appelle jamais** `StateHasChanged()` dans `OnInitialized` ou `OnParametersSet` (déjà implicite)
+- **Ne charge jamais** de données dans le constructeur (utilise `OnInitializedAsync`)
+- **N'utilise jamais** `@bind` avec `@onclick` sur le même élément sans séparer les concerns
+- **N'oublie jamais** de désabonner les event handlers dans `Dispose()`
+- **Ne capture jamais** `this` dans les callbacks JS sans précautions
+- **N'injecte jamais** de services Scoped dans des Singletons
+- **N'appelle jamais** JS Interop avant `OnAfterRender` (DOM non prêt)
+
+## ✅ À FAIRE
+
+- **Implémente toujours** `IDisposable` pour nettoyer les ressources
+- **Charge toujours** les données dans `OnInitializedAsync()`
+- **Utilise toujours** `@key` pour les listes afin d'optimiser le rendu
+- **Préfère toujours** `EventCallback<T>` à `Action<T>` pour les paramètres d'événements
+- **Valide toujours** `firstRender` dans `OnAfterRenderAsync` pour les initialisations uniques
+- **Sépare toujours** le code-behind dans un fichier `.razor.cs` pour les composants complexes
+- **Utilise toujours** `@inject` ou le constructeur pour la DI, jamais les deux
 
 ## 🔄 Component Lifecycle
 

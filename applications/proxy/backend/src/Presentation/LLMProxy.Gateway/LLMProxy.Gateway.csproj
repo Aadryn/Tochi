@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.System" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+    <PackageReference Include="Serilog.Expressions" Version="5.0.0" />
+    <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="2.2.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.9.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
+    <PackageReference Include="Polly" Version="8.5.0" />
+    <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
+    <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" Version="9.0.0" />
+    <PackageReference Include="SharpToken" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\LLMProxy.Domain\LLMProxy.Domain.csproj" />
+    <ProjectReference Include="..\..\Application\LLMProxy.Application\LLMProxy.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Authorization\LLMProxy.Infrastructure.Authorization.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Authorization.Abstractions\LLMProxy.Infrastructure.Authorization.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.PostgreSQL\LLMProxy.Infrastructure.PostgreSQL.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Redis\LLMProxy.Infrastructure.Redis.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Security.Abstractions\LLMProxy.Infrastructure.Security.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Security\LLMProxy.Infrastructure.Security.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Telemetry\LLMProxy.Infrastructure.Telemetry.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.LLMProviders\LLMProxy.Infrastructure.LLMProviders.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\LLMProxy.Infrastructure.Configuration\LLMProxy.Infrastructure.Configuration.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,297 @@
+{
+  "header": {
+    "title": "Admin LLM Proxy",
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "tenants": "Tenants",
+      "providers": "Fournisseurs",
+      "monitoring": "Surveillance",
+      "routes": "Routes",
+      "settings": "Paramètres"
+    },
+    "language": {
+      "french": "Français",
+      "english": "English"
+    },
+    "theme": {
+      "light": "Mode clair",
+      "dark": "Mode sombre"
+    },
+    "user": {
+      "profile": "Profil",
+      "logout": "Déconnexion"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "metrics": {
+      "totalRequests": "Requêtes totales",
+      "activeProviders": "Fournisseurs actifs",
+      "totalTenants": "Tenants",
+      "averageLatency": "Latence moyenne"
+    },
+    "charts": {
+      "requestsOverTime": "Requêtes dans le temps",
+      "providerUsage": "Utilisation par fournisseur",
+      "errorRate": "Taux d'erreur"
+    }
+  },
+  "tenants": {
+    "title": "Gestion des Tenants",
+    "list": {
+      "name": "Nom",
+      "apiKey": "Clé API",
+      "status": "Statut",
+      "createdAt": "Créé le",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "suspended": "Suspendu"
+    },
+    "form": {
+      "create": "Créer un tenant",
+      "edit": "Modifier le tenant",
+      "name": "Nom du tenant",
+      "namePlaceholder": "Ex: Acme Corp",
+      "description": "Description",
+      "descriptionPlaceholder": "Description du tenant...",
+      "apiKey": "Clé API",
+      "generateApiKey": "Générer une nouvelle clé",
+      "status": "Statut",
+      "submit": "Enregistrer",
+      "cancel": "Annuler"
+    },
+    "actions": {
+      "view": "Voir les détails",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "regenerateKey": "Régénérer la clé API"
+    },
+    "messages": {
+      "createSuccess": "Tenant créé avec succès",
+      "updateSuccess": "Tenant mis à jour",
+      "deleteSuccess": "Tenant supprimé",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce tenant ?",
+      "keyRegenerated": "Clé API régénérée",
+      "error": "Une erreur est survenue"
+    }
+  },
+  "providers": {
+    "title": "Fournisseurs LLM",
+    "list": {
+      "name": "Nom",
+      "type": "Type",
+      "endpoint": "Point de terminaison",
+      "status": "Statut",
+      "priority": "Priorité",
+      "actions": "Actions"
+    },
+    "types": {
+      "openai": "OpenAI",
+      "anthropic": "Anthropic",
+      "azure": "Azure OpenAI",
+      "custom": "Personnalisé"
+    },
+    "status": {
+      "healthy": "Sain",
+      "degraded": "Dégradé",
+      "down": "Indisponible"
+    },
+    "form": {
+      "create": "Ajouter un fournisseur",
+      "edit": "Modifier le fournisseur",
+      "name": "Nom",
+      "type": "Type de fournisseur",
+      "endpoint": "URL de l'API",
+      "apiKey": "Clé API",
+      "priority": "Priorité",
+      "timeout": "Timeout (ms)",
+      "maxRetries": "Tentatives max",
+      "healthCheckUrl": "URL health check",
+      "submit": "Enregistrer",
+      "cancel": "Annuler"
+    },
+    "actions": {
+      "test": "Tester la connexion",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "toggleStatus": "Activer/Désactiver"
+    },
+    "messages": {
+      "createSuccess": "Fournisseur ajouté",
+      "updateSuccess": "Fournisseur mis à jour",
+      "deleteSuccess": "Fournisseur supprimé",
+      "testSuccess": "Connexion réussie",
+      "testFailed": "Échec de la connexion",
+      "error": "Erreur lors de l'opération"
+    }
+  },
+  "monitoring": {
+    "title": "Surveillance",
+    "tabs": {
+      "realtime": "Temps réel",
+      "history": "Historique",
+      "alerts": "Alertes"
+    },
+    "metrics": {
+      "requestsPerSecond": "Requêtes/s",
+      "errorRate": "Taux d'erreur",
+      "avgLatency": "Latence moyenne",
+      "p95Latency": "Latence P95",
+      "p99Latency": "Latence P99"
+    },
+    "filters": {
+      "timeRange": "Plage temporelle",
+      "last5min": "5 dernières minutes",
+      "last1hour": "Dernière heure",
+      "last24hours": "24 dernières heures",
+      "last7days": "7 derniers jours",
+      "provider": "Fournisseur",
+      "tenant": "Tenant",
+      "status": "Statut"
+    },
+    "alerts": {
+      "title": "Alertes actives",
+      "severity": {
+        "critical": "Critique",
+        "warning": "Avertissement",
+        "info": "Information"
+      },
+      "noAlerts": "Aucune alerte active",
+      "acknowledge": "Acquitter",
+      "resolve": "Résoudre"
+    }
+  },
+  "routes": {
+    "title": "Configuration des Routes",
+    "list": {
+      "path": "Chemin",
+      "method": "Méthode",
+      "provider": "Fournisseur",
+      "rateLimit": "Limite de requêtes",
+      "caching": "Cache",
+      "actions": "Actions"
+    },
+    "form": {
+      "create": "Créer une route",
+      "edit": "Modifier la route",
+      "path": "Chemin de la route",
+      "method": "Méthode HTTP",
+      "provider": "Fournisseur cible",
+      "rateLimitEnabled": "Activer le rate limiting",
+      "rateLimit": "Requêtes par minute",
+      "cachingEnabled": "Activer le cache",
+      "cacheTtl": "Durée du cache (secondes)",
+      "submit": "Enregistrer",
+      "cancel": "Annuler"
+    },
+    "caching": {
+      "enabled": "Activé",
+      "disabled": "Désactivé"
+    },
+    "messages": {
+      "createSuccess": "Route créée",
+      "updateSuccess": "Route mise à jour",
+      "deleteSuccess": "Route supprimée",
+      "error": "Erreur lors de l'opération"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "sections": {
+      "general": "Général",
+      "security": "Sécurité",
+      "notifications": "Notifications",
+      "advanced": "Avancé"
+    },
+    "general": {
+      "language": "Langue",
+      "theme": "Thème",
+      "timezone": "Fuseau horaire",
+      "dateFormat": "Format de date"
+    },
+    "security": {
+      "changePassword": "Changer le mot de passe",
+      "twoFactorAuth": "Authentification à deux facteurs",
+      "apiKeys": "Clés API",
+      "sessions": "Sessions actives"
+    },
+    "notifications": {
+      "email": "Notifications par email",
+      "slack": "Notifications Slack",
+      "webhook": "Webhook personnalisé",
+      "alertThreshold": "Seuil d'alerte"
+    },
+    "messages": {
+      "saveSuccess": "Paramètres enregistrés",
+      "saveError": "Erreur lors de l'enregistrement"
+    }
+  },
+  "common": {
+    "actions": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "create": "Créer",
+      "search": "Rechercher",
+      "filter": "Filtrer",
+      "export": "Exporter",
+      "import": "Importer",
+      "refresh": "Actualiser",
+      "close": "Fermer",
+      "back": "Retour",
+      "next": "Suivant",
+      "previous": "Précédent",
+      "confirm": "Confirmer",
+      "yes": "Oui",
+      "no": "Non"
+    },
+    "status": {
+      "loading": "Chargement...",
+      "saving": "Enregistrement...",
+      "saved": "Enregistré",
+      "error": "Erreur",
+      "success": "Succès",
+      "pending": "En attente",
+      "processing": "Traitement en cours"
+    },
+    "validation": {
+      "required": "Ce champ est requis",
+      "invalidEmail": "Email invalide",
+      "invalidUrl": "URL invalide",
+      "minLength": "Minimum {min} caractères",
+      "maxLength": "Maximum {max} caractères",
+      "minValue": "Valeur minimale: {min}",
+      "maxValue": "Valeur maximale: {max}",
+      "numeric": "Doit être un nombre",
+      "alphanumeric": "Lettres et chiffres uniquement"
+    },
+    "messages": {
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+      "unsavedChanges": "Vous avez des modifications non enregistrées. Voulez-vous continuer ?",
+      "noData": "Aucune donnée disponible",
+      "networkError": "Erreur réseau. Veuillez réessayer.",
+      "unauthorized": "Non autorisé. Veuillez vous reconnecter.",
+      "forbidden": "Accès refusé",
+      "notFound": "Ressource non trouvée",
+      "serverError": "Erreur serveur. Veuillez contacter le support."
+    },
+    "time": {
+      "now": "Maintenant",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "lastWeek": "Semaine dernière",
+      "lastMonth": "Mois dernier",
+      "seconds": "secondes",
+      "minutes": "minutes",
+      "hours": "heures",
+      "days": "jours",
+      "weeks": "semaines",
+      "months": "mois",
+      "years": "ans"
+    }
+  }
+}

@@ -8,6 +8,26 @@ applyTo: "**/.github/instructions/*.instructions.md"
 
 Guide pour rédiger des instructions claires, directives, actionnables avec exemples concrets.
 
+## ⛔ À NE PAS FAIRE
+
+- **N'utilise jamais** de formulations vagues ("il serait bien de", "penser à")
+- **N'écris jamais** de règle sans exemple concret
+- **Ne mélange jamais** plusieurs concepts dans une seule instruction
+- **N'omets jamais** les exemples ✅ BON et ❌ MAUVAIS
+- **N'utilise jamais** de conditionnel faible ("pourrait", "devrait peut-être")
+- **Ne laisse jamais** d'instruction sans action immédiatement applicable
+- **N'écris jamais** de blocs de code sans contextualiser
+
+## ✅ À FAIRE
+
+- **Utilise toujours** un ton directif et impératif (DOIT, TOUJOURS, JAMAIS)
+- **Écris toujours** des instructions actionnables immédiatement
+- **Fournis toujours** un exemple ✅ BON et un exemple ❌ MAUVAIS
+- **Structure toujours** avec des listes numérotées ou à puces
+- **Utilise toujours** des blocs de code avec le langage spécifié
+- **Explique toujours** le POURQUOI derrière chaque règle
+- **Garde toujours** chaque instruction focalisée sur un seul concept
+
 ## 🎯 Actions Obligatoires (Mandatory)
 
 **Style de rédaction à TOUJOURS appliquer :**

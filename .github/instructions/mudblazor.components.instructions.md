@@ -1,10 +1,30 @@
 ---
 description: Composants MudBlazor - AppBar, Navigation, Cards, Boutons, Tables, Formulaires, Alerts
 name: MudBlazor_Components_Patterns
-applyTo: "**/*.razor"
+applyTo: "**/backend/Presentation/**/*.razor"
 ---
 
 # MudBlazor - Patterns de Composants
+
+## ⛔ À NE PAS FAIRE
+
+- **N'utilise jamais** de balises HTML natives (`<div>`, `<span>`) - composants MudBlazor uniquement
+- **N'oublie jamais** `Dense="true"` pour les interfaces compactes
+- **Ne hardcode jamais** les textes - utilise `IStringLocalizer` pour l'i18n
+- **N'utilise jamais** `Elevation` >2 (design minimaliste)
+- **Ne crée jamais** de bouton sans `Variant` explicite
+- **N'imbrique jamais** excessivement les composants (max 4 niveaux)
+- **N'oublie jamais** le type générique `T="string"` sur MudChip, MudSelect, etc.
+
+## ✅ À FAIRE
+
+- **Utilise toujours** les composants MudBlazor natifs (MudStack, MudPaper, MudText)
+- **Spécifie toujours** `Variant`, `Color`, `Size` explicitement
+- **Utilise toujours** `MudSpacer` pour l'espacement flexible
+- **Préfère toujours** `MudStack` à `MudGrid` pour les layouts simples
+- **Utilise toujours** les icônes Material Design (`Icons.Material.*`)
+- **Applique toujours** `Class="text-none"` sur les boutons pour éviter le uppercase
+- **Valide toujours** les formulaires avec `MudForm` et `FluentValidation`
 
 ## 🎯 AppBar et Navigation
 

@@ -1,10 +1,30 @@
 ---
 description: Règles fondamentales MudBlazor - Composants uniquement, séparation des fichiers, internationalisation obligatoire
 name: MudBlazor_Core_Rules
-applyTo: "**/*.razor,**/*.razor.cs"
+applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.cs"
 ---
 
 # MudBlazor - Règles Fondamentales
+
+## ⛔ À NE PAS FAIRE
+
+- **N'écris jamais** de balise HTML native (`<div>`, `<span>`, `<p>`, `<section>`)
+- **Ne mélange jamais** markup et code C# dans le même fichier .razor (séparer en .razor.cs)
+- **Ne hardcode jamais** de texte affiché - utilise `IStringLocalizer<T>`
+- **N'utilise jamais** de CSS inline - utilise les propriétés MudBlazor natives
+- **N'écris jamais** de CSS custom si MudBlazor offre une propriété native
+- **Ne crée jamais** de layout avec `<div>` - utilise `MudStack` ou `MudGrid`
+- **N'ignore jamais** les `[Parameter]` requis des composants MudBlazor
+
+## ✅ À FAIRE
+
+- **Utilise toujours** les composants MudBlazor exclusivement (MudStack, MudPaper, MudText)
+- **Sépare toujours** le code dans un fichier `.razor.cs` pour les composants >20 lignes C#
+- **Utilise toujours** `IStringLocalizer<T>` pour tout texte affiché (i18n obligatoire)
+- **Privilégie toujours** les propriétés natives (`Class`, `Style`, `Elevation`, `Spacing`)
+- **Utilise toujours** `MudStack` pour les layouts linéaires, `MudGrid` pour les grilles
+- **Crée toujours** un fichier `.razor.css` pour les styles spécifiques au composant
+- **Documente toujours** les `[Parameter]` publics avec des commentaires XML
 
 ## 🚨 RÈGLES ABSOLUES (NON NÉGOCIABLES)
 

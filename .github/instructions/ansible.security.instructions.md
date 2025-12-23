@@ -1,10 +1,30 @@
 ---
 description: Security, Ansible Vault, secrets management, and privilege escalation
 name: Ansible_Security_Best_Practices
-applyTo: "**/*.{yml,yaml}"
+applyTo: "**/ansible/**/*.yml,**/ansible/**/*.yaml"
 ---
 
 # Ansible Security - Guide Expert
+
+## ⛔ À NE PAS FAIRE
+
+- **Ne stocke jamais** de secrets en clair dans les fichiers YAML
+- **Ne commite jamais** de fichiers vault non chiffrés
+- **N'utilise jamais** become: true sans nécessité absolue
+- **Ne partage jamais** le mot de passe vault en clair
+- **Ne désactive jamais** host_key_checking en production
+- **N'utilise jamais** de clés SSH sans passphrase pour les accès critiques
+- **Ne laisse jamais** de permissions trop larges sur les fichiers sensibles
+
+## ✅ À FAIRE
+
+- **Chiffre toujours** les secrets avec Ansible Vault
+- **Sépare toujours** les fichiers vault par environnement
+- **Utilise toujours** `no_log: true` pour les tasks manipulant des secrets
+- **Applique toujours** le principe du moindre privilège pour become
+- **Stocke toujours** le mot de passe vault dans un gestionnaire de secrets
+- **Vérifie toujours** les permissions des fichiers sensibles (0600)
+- **Audite toujours** les accès et élévations de privilèges
 
 ## 🎯 Actions Obligatoires (Mandatory)
 

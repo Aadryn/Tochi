@@ -1,10 +1,30 @@
 ---
 description: Testing, validation, Molecule, ansible-lint, and CI/CD integration
 name: Ansible_Testing_CICD
-applyTo: "**/*.{yml,yaml}"
+applyTo: "**/ansible/**/*.yml,**/ansible/**/*.yaml"
 ---
 
 # Ansible Testing & CI/CD - Guide Expert
+
+## ⛔ À NE PAS FAIRE
+
+- **Ne merge jamais** de code sans que tous les tests soient au vert
+- **Ne déploie jamais** en production sans test préalable en staging
+- **N'ignore jamais** les erreurs ansible-lint
+- **Ne skippe jamais** le test d'idempotence
+- **Ne crée jamais** de rôle sans tests Molecule
+- **N'exécute jamais** sans dry-run préalable (`--check --diff`)
+
+## ✅ À FAIRE
+
+- **Valide toujours** la syntaxe avec `ansible-playbook --syntax-check`
+- **Analyse toujours** avec `ansible-lint` (zéro erreur obligatoire)
+- **Exécute toujours** un dry-run avec `--check --diff`
+- **Teste toujours** l'idempotence (2 exécutions, changed=0 la 2ème)
+- **Crée toujours** des tests Molecule pour chaque rôle
+- **Valide toujours** le YAML avec yamllint
+- **Teste toujours** le rollback avant déploiement
+- **Intègre toujours** les tests dans la CI/CD
 
 ## 🎯 Actions Obligatoires (Mandatory)
 

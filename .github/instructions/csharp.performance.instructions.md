@@ -1,12 +1,32 @@
 ---
 description: C# performance optimization - memory management, allocations, benchmarking, profiling
 name: CSharp_Performance_Optimization
-applyTo: "**/*.cs"
+applyTo: "**/backend/*Service.cs,**/backend/*Handler.cs,**/backend/*Repository.cs,**/backend/*Provider.cs"
 ---
 
 # Performance et Optimisation C# - Guide Avancé
 
 Guide complet pour optimiser les performances : gestion mémoire, allocations, structures de données, benchmarking et profiling.
+
+## ⛔ À NE PAS FAIRE
+
+- **N'optimise jamais** sans avoir mesuré avec BenchmarkDotNet
+- **N'alloue jamais** dans les boucles critiques (GC pressure)
+- **N'utilise jamais** LINQ dans les chemins chauds sans mesurer l'impact
+- **Ne concatène jamais** des strings dans une boucle (utilise StringBuilder)
+- **N'ignore jamais** les allocations de closures dans les lambdas
+- **Ne boxe jamais** des value types inutilement
+- **N'utilise jamais** `ToList()` si l'énumération suffit
+
+## ✅ À FAIRE
+
+- **Mesure toujours** avant d'optimiser avec BenchmarkDotNet
+- **Utilise toujours** Span<T> et Memory<T> pour les buffers
+- **Préfère toujours** les structs pour les petits objets à courte durée de vie
+- **Utilise toujours** ArrayPool<T> pour les allocations temporaires fréquentes
+- **Profile toujours** avec dotMemory/dotTrace pour identifier les goulots
+- **Cache toujours** les résultats de calculs coûteux
+- **Utilise toujours** les collections avec capacité initiale quand connue
 
 ## 🎯 Principes Fondamentaux (OBLIGATOIRES)
 

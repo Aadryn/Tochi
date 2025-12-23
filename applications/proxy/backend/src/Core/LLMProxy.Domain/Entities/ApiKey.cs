@@ -1,0 +1,148 @@
+using LLMProxy.Domain.Common;
+using System.Security.Cryptography;
+using System.Diagnostics;
+
+namespace LLMProxy.Domain.Entities;
+
+/// <summary>
+/// Représente une clé API pour l'authentification
+/// </summary>
+public class ApiKey : Entity
+{
+    public Guid UserId { get; private set; }
+    public Guid TenantId { get; private set; }
+    public string Name { get; private set; }
+    public string KeyHash { get; private set; } // Store hash, never plain text
+    public string KeyPrefix { get; private set; } // First 8 chars for identification (e.g., "sk_live_abcd1234")
+    public bool IsActive { get; private set; }
+    public DateTime? ExpiresAt { get; private set; }
+    public DateTime? RevokedAt { get; private set; }
+    public DateTime? LastUsedAt { get; private set; }
+    
+    // Navigation
+    public User User { get; private set; } = null!;
+    public Tenant Tenant { get; private set; } = null!;
+
+    private ApiKey() 
+    {
+        Name = string.Empty;
+        KeyHash = string.Empty;
+        KeyPrefix = string.Empty;
+    } // EF Core
+
+    private ApiKey(Guid userId, Guid tenantId, string name, string keyHash, string keyPrefix, DateTime? expiresAt)
+    {
+        UserId = userId;
+        TenantId = tenantId;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        KeyHash = keyHash ?? throw new ArgumentNullException(nameof(keyHash));
+        KeyPrefix = keyPrefix ?? throw new ArgumentNullException(nameof(keyPrefix));
+        ExpiresAt = expiresAt;
+        IsActive = true;
+        
+        // Invariants : L'API key doit avoir tous les champs requis après construction
+        Debug.Assert(UserId != Guid.Empty, "ApiKey must have a valid UserId after construction");
+        Debug.Assert(TenantId != Guid.Empty, "ApiKey must have a valid TenantId after construction");
+        Debug.Assert(!string.IsNullOrWhiteSpace(Name), "ApiKey name must not be null or whitespace after construction");
+        Debug.Assert(!string.IsNullOrWhiteSpace(KeyHash), "ApiKey hash must not be null or whitespace after construction");
+        Debug.Assert(!string.IsNullOrWhiteSpace(KeyPrefix), "ApiKey prefix must not be null or whitespace after construction");
+        Debug.Assert(IsActive, "ApiKey must be active after construction");
+        Debug.Assert(!ExpiresAt.HasValue || ExpiresAt.Value > DateTime.UtcNow, "ApiKey expiration must be in the future if set");
+    }
+
+    public static Result<ApiKey> Create(Guid userId, Guid tenantId, string name, DateTime? expiresAt = null)
+    {
+        try
+        {
+            Guard.AgainstEmptyGuid(userId, nameof(userId), "Invalid user ID.");
+            Guard.AgainstEmptyGuid(tenantId, nameof(tenantId), "Invalid tenant ID.");
+            Guard.AgainstNullOrWhiteSpace(name, nameof(name), "API key name cannot be empty.");
+        }
+        catch (ArgumentException)
+        {
+            return Error.Validation.Required(nameof(name));
+        }
+
+        if (expiresAt.HasValue && expiresAt.Value <= DateTime.UtcNow)
+            return new Error("Validation.ExpiresAt.Invalid", "Expiration date must be in the future.");
+
+        // Generate a secure random key
+        var rawKey = GenerateSecureKey();
+        var keyHash = HashKey(rawKey);
+        var keyPrefix = rawKey.Substring(0, Math.Min(16, rawKey.Length));
+
+        var apiKey = new ApiKey(userId, tenantId, name, keyHash, keyPrefix, expiresAt);
+        
+        // Store the raw key in a domain event so it can be returned once (never stored)
+        apiKey.AddDomainEvent(new ApiKeyCreatedEvent(apiKey.Id, rawKey));
+        
+        return apiKey;
+    }
+
+    // Overload for when a plain key is provided (for command handlers)
+    public static ApiKey Create(Guid userId, Guid tenantId, string name, string plainKey, DateTime? expiresAt = null)
+    {
+        var keyHash = HashKey(plainKey);
+        var keyPrefix = plainKey.Substring(0, Math.Min(16, plainKey.Length));
+
+        var apiKey = new ApiKey(userId, tenantId, name, keyHash, keyPrefix, expiresAt);
+        
+        // Store the raw key in a domain event so it can be returned once (never stored)
+        apiKey.AddDomainEvent(new ApiKeyCreatedEvent(apiKey.Id, plainKey));
+        
+        return apiKey;
+    }
+
+    public static string GenerateKey()
+    {
+        return GenerateSecureKey();
+    }
+
+    public bool IsExpired() => ExpiresAt.HasValue && ExpiresAt.Value <= DateTime.UtcNow;
+    public bool IsRevoked() => RevokedAt.HasValue;
+    public bool IsValid() => IsActive && !IsExpired() && !IsRevoked();
+
+    public Result Revoke()
+    {
+        if (IsRevoked())
+            return new Error("ApiKey.AlreadyRevoked", "API key is already revoked.");
+
+        IsActive = false;
+        RevokedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+        
+        return Result.Success();
+    }
+
+    public void UpdateLastUsed()
+    {
+        LastUsedAt = DateTime.UtcNow;
+    }
+
+    public bool VerifyKey(string rawKey)
+    {
+        if (string.IsNullOrWhiteSpace(rawKey))
+            return false;
+
+        var hash = HashKey(rawKey);
+        return KeyHash == hash;
+    }
+
+    private static string GenerateSecureKey()
+    {
+        const string prefix = "llm_";
+        var randomBytes = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(randomBytes);
+        }
+        return prefix + Convert.ToBase64String(randomBytes).Replace("+", "").Replace("/", "").Replace("=", "");
+    }
+
+    private static string HashKey(string rawKey)
+    {
+        using var sha256 = SHA256.Create();
+        var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(rawKey));
+        return Convert.ToBase64String(hashBytes);
+    }
+}

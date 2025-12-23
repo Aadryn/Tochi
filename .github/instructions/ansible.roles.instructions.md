@@ -1,10 +1,30 @@
 ---
 description: Role development best practices - structure, tasks, variables, handlers, templates
 name: Ansible_Roles_Development
-applyTo: "**/roles/**/*.{yml,yaml}"
+applyTo: "**/ansible/roles/**/*.yml,**/ansible/roles/**/*.yaml"
 ---
 
 # Ansible Roles - Guide Expert
+
+## ⛔ À NE PAS FAIRE
+
+- **Ne crée jamais** un rôle sans la structure complète standardisée
+- **N'omets jamais** le README.md de documentation du rôle
+- **Ne nomme jamais** les variables sans le préfixe du rôle
+- **Ne mélange jamais** defaults/ et vars/ (defaults = overridable, vars = internes)
+- **N'oublie jamais** le fichier meta/main.yml avec les dépendances
+- **Ne duplique jamais** de logique entre rôles (extraire en rôle commun)
+- **N'écris jamais** de template sans `{{ ansible_managed }}`
+
+## ✅ À FAIRE
+
+- **Crée toujours** la structure complète (defaults/, tasks/, handlers/, templates/, meta/)
+- **Documente toujours** le rôle dans README.md avec exemples d'utilisation
+- **Préfixe toujours** les variables par le nom du rôle (`nginx_worker_processes`)
+- **Utilise toujours** defaults/main.yml pour les variables overridables
+- **Définis toujours** les dépendances dans meta/main.yml
+- **Ajoute toujours** `{{ ansible_managed }}` en en-tête des templates
+- **Teste toujours** le rôle avec Molecule
 
 ## 🎯 Actions Obligatoires (Mandatory)
 

@@ -1,10 +1,30 @@
 ---
 description: Writing idempotent, robust tasks with proper error handling and conditions
 name: Ansible_Tasks_Best_Practices
-applyTo: "**/{tasks,handlers}/**/*.{yml,yaml}"
+applyTo: "**/ansible/**/tasks/**/*.yml,**/ansible/**/handlers/**/*.yml"
 ---
 
 # Ansible Tasks - Guide Expert
+
+## ⛔ À NE PAS FAIRE
+
+- **N'écris jamais** de task sans nom descriptif
+- **N'utilise jamais** shell/command si un module natif existe
+- **Ne crée jamais** de task non idempotente
+- **N'ignore jamais** les erreurs sans gestion explicite (block/rescue)
+- **N'utilise jamais** `changed_when: false` sans justification
+- **Ne hardcode jamais** de valeurs (utilise des variables)
+- **N'oublie jamais** de supporter le mode check (`--check`)
+
+## ✅ À FAIRE
+
+- **Nomme toujours** chaque task avec l'état souhaité ("Ensure nginx is running")
+- **Utilise toujours** les modules natifs Ansible (FQCN: `ansible.builtin.file`)
+- **Garantis toujours** l'idempotence (1000 exécutions = même résultat)
+- **Gère toujours** les erreurs avec block/rescue/always pour les opérations critiques
+- **Teste toujours** le support du mode check
+- **Utilise toujours** des handlers pour les redémarrages de services
+- **Conditionne toujours** les tasks avec when: quand nécessaire
 
 ## 🎯 Actions Obligatoires (Mandatory)
 

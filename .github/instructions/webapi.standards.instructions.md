@@ -1,8 +1,34 @@
+---
+description: Standards WebApi ASP.NET Core - Routing, Binding, Documentation, Gestion des erreurs
+name: WebApi_Standards
+applyTo: "**/backend/*Controller.cs,**/backend/*Endpoint.cs"
+---
+
 # Instructions - Standards WebApi ASP.NET Core
 
 **Fichier :** `webapi.standards.instructions.md`  
 **Objectif :** Définir les standards et bonnes pratiques pour les contrôleurs WebApi ASP.NET Core  
 **Scope :** S'applique à tous les fichiers de contrôleurs (`**/Controllers/*.cs`) dans les projets WebApi
+
+## ⛔ À NE PAS FAIRE
+
+- **N'utilise jamais** `[FromQuery]` pour des identifiants de ressources (utilise `[FromRoute]`)
+- **Ne compte jamais** sur l'inférence de binding (sois explicite avec les attributs)
+- **Ne retourne jamais** de types anonymes depuis les contrôleurs
+- **N'oublie jamais** la documentation XML sur les endpoints publics
+- **Ne mélange jamais** logique métier et logique de contrôleur
+- **N'utilise jamais** de `Task.Result` ou `.Wait()` dans les contrôleurs async
+- **Ne retourne jamais** `void` depuis une action (utilise `IActionResult`)
+
+## ✅ À FAIRE
+
+- **Utilise toujours** l'ordre de binding : `[FromRoute]` → `[FromBody]` → `[FromHeader]` → `[FromQuery]`
+- **Spécifie toujours** explicitement les attributs de binding (`[FromRoute]`, `[FromBody]`, etc.)
+- **Retourne toujours** `ActionResult<T>` pour les endpoints typés
+- **Documente toujours** avec `[ProducesResponseType]` tous les codes de retour possibles
+- **Utilise toujours** les DTOs pour les requêtes/réponses (jamais les entités domaine)
+- **Valide toujours** les entrées avec FluentValidation ou DataAnnotations
+- **Gère toujours** les erreurs avec le Result Pattern ou ProblemDetails
 
 ---
 

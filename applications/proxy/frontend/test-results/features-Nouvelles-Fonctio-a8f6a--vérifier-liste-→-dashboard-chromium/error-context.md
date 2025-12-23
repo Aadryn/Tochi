@@ -1,0 +1,68 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: 
+        - generic [ref=e8]: LLM Proxy
+      - button "" [ref=e9] [cursor=pointer]:
+        - generic [ref=e10]: 
+    - navigation [ref=e11]:
+      - list [ref=e12]:
+        - listitem [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]: 
+          - generic [ref=e15]: Tableau de bord
+        - listitem [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: 
+          - generic [ref=e18]: Providers
+        - listitem [ref=e19] [cursor=pointer]:
+          - generic [ref=e20]: 
+          - generic [ref=e21]: Tenants
+        - listitem [ref=e22] [cursor=pointer]:
+          - generic [ref=e23]: 
+          - generic [ref=e24]: Routes
+        - listitem [ref=e25] [cursor=pointer]:
+          - generic [ref=e26]: 
+          - generic [ref=e27]: Monitoring
+        - listitem [ref=e28] [cursor=pointer]:
+          - generic [ref=e29]: 
+          - generic [ref=e30]: Paramètres
+    - generic [ref=e32]: v1.0.0
+  - generic [ref=e33]:
+    - banner [ref=e34]:
+      - generic [ref=e35]:
+        - heading "Monitoring" [level=1] [ref=e36]
+        - navigation [ref=e37]:
+          - generic [ref=e38]:
+            - link "Dashboard" [ref=e39] [cursor=pointer]:
+              - /url: /
+            - generic [ref=e40]: 
+          - generic [ref=e42]: Monitoring
+      - generic [ref=e43]:
+        - button " EN" [ref=e45] [cursor=pointer]:
+          - generic [ref=e46]: 
+          - generic [ref=e47]: EN
+        - button "" [ref=e48] [cursor=pointer]:
+          - generic [ref=e49]: 
+        - button " 3" [ref=e50] [cursor=pointer]:
+          - generic [ref=e51]: 
+          - generic [ref=e52]: "3"
+        - button "U Profile " [ref=e54] [cursor=pointer]:
+          - generic [ref=e55]: U
+          - generic [ref=e56]: Profile
+          - generic [ref=e57]: 
+    - main [ref=e58]:
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - heading "Monitoring" [level=2] [ref=e62]
+            - paragraph [ref=e63]: Surveillance en temps réel des requêtes et performances
+          - button " Pause" [ref=e64] [cursor=pointer]:
+            - generic [ref=e65]: 
+            - text: Pause
+        - generic [ref=e66]:
+          - generic [ref=e67]: 
+          - generic [ref=e68]: Connexion au flux en temps réel...
+```

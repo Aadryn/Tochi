@@ -1,10 +1,30 @@
 ---
 description: Design minimaliste MudBlazor - Palette clair/gris/blanc, espacement, typographie, icônes
 name: MudBlazor_Design_Principles
-applyTo: "**/*.razor,**/*.razor.cs"
+applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.cs"
 ---
 
 # MudBlazor - Principes de Design Minimaliste
+
+## ⛔ À NE PAS FAIRE
+
+- **N'utilise jamais** de couleurs hors de la palette définie (#0288d1, #f5f5f5, #ffffff)
+- **N'applique jamais** `Elevation` >2 (design plat et minimaliste)
+- **Ne mélange jamais** plusieurs typographies différentes sur un même écran
+- **N'utilise jamais** d'icônes hors de Material Design (`Icons.Material.*`)
+- **Ne surcharge jamais** visuellement les interfaces (moins = mieux)
+- **N'utilise jamais** de `Spacing` >4 entre composants standards
+- **N'ajoute jamais** de décorations superflues (ombres, bordures excessives)
+
+## ✅ À FAIRE
+
+- **Utilise toujours** la palette clair/gris/blanc définie (Primary=#0288d1, Background=#f5f5f5)
+- **Applique toujours** `Elevation="0"` ou `Elevation="1"` maximum
+- **Utilise toujours** la hiérarchie typographique (h5/h6 pour titres, body1/body2 pour texte)
+- **Utilise toujours** les icônes Material Design uniquement
+- **Respecte toujours** l'espacement cohérent (`Spacing="3"` ≈ 24px standard)
+- **Préfère toujours** les espaces blancs aux séparateurs visuels
+- **Maintiens toujours** un contraste suffisant pour l'accessibilité
 
 ## 🎨 Philosophie de Design
 

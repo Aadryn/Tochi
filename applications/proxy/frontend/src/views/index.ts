@@ -1,0 +1,7 @@
+export { default as DashboardView } from './DashboardView.vue'
+export { default as LoginView } from './LoginView.vue'
+export { default as ProvidersView } from './ProvidersView.vue'
+export { default as TenantsView } from './TenantsView.vue'
+export { default as RoutesView } from './RoutesView.vue'
+export { default as MonitoringView } from './MonitoringView.vue'
+export { default as SettingsView } from './SettingsView.vue'

@@ -8,6 +8,28 @@ applyTo: "**/docs/adr/**/*.adr.md"
 
 Guide complet pour créer, structurer et gérer les Architecture Decision Records (ADR) au format MADR.
 
+## ⛔ À NE PAS FAIRE
+
+- **N'écris jamais** un ADR sans numéro séquentiel (`001-`, `002-`, etc.)
+- **N'utilise jamais** de PascalCase ou d'underscores dans le nom du fichier
+- **Ne crée jamais** un ADR sans les sections obligatoires (Contexte, Décision, Conséquences)
+- **N'omets jamais** la section "Alternatives considérées"
+- **Ne modifie jamais** un ADR "Accepté" sans créer un nouvel ADR de remplacement
+- **N'écris jamais** de décision vague ou ambiguë
+- **Ne stocke jamais** un ADR hors du dossier `docs/adr/`
+- **N'oublie jamais** d'ajouter la date de création
+
+## ✅ À FAIRE
+
+- **Utilise toujours** le format MADR (Markdown Any Decision Records)
+- **Nomme toujours** les fichiers en `NNN-titre-en-kebab-case.adr.md`
+- **Documente toujours** le contexte métier et technique de la décision
+- **Liste toujours** les alternatives considérées avec leurs avantages/inconvénients
+- **Sépare toujours** les conséquences positives, négatives et neutres
+- **Référence toujours** les discussions et le code concerné
+- **Mets à jour toujours** le statut (Proposé → Accepté → Déprécié)
+- **Consulte toujours** les ADR existants avant d'en créer un nouveau
+
 ## 🎯 Actions Obligatoires (Mandatory)
 
 ### Format et Structure

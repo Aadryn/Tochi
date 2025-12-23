@@ -8,6 +8,34 @@ applyTo: "**/.github/instructions/*.instructions.md"
 
 Guide pour la structure, le frontmatter YAML et les métadonnées des fichiers `*.instructions.md`.
 
+## 📚 Instructions Spécifiques Liées
+
+| Fichier | Description | Fichiers ciblés |
+|---------|-------------|----------------|
+| [copilot.content.instructions.md](copilot.content.instructions.md) | Rédaction du contenu, ton directif | `*.instructions.md` |
+| [copilot.agents.instructions.md](copilot.agents.instructions.md) | Création d'agents personnalisés | `agents/*.agent.md` |
+| [copilot.prompts.instructions.md](copilot.prompts.instructions.md) | Prompt files réutilisables | `prompts/*.prompt.md` |
+
+## ⛔ À NE PAS FAIRE
+
+- **N'utilise jamais** d'extension autre que `.instructions.md`
+- **N'omets jamais** le frontmatter YAML (description, name, applyTo)
+- **Ne laisse jamais** le champ `description` vide ou générique
+- **N'utilise jamais** d'espaces dans le champ `name`
+- **N'oublie jamais** le champ `applyTo` avec le pattern glob
+- **Ne crée jamais** de fichier sans titre H1 après le frontmatter
+- **N'utilise jamais** de patterns `applyTo` trop larges (`**/*`)
+
+## ✅ À FAIRE
+
+- **Utilise toujours** l'extension `.instructions.md`
+- **Définis toujours** le frontmatter YAML complet (description, name, applyTo)
+- **Écris toujours** une description précise en 1 ligne
+- **Nomme toujours** avec le pattern `technologie.aspect.instructions.md`
+- **Spécifie toujours** `applyTo` avec un pattern glob précis
+- **Ajoute toujours** un titre H1 descriptif après le frontmatter
+- **Structure toujours** avec les sections ⛔/✅ puis les détails
+
 ## 🎯 Actions Obligatoires (Mandatory)
 
 **Structure à TOUJOURS respecter :**

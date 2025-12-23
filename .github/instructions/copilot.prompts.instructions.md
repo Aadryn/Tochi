@@ -8,6 +8,26 @@ applyTo: "**/.github/prompts/*.prompt.md"
 
 Guide pour créer des prompt files réutilisables dans `.github/prompts/` conformément à la [documentation officielle Microsoft](https://code.visualstudio.com/docs/copilot/customization/prompt-files).
 
+## ⛔ À NE PAS FAIRE
+
+- **N'utilise jamais** d'extension autre que `.prompt.md`
+- **N'omets jamais** le frontmatter YAML (description, name, agent, model)
+- **Ne crée jamais** de prompt sans description claire de son usage
+- **N'oublie jamais** de spécifier le champ `agent` (souvent `agent: agent`)
+- **Ne laisse jamais** le champ `model` sans valeur
+- **N'utilise jamais** d'espaces dans le champ `name`
+- **Ne crée jamais** de prompt trop générique (un prompt = un cas d'usage précis)
+
+## ✅ À FAIRE
+
+- **Utilise toujours** l'extension `.prompt.md`
+- **Définis toujours** le frontmatter YAML complet (description, name, agent, model)
+- **Décris toujours** clairement ce que fait le prompt en 1 ligne
+- **Spécifie toujours** le modèle (`model: claude-sonnet-4.5` ou autre)
+- **Inclus toujours** les variables nécessaires avec `{{variable}}`
+- **Structure toujours** le prompt avec des sections claires
+- **Documente toujours** les paramètres attendus et les sorties produites
+
 ## 🎯 Actions Obligatoires (Mandatory)
 
 **À TOUJOURS respecter lors de la création/modification d'un prompt file :**

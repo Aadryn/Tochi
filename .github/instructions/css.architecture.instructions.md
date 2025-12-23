@@ -1,10 +1,30 @@
 ---
 description: Architecture CSS - Classes composables, hiérarchie de styling et conventions de nommage
 name: CSS_Architecture
-applyTo: "**/*.{css,razor.css}"
+applyTo: "**/frontend/assets/**/*.css,**/backend/**/*.razor.css,**/wwwroot/css/**/*.css"
 ---
 
 # Instructions CSS - Architecture et Composabilité
+
+## ⛔ À NE PAS FAIRE
+
+- **N'utilise jamais** l'attribut `Style=""` pour des valeurs statiques
+- **Ne duplique jamais** de styles entre fichiers `.razor.css`
+- **N'utilise jamais** de classes Bootstrap (`d-flex`, `pa-4`, `mb-2`, `col-*`)
+- **N'utilise jamais** de classes Tailwind (`flex`, `p-4`, `mb-2`, `grid`)
+- **Ne crée jamais** de classes spécifiques à un composant dans `wwwroot/app.css`
+- **N'utilise jamais** `!important` (sauf cas exceptionnel documenté)
+- **N'écris jamais** de styles inline dans HTML/Razor (sauf calculs dynamiques C#)
+
+## ✅ À FAIRE
+
+- **Centralise toujours** les styles réutilisables dans `wwwroot/app.css`
+- **Compose toujours** les classes CSS pour créer des styles réutilisables
+- **Utilise toujours** des classes scoped `.razor.css` UNIQUEMENT pour styles vraiment uniques
+- **Nomme toujours** les classes selon une convention sémantique cohérente
+- **Documente toujours** les classes globales avec des commentaires
+- **Vérifie toujours** la duplication avant de créer une nouvelle classe
+- **Utilise toujours** les variables CSS pour les valeurs répétitives
 
 ## ⚠️ RÈGLES MANDATORY
 

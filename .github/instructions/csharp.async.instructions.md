@@ -1,12 +1,32 @@
 ---
 description: Asynchronous C# programming - async/await, Task, parallelism, cancellation, best practices
 name: CSharp_Async_Programming
-applyTo: "**/*.cs"
+applyTo: "**/backend/*Service.cs,**/backend/*Handler.cs,**/backend/*Repository.cs,**/backend/*Controller.cs"
 ---
 
 # Programmation Asynchrone C# - Guide Complet
 
 Guide exhaustif pour maîtriser `async`/`await`, `Task`, parallélisme, cancellation, et éviter les pièges classiques.
+
+## ⛔ À NE PAS FAIRE
+
+- **N'utilise jamais** `.Result` ou `.Wait()` sur une Task (deadlock potentiel)
+- **Ne bloque jamais** un contexte de synchronisation avec du code synchrone
+- **N'oublie jamais** le suffixe `Async` sur les méthodes asynchrones
+- **Ne crée jamais** de méthode `async void` (sauf pour event handlers)
+- **N'ignore jamais** les `CancellationToken` passés en paramètre
+- **N'utilise jamais** `Task.Run()` pour du code déjà asynchrone
+- **N'oublie jamais** `.ConfigureAwait(false)` dans les bibliothèques
+
+## ✅ À FAIRE
+
+- **Propage toujours** l'async du bas vers le haut (async all the way)
+- **Utilise toujours** `await` au lieu de `.Result` ou `.Wait()`
+- **Nomme toujours** les méthodes async avec le suffixe `Async`
+- **Retourne toujours** `Task` ou `Task<T>` (jamais `async void`)
+- **Propage toujours** les `CancellationToken` jusqu'aux API de bas niveau
+- **Utilise toujours** `ValueTask<T>` pour les chemins chauds avec retour fréquent synchrone
+- **Gère toujours** `OperationCanceledException` pour les annulations
 
 ## 🎯 Principes Fondamentaux (OBLIGATOIRES)
 

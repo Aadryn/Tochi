@@ -1,5 +1,154 @@
 # DIRECTIVES AGENT IA - WORKFLOW DÉVELOPPEMENT
 
+## 🎯 PRIORITÉS DE GÉNÉRATION DE CODE
+
+**DIRECTIVE FONDAMENTALE** : Lors de TOUTE génération de code, TOUJOURS privilégier ces aspects dans l'ordre de priorité suivant :
+
+### 1. Modularité
+- Découper le code en modules indépendants et cohésifs
+- Respecter le principe de responsabilité unique (SRP)
+- Favoriser les interfaces claires et le couplage faible
+- Permettre le remplacement et l'évolution indépendante des modules
+
+### 2. Composabilité
+- Concevoir des composants qui peuvent être combinés pour créer des solutions complexes
+- Privilégier la composition à l'héritage (composition over inheritance)
+- Créer des interfaces cohérentes permettant l'assemblage fluide des composants
+- Garantir que chaque composant peut fonctionner de manière autonome
+- Favoriser les fonctions pures et les transformations de données
+
+### 3. Rationalisation
+- Justifier chaque choix technique par un besoin réel et mesurable
+- Éviter les décisions basées sur des préférences personnelles
+- Documenter explicitement les compromis (trade-offs)
+- Éliminer tout code ou abstraction sans justification claire
+
+### 4. Réutilisabilité
+- Extraire les fonctionnalités communes en composants réutilisables
+- Concevoir des abstractions génériques quand approprié
+- Centraliser les utilitaires et configurations partagées
+- Favoriser la composition plutôt que la duplication
+
+### 5. Maintenabilité
+- Écrire du code lisible et auto-documenté
+- Utiliser des nommages explicites et cohérents
+- Maintenir une documentation à jour
+- Limiter la dette technique
+
+### 6. Simplicité (KISS)
+- Préférer la solution la plus simple qui fonctionne
+- Éviter la sur-ingénierie et la complexité accidentelle
+- Minimiser le nombre d'abstractions et de concepts
+- Rendre le code compréhensible par un développeur junior
+
+### 7. Sécurité
+- Appliquer le principe du moindre privilège
+- Valider et assainir toutes les entrées
+- Protéger les données sensibles (chiffrement, masquage)
+- Gérer les secrets de manière sécurisée (pas de hardcoding)
+- Adresser les vulnérabilités OWASP connues
+
+**APPLICATION OBLIGATOIRE** : À chaque génération de code, vérifier que ces 7 aspects sont respectés. En cas de conflit, privilégier l'aspect le plus haut dans la liste.
+
+## 🎨 DESIGN SYSTEM - RESPECT ET AMÉLIORATION CONTINUE
+
+**PRINCIPE FONDAMENTAL** : Le design system est un actif vivant qui DOIT être respecté ET amélioré continuellement.
+
+### Respect du Design System Existant
+
+**OBLIGATOIRE pour TOUT composant UI (MudBlazor, Vue/PrimeVue, CSS) :**
+
+1. **VÉRIFIER** le design system avant toute création/modification UI
+   - Palette de couleurs définie (`.github/instructions/mudblazor.design.principles.instructions.md`)
+   - Espacement standardisé (`.github/instructions/mudblazor.spacing.instructions.md`)
+   - Composants réutilisables existants (`.github/instructions/mudblazor.components.instructions.md`)
+   - Variables CSS/SCSS (`.github/instructions/css.variables.instructions.md`)
+
+2. **UTILISER** les éléments du design system existant
+   - Composants MudBlazor : MudCard, MudButton, MudDataGrid, etc.
+   - Palette : Primary=#0288d1, Background=#f5f5f5, Surface=#ffffff
+   - Espacement : Spacing="3" (24px) par défaut
+   - Élévation : Elevation="0" ou "1" maximum (design plat)
+   - Typographie : h5/h6 pour titres, body1/body2 pour texte
+   - Icônes : Material Design uniquement (`Icons.Material.*`)
+
+3. **RESPECTER** les conventions de design
+   - Design minimaliste clair/gris/blanc
+   - Espaces blancs généreux
+   - Bordures subtiles au lieu d'ombres fortes
+   - Contraste suffisant pour accessibilité
+   - Cohérence visuelle entre toutes les pages
+
+### Amélioration et Amendement du Design System
+
+**CAPITALISER SYSTÉMATIQUEMENT** toute amélioration du design system :
+
+1. **IDENTIFIER** les opportunités d'amélioration
+   - Nouveau pattern UI récurrent détecté
+   - Incohérence visuelle entre composants
+   - Besoin de standardisation manquant
+   - Composant réutilisable non documenté
+   - Variable/mixin CSS/SCSS manquant
+
+2. **DOCUMENTER** immédiatement dans les fichiers d'instructions appropriés
+   - **Nouveau composant MudBlazor** → Amender `.github/instructions/mudblazor.components.instructions.md`
+   - **Nouvelle convention de design** → Amender `.github/instructions/mudblazor.design.principles.instructions.md`
+   - **Nouveau pattern d'espacement** → Amender `.github/instructions/mudblazor.spacing.instructions.md`
+   - **Nouvelle variable CSS** → Amender `.github/instructions/css.variables.instructions.md`
+   - **Nouveau mixin SCSS** → Amender `.github/instructions/scss.mixins.instructions.md`
+   - **Nouveau composant Vue** → Amender `.github/instructions/vue3.components.instructions.md`
+
+3. **CRÉER** des exemples concrets et réutilisables
+   - Code complet du composant avec tous les paramètres
+   - Cas d'usage typiques (✅ BON)
+   - Anti-patterns à éviter (❌ MAUVAIS)
+   - Screenshots ou descriptions visuelles si pertinent
+
+4. **PROPAGER** les changements dans le code existant
+   - Identifier les composants impactés par la nouvelle règle
+   - Proposer un plan de migration si changement majeur
+   - Créer une tâche de refactoring si nécessaire
+
+### Workflow Design System
+
+**AVANT de créer un composant UI :**
+
+1. ✅ **CHERCHER** si un composant similaire existe déjà
+2. ✅ **VÉRIFIER** la palette, l'espacement, la typographie du design system
+3. ✅ **RÉUTILISER** ou composer les composants existants
+4. ✅ Si nouveau composant nécessaire → DOCUMENTER dans les instructions
+
+**PENDANT le développement UI :**
+
+1. ✅ **APPLIQUER** strictement les règles du design system
+2. ✅ **VALIDER** visuellement avec Chrome DevTools (cohérence, espacement, couleurs)
+3. ✅ **TESTER** le responsive (mobile, tablette, desktop)
+4. ✅ **VÉRIFIER** l'accessibilité (contraste, navigation clavier)
+
+**APRÈS la création d'un composant :**
+
+1. ✅ **EXTRAIRE** les patterns réutilisables en composants
+2. ✅ **DOCUMENTER** dans `.github/instructions/*.instructions.md`
+3. ✅ **CRÉER** des exemples d'utilisation
+4. ✅ **CAPITALISER** les leçons apprises (ADR si décision architecturale)
+
+### Validation Design System
+
+**CHECKLIST OBLIGATOIRE pour tout composant UI :**
+
+- [ ] Palette de couleurs respectée (Primary=#0288d1, Background=#f5f5f5)
+- [ ] Espacement cohérent (Spacing="3" par défaut)
+- [ ] Élévation minimale (Elevation="0" ou "1")
+- [ ] Typographie appropriée (h5/h6, body1/body2)
+- [ ] Icônes Material Design uniquement
+- [ ] Contraste suffisant (accessibilité WCAG AA minimum)
+- [ ] Responsive testé (mobile, tablette, desktop)
+- [ ] Cohérence visuelle avec le reste de l'application
+- [ ] Pas de code CSS/SCSS custom sans justification
+- [ ] Variables/mixins utilisés au lieu de valeurs en dur
+- [ ] Composant documenté si réutilisable
+- [ ] Design system amendé si nouveau pattern identifié
+
 ## 🎯 CONTEXTE TECHNIQUE
 
 **Environnement disponible :**
@@ -250,11 +399,15 @@ if ($todo.Count -gt 0) {
 9. **CAPITALISER L'APPRENTISSAGE** (IMPÉRATIF) :
    - **À CHAQUE fois qu'une information utile est découverte** (bonne pratique, pattern, contrainte, règle métier, comportement technique)
    - **CRÉER IMMÉDIATEMENT** un ADR (technique) OU Requirements (métier) pour spécialiser et pérenniser cette connaissance
+   - **AMENDER IMMÉDIATEMENT** le design system si nouveau pattern UI identifié
    - **Ne JAMAIS laisser de connaissance implicite** : Tout apprentissage DOIT être documenté formellement
    - **Exemples de situations déclenchant documentation** :
      * Pattern technique efficace découvert (→ ADR)
      * Règle métier identifiée lors du développement (→ Requirements)
      * Contrainte système/librairie découverte (→ ADR)
+     * **Pattern UI réutilisable créé** (→ Amender `.github/instructions/mudblazor.*.instructions.md` ou `.github/instructions/vue3.*.instructions.md`)
+     * **Nouvelle convention de design** (→ Amender `.github/instructions/mudblazor.design.principles.instructions.md`)
+     * **Nouveau composant CSS/SCSS réutilisable** (→ Amender `.github/instructions/css.*.instructions.md` ou `.github/instructions/scss.*.instructions.md`)
      * Comportement attendu clarifié par utilisateur (→ Requirements si métier, ADR si technique)
      * Solution à un problème récurrent (→ ADR)
      * Validation d'hypothèse métier (→ Requirements)
@@ -290,8 +443,11 @@ Après TOUTE modification impactant l'interface utilisateur ou les APIs :
 3. **VALIDER** critères fonctionnels :
    - Fonctionnalité utilisable de bout en bout
    - Aucune régression sur fonctionnalités existantes
-   - UI cohérente avec le design system
+   - **UI STRICTEMENT COHÉRENTE avec le design system** (palette, espacement, typographie)
+   - **Design system respecté à 100%** (vérifier `.github/instructions/mudblazor.*.instructions.md`)
    - Messages d'erreur explicites si applicable
+   - Responsive fonctionnel (mobile, tablette, desktop)
+   - Accessibilité validée (contraste, navigation clavier)
 
 4. **DOCUMENTER** résultats validation :
    ```powershell

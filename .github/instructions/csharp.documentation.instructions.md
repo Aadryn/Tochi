@@ -1,12 +1,32 @@
 ---
 description: XML documentation standards - French language, didactic tone, novice-friendly
 name: CSharp_Documentation_Standards
-applyTo: "**/*.cs"
+applyTo: "**/backend/src/**/*.cs"
 ---
 
 # Documentation C# - Standards XML
 
 Guide pour documenter le code C# avec des commentaires XML précis, didactiques et compréhensibles.
+
+## ⛔ À NE PAS FAIRE
+
+- **N'écris jamais** de documentation en anglais (français OBLIGATOIRE)
+- **Ne laisse jamais** de membre public sans commentaire XML
+- **N'utilise jamais** de commentaires vides ou génériques ("Gets or sets the value")
+- **Ne copie jamais** le nom de la méthode comme description
+- **N'oublie jamais** les tags `<param>`, `<returns>`, `<exception>` quand applicables
+- **N'écris jamais** de documentation COMMENT (implémentation) mais QUOI/POURQUOI
+- **Ne documente jamais** l'évident - ajoute de la valeur
+
+## ✅ À FAIRE
+
+- **Écris toujours** la documentation en français
+- **Documente toujours** tous les membres publics avec `<summary>`
+- **Utilise toujours** un ton didactique accessible aux débutants
+- **Ajoute toujours** `<remarks>` pour les détails d'implémentation complexes
+- **Documente toujours** les exceptions avec `<exception cref="...">Quand/Pourquoi</exception>`
+- **Inclus toujours** `<example>` pour les usages non triviaux
+- **Utilise toujours** `<see cref="..."/>` pour référencer d'autres types
 
 ## 🎯 Actions Obligatoires (Mandatory)
 

@@ -1,10 +1,30 @@
 ---
 description: Performance Blazor - Optimisation du rendu, virtualisation, lazy loading, streaming, memoization
 name: Blazor_Performance_Optimization
-applyTo: "**/*.razor,**/*.razor.cs"
+applyTo: "**/backend/Presentation/**/*.razor,**/backend/Presentation/**/*.razor.cs"
 ---
 
 # Blazor - Optimisation des Performances
+
+## ⛔ À NE PAS FAIRE
+
+- **N'appelle jamais** `StateHasChanged()` sans nécessité (dégrade les performances)
+- **Ne rends jamais** des listes >100 items sans virtualisation (`<Virtualize>`)
+- **Ne charge jamais** de gros fichiers sans lazy loading
+- **N'utilise jamais** des méthodes coûteuses dans les templates (recalcul à chaque rendu)
+- **Ne passe jamais** de lambdas inline en `[Parameter]` (nouvelle instance à chaque rendu)
+- **N'oublie jamais** `@key` pour les listes dynamiques
+- **Ne fais jamais** d'appels réseau dans `ShouldRender()`
+
+## ✅ À FAIRE
+
+- **Implémente toujours** `ShouldRender()` pour les composants avec rendu fréquent
+- **Utilise toujours** `<Virtualize>` pour les longues listes
+- **Cache toujours** les résultats de calculs coûteux avec des champs privés
+- **Utilise toujours** `@key` pour aider Blazor à identifier les éléments
+- **Préfère toujours** les propriétés immutables pour détecter les changements
+- **Débonce toujours** les événements fréquents (scroll, resize, input)
+- **Profile toujours** avec les DevTools Blazor pour identifier les goulots
 
 ## 🚀 Optimisation du Rendu
 

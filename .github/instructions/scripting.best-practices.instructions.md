@@ -6,6 +6,26 @@ applyTo: "**/*.{sh,bash,bat,cmd,ps1,psm1}"
 
 # Scripting Best Practices - Guide Expert
 
+## ⛔ À NE PAS FAIRE
+
+- **N'écris jamais** de script sans shebang (Bash) ou header de documentation
+- **N'ignore jamais** les erreurs (pas de script sans gestion d'erreurs stricte)
+- **N'utilise jamais** de variables non initialisées ou non validées
+- **Ne hardcode jamais** de chemins absolus ou de credentials
+- **N'exécute jamais** un script sans option `--dry-run` disponible
+- **Ne supprime jamais** de fichiers sans confirmation ou backup
+- **N'utilise jamais** `rm -rf` sans validation de chemin préalable
+
+## ✅ À FAIRE
+
+- **Commence toujours** par le shebang (`#!/bin/bash`) ou header descriptif
+- **Active toujours** le mode strict (`set -euo pipefail` Bash, `$ErrorActionPreference = 'Stop'` PS)
+- **Valide toujours** tous les arguments avant utilisation
+- **Fournis toujours** une option `--dry-run` ou `-WhatIf` pour tester
+- **Écris toujours** des scripts idempotents (réexécutables sans effets de bord)
+- **Utilise toujours** des exit codes appropriés (0 = succès, >0 = erreur)
+- **Documente toujours** avec header : description, usage, exemples, auteur
+
 ## 🎯 Actions Obligatoires (Mandatory)
 
 **À TOUJOURS respecter lors de l'écriture de scripts :**

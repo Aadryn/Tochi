@@ -1,9 +1,10 @@
-# MudBlazor Spacing Convention - Harmonization Guidelines
-
-**Applies To:** `**/*.razor`  
-**Description:** Règles de spacing pour composants MudGrid, MudStack et autres layouts MudBlazor
-
 ---
+description: MudBlazor Spacing Convention - Règles de spacing pour MudGrid, MudStack et layouts
+name: MudBlazor_Spacing_Convention
+applyTo: "**/backend/Presentation/**/*.razor"
+---
+
+# MudBlazor Spacing Convention - Harmonization Guidelines
 
 ## 📏 Convention Spacing Standard
 

@@ -1,0 +1,91 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+{
+	"name": "C# (.NET)",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/dotnet:1-9.0-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+			"version": "latest",
+			"bicepVersion": "latest"
+		},
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": true,
+			"installOhMyZsh": true,
+			"installOhMyZshConfig": true,
+			"upgradePackages": true,
+			"installSsl": true,
+			"username": "automatic",
+			"userUid": "1001",
+			"userGid": "1001"
+		},
+		"ghcr.io/devcontainers/features/copilot-cli:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+			"moby": true,
+			"installDockerBuildx": true,
+			"installDockerComposeSwitch": true,
+			"version": "latest",
+			"dockerDashComposeVersion": "v2"
+		},
+		"ghcr.io/devcontainers/features/dotnet:2": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/git:1": {
+			"ppa": true,
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/git-lfs:1": {
+			"autoPull": true,
+			"installDirectlyFromGitHubRelease": true,
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"installDirectlyFromGitHubRelease": true,
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/hugo:1": {
+			"extended": true,
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/nix:1": {
+			"multiUser": true,
+			"useAttributePath": true,
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/node:1": {
+			"nodeGypDependencies": true,
+			"installYarnUsingApt": true,
+			"version": "latest",
+			"pnpmVersion": "latest",
+			"nvmVersion": "latest"
+		},
+		"ghcr.io/devcontainers/features/powershell:1": {
+			"version": "latest"
+		},
+		"ghcr.io/dotnet/aspire-devcontainer-feature/dotnetaspire:1": {
+			"version": "latest"
+		}
+	}
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [5000, 5001],
+	// "portsAttributes": {
+	//		"5001": {
+	//			"protocol": "https"
+	//		}
+	// }
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "dotnet restore",
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}

@@ -6,6 +6,21 @@ applyTo: "**/.deprecated/**"
 
 # ⚠️ FICHIER DÉPRÉCIÉ
 
+## ⛔ À NE PAS FAIRE
+
+- **Ne lis plus** ce fichier - il est obsolète
+- **N'applique plus** les règles de ce fichier
+- **Ne référence plus** ce fichier dans les imports
+
+## ✅ À FAIRE
+
+- **Consulte** les fichiers spécialisés à la place :
+  - `mudblazor.core.instructions.md` - Règles fondamentales
+  - `mudblazor.design.principles.instructions.md` - Principes de design
+  - `mudblazor.components.instructions.md` - Patterns de composants
+  - `mudblazor.architecture.instructions.md` - Architecture
+  - `css.architecture.instructions.md` - Classes CSS
+
 Ce fichier a été **découpé en plusieurs fichiers spécialisés** pour une meilleure maintenabilité :
 
 ## 📂 Nouveaux Fichiers d'Instructions

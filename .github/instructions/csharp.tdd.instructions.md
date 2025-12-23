@@ -1,12 +1,33 @@
 ---
 description: Test-Driven Development (TDD) with xUnit, NFluent, NSubstitute, and Bogus
 name: CSharp_TDD_Testing
-applyTo: "**/*.Tests.cs,**/*.Unit.Tests/**/*.cs"
+applyTo: "**/backend/tests/**/*Tests.cs,**/backend/tests/**/*Test.cs"
 ---
 
 # Test-Driven Development (TDD) - Guide Complet C#
 
 Guide exhaustif pour TDD avec **xUnit**, **NFluent**, **NSubstitute**, et **Bogus**.
+
+## ⛔ À NE PAS FAIRE
+
+- **N'écris jamais** de code de production avant le test (cycle RED-GREEN-REFACTOR)
+- **Ne teste jamais** l'implémentation, teste le comportement
+- **N'utilise jamais** de données de test hardcodées répétitives (utilise Bogus)
+- **Ne couple jamais** les tests aux détails d'implémentation
+- **N'ignore jamais** les tests qui échouent (pas de `[Skip]` sans justification)
+- **Ne teste jamais** plusieurs comportements dans un seul test
+- **N'utilise jamais** de dépendances réelles dans les tests unitaires (mock avec NSubstitute)
+
+## ✅ À FAIRE
+
+- **Suis toujours** le cycle RED → GREEN → REFACTOR
+- **Nomme toujours** les tests avec le pattern `MethodName_Scenario_ExpectedResult`
+- **Utilise toujours** Bogus/AutoFixture pour générer les données de test
+- **Utilise toujours** NFluent pour les assertions (`Check.That(...).IsEqualTo(...)`)
+- **Utilise toujours** NSubstitute pour les mocks (`Substitute.For<IService>()`)
+- **Isole toujours** le SUT (System Under Test) de ses dépendances
+- **Structure toujours** avec Arrange-Act-Assert (AAA)
+- **Vise toujours** un test par comportement, pas par méthode
 
 ## 🎯 Principes Fondamentaux TDD
 

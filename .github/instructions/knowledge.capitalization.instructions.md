@@ -1,8 +1,32 @@
+---
+description: Capitalisation de connaissances - Obligation morale de documentation immédiate
+name: Knowledge_Capitalization
+applyTo: "**/*"
+---
+
 # Capitalisation de Connaissances - Obligation Morale de Documentation
 
-**Applies To:** Tous les fichiers et activités du projet  
-**Audience:** Agent IA, développeurs, architectes  
-**Dernière mise à jour:** 2025-12-06
+**Audience:** Agent IA, développeurs, architectes
+
+## ⛔ À NE PAS FAIRE
+
+- **Ne laisse jamais** une connaissance acquise non documentée
+- **N'attends jamais** pour documenter - fais-le immédiatement
+- **Ne mélange jamais** technique (ADR) et métier (Requirements)
+- **Ne duplique jamais** une information déjà documentée
+- **N'écris jamais** de documentation vague ou non actionnable
+- **Ne sous-estime jamais** l'importance d'un apprentissage
+- **N'ignore jamais** un workaround technique découvert
+
+## ✅ À FAIRE
+
+- **Documente toujours** immédiatement chaque découverte technique (→ ADR)
+- **Capitalise toujours** les règles métier identifiées (→ Requirements)
+- **Crée toujours** une instruction Copilot pour les patterns récurrents
+- **Référence toujours** la source de la connaissance (code, discussion, test)
+- **Utilise toujours** des exemples concrets dans la documentation
+- **Vérifie toujours** si la connaissance existe déjà avant de documenter
+- **Mets à jour toujours** la documentation existante si obsolète
 
 ## PRINCIPE FONDAMENTAL
 

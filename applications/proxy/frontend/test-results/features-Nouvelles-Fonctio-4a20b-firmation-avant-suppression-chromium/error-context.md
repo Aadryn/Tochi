@@ -1,0 +1,159 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]: 
+          - generic [ref=e8]: LLM Proxy
+        - button "" [ref=e9] [cursor=pointer]:
+          - generic [ref=e10]: 
+      - navigation [ref=e11]:
+        - list [ref=e12]:
+          - listitem [ref=e13] [cursor=pointer]:
+            - generic [ref=e14]: 
+            - generic [ref=e15]: Tableau de bord
+          - listitem [ref=e16] [cursor=pointer]:
+            - generic [ref=e17]: 
+            - generic [ref=e18]: Providers
+          - listitem [ref=e19] [cursor=pointer]:
+            - generic [ref=e20]: 
+            - generic [ref=e21]: Tenants
+          - listitem [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]: 
+            - generic [ref=e24]: Routes
+          - listitem [ref=e25] [cursor=pointer]:
+            - generic [ref=e26]: 
+            - generic [ref=e27]: Monitoring
+          - listitem [ref=e28] [cursor=pointer]:
+            - generic [ref=e29]: 
+            - generic [ref=e30]: Paramètres
+      - generic [ref=e32]: v1.0.0
+    - generic [ref=e33]:
+      - banner [ref=e34]:
+        - generic [ref=e35]:
+          - heading "Tenant Management" [level=1] [ref=e36]
+          - navigation [ref=e37]:
+            - generic [ref=e38]:
+              - link "Dashboard" [ref=e39] [cursor=pointer]:
+                - /url: /
+              - generic [ref=e40]: 
+            - generic [ref=e42]: Tenants
+        - generic [ref=e43]:
+          - button " EN" [ref=e45] [cursor=pointer]:
+            - generic [ref=e46]: 
+            - generic [ref=e47]: EN
+          - button "" [ref=e48] [cursor=pointer]:
+            - generic [ref=e49]: 
+          - button " 3" [ref=e50] [cursor=pointer]:
+            - generic [ref=e51]: 
+            - generic [ref=e52]: "3"
+          - button "U Profile " [ref=e54] [cursor=pointer]:
+            - generic [ref=e55]: U
+            - generic [ref=e56]: Profile
+            - generic [ref=e57]: 
+      - main [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - heading "Tenants" [level=2] [ref=e62]
+              - paragraph [ref=e63]: Gérez les organisations et leurs quotas d'utilisation de l'API.
+            - button " data-testid=\"btn-new-tenant\" Nouveau Tenant" [ref=e64] [cursor=pointer]:
+              - generic [ref=e65]: 
+              - text: data-testid="btn-new-tenant" Nouveau Tenant
+          - generic [ref=e66]:
+            - generic [ref=e68]:
+              - generic [ref=e69]:
+                - generic [ref=e70]:
+                  - heading "Acme Corp" [level=3] [ref=e71]
+                  - text: /api/acme-corp/
+                - generic [ref=e74]: Opérationnel
+              - generic [ref=e75]:
+                - generic [ref=e77]:
+                  - generic [ref=e78]: Requêtes ce mois
+                  - generic [ref=e79]: 45.2k / 100.0k
+                - generic [ref=e83]:
+                  - generic [ref=e84]: Tokens ce mois
+                  - generic [ref=e85]: 4.5M / 10.0M
+              - generic [ref=e88]:
+                - generic [ref=e89]:
+                  - generic [ref=e90]: 
+                  - generic [ref=e91]: 3 clé(s) API
+                - generic [ref=e92]:
+                  - generic [ref=e93]: 
+                  - generic [ref=e94]: Créé le 10 janv. 2024
+              - generic [ref=e95]:
+                - button "" [ref=e96] [cursor=pointer]:
+                  - generic [ref=e97]: 
+                - button "" [ref=e98] [cursor=pointer]:
+                  - generic [ref=e99]: 
+                - button "" [active] [ref=e100] [cursor=pointer]:
+                  - generic [ref=e101]: 
+            - generic [ref=e103]:
+              - generic [ref=e104]:
+                - generic [ref=e105]:
+                  - heading "Tech Startup" [level=3] [ref=e106]
+                  - text: /api/tech-startup/
+                - generic [ref=e109]: Opérationnel
+              - generic [ref=e110]:
+                - generic [ref=e112]:
+                  - generic [ref=e113]: Requêtes ce mois
+                  - generic [ref=e114]: 32.1k / 50.0k
+                - generic [ref=e118]:
+                  - generic [ref=e119]: Tokens ce mois
+                  - generic [ref=e120]: 3.2M / 5.0M
+              - generic [ref=e123]:
+                - generic [ref=e124]:
+                  - generic [ref=e125]: 
+                  - generic [ref=e126]: 2 clé(s) API
+                - generic [ref=e127]:
+                  - generic [ref=e128]: 
+                  - generic [ref=e129]: Créé le 15 janv. 2024
+              - generic [ref=e130]:
+                - button "" [ref=e131] [cursor=pointer]:
+                  - generic [ref=e132]: 
+                - button "" [ref=e133] [cursor=pointer]:
+                  - generic [ref=e134]: 
+                - button "" [ref=e135] [cursor=pointer]:
+                  - generic [ref=e136]: 
+            - generic [ref=e138]:
+              - generic [ref=e139]:
+                - generic [ref=e140]:
+                  - heading "Research Lab" [level=3] [ref=e141]
+                  - text: /api/research-lab/
+                - generic [ref=e144]: Opérationnel
+              - generic [ref=e145]:
+                - generic [ref=e147]:
+                  - generic [ref=e148]: Requêtes ce mois
+                  - generic [ref=e149]: 156.4k / 200.0k
+                - generic [ref=e153]:
+                  - generic [ref=e154]: Tokens ce mois
+                  - generic [ref=e155]: 15.6M / 20.0M
+              - generic [ref=e158]:
+                - generic [ref=e159]:
+                  - generic [ref=e160]: 
+                  - generic [ref=e161]: 5 clé(s) API
+                - generic [ref=e162]:
+                  - generic [ref=e163]: 
+                  - generic [ref=e164]: Créé le 01 févr. 2024
+              - generic [ref=e165]:
+                - button "" [ref=e166] [cursor=pointer]:
+                  - generic [ref=e167]: 
+                - button "" [ref=e168] [cursor=pointer]:
+                  - generic [ref=e169]: 
+                - button "" [ref=e170] [cursor=pointer]:
+                  - generic [ref=e171]: 
+  - dialog [ref=e173]:
+    - generic [ref=e174]:
+      - heading "Supprimer le tenant" [level=3] [ref=e175]
+      - button "Fermer" [ref=e176] [cursor=pointer]:
+        - generic [ref=e177]: 
+    - generic [ref=e179]:
+      - generic [ref=e181]: 
+      - paragraph [ref=e182]: Êtes-vous sûr de vouloir supprimer le tenant « Acme Corp » ? Toutes ses clés API seront également supprimées. Cette action est irréversible.
+    - generic [ref=e183]:
+      - button "Annuler" [ref=e184]
+      - button "Supprimer" [ref=e185] [cursor=pointer]
+```

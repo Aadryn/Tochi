@@ -1,10 +1,29 @@
 ---
 description: Performance optimization, parallelism, caching, and execution strategies
 name: Ansible_Performance_Optimization
-applyTo: "**/*.{yml,yaml}"
+applyTo: "**/ansible/**/*.yml,**/ansible/**/*.yaml"
 ---
 
 # Ansible Performance - Guide Expert
+
+## ⛔ À NE PAS FAIRE
+
+- **N'active jamais** gather_facts si les facts ne sont pas nécessaires
+- **N'installe jamais** les packages un par un (grouper en une seule task)
+- **N'utilise jamais** la stratégie `linear` si `free` est plus adaptée
+- **Ne désactive jamais** le pipelining SSH sans raison valable
+- **N'ignore jamais** le cache de facts pour les gros inventaires
+- **Ne configure jamais** un nombre de forks supérieur aux capacités du contrôleur
+
+## ✅ À FAIRE
+
+- **Configure toujours** le pipelining SSH (`pipelining = True`)
+- **Active toujours** le cache de facts pour éviter les collectes répétées
+- **Groupe toujours** les installations de packages en une seule task
+- **Utilise toujours** `gather_facts: false` quand les facts ne sont pas nécessaires
+- **Optimise toujours** le nombre de forks selon l'infrastructure
+- **Profile toujours** les playbooks avec callback_whitelist pour identifier les goulots
+- **Utilise toujours** async/poll pour les tâches longues
 
 ## 🎯 Actions Obligatoires (Mandatory)
 

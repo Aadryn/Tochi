@@ -1,12 +1,32 @@
 ---
 description: C# coding standards - naming, formatting, best practices, and patterns
 name: CSharp_Coding_Standards
-applyTo: "**/*.cs"
+applyTo: "**/backend/**/*.cs"
 ---
 
 # Standards C# - Conventions et Bonnes Pratiques
 
 Guide complet des standards de codage C# : nommage, formatage, patterns, et principes SOLID.
+
+## ⛔ À NE PAS FAIRE
+
+- **N'utilise jamais** de noms abrégés ou cryptiques (`str`, `mgr`, `cnt`)
+- **Ne crée jamais** de méthode >20 lignes sans extraire
+- **N'utilise jamais** de nombres magiques (constantes nommées obligatoires)
+- **Ne laisse jamais** de code commenté ou mort
+- **N'utilise jamais** de `var` quand le type n'est pas évident
+- **Ne mélange jamais** plusieurs niveaux d'abstraction dans une méthode
+- **N'ignore jamais** les warnings du compilateur
+
+## ✅ À FAIRE
+
+- **Nomme toujours** explicitement (PascalCase classes, camelCase variables, _camelCase champs privés)
+- **Garde toujours** les méthodes courtes et focalisées (<20 lignes idéalement)
+- **Utilise toujours** des constantes nommées pour les valeurs littérales
+- **Préfère toujours** la composition à l'héritage
+- **Utilise toujours** les expressions switch C# modernes
+- **Applique toujours** early return pour réduire l'imbrication
+- **Traite toujours** tous les warnings comme des erreurs (zléro warning)
 
 ## 🎯 Principes Fondamentaux (OBLIGATOIRES)
 
