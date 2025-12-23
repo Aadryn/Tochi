@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
         // Services
-        services.AddScoped<IAuthorizationService, AuthorizationService>();
+        services.AddScoped<IRbacAuthorizationService, AuthorizationService>();
 
         return services;
     }

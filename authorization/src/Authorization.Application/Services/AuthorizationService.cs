@@ -12,7 +12,7 @@ namespace Authorization.Application.Services;
 /// Implémentation du service d'autorisation.
 /// Orchestre OpenFGA, cache Redis et audit PostgreSQL.
 /// </summary>
-public class AuthorizationService : IAuthorizationService
+public class AuthorizationService : IRbacAuthorizationService
 {
     private readonly IOpenFgaService _openFgaService;
     private readonly IPermissionCacheService _cacheService;
