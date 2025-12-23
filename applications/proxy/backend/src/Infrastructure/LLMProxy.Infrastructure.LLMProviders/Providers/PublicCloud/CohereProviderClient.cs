@@ -6,7 +6,6 @@ using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.LLM;
 using LLMProxy.Infrastructure.LLMProviders.Configuration;
 using Microsoft.Extensions.Logging;
-using LLMProxy.Infrastructure.LLMProviders.Providers.PublicCloud.Cohere.Contracts;
 
 namespace LLMProxy.Infrastructure.LLMProviders.Providers.PublicCloud;
 
@@ -83,7 +82,7 @@ public sealed class CohereProviderClient : LLMProviderClientBase
                                | ModelCapabilities.Streaming
                                | ModelCapabilities.FunctionCalling,
                 IsAvailable = true,
-                ContextLength = 128000
+                MaxContextLength = 128000
             },
             new()
             {
@@ -94,7 +93,7 @@ public sealed class CohereProviderClient : LLMProviderClientBase
                                | ModelCapabilities.Streaming
                                | ModelCapabilities.FunctionCalling,
                 IsAvailable = true,
-                ContextLength = 128000
+                MaxContextLength = 128000
             },
             new()
             {
@@ -347,4 +346,121 @@ public sealed class CohereProviderClient : LLMProviderClientBase
 
     #endregion
 
+    #region DTOs Cohere
+
+    private sealed record CohereChatRequest
+    {
+        public required string Model { get; init; }
+        public required List<CohereMessage> Messages { get; init; }
+        public string? Preamble { get; init; }
+        public float? Temperature { get; init; }
+        public int? MaxTokens { get; init; }
+        public float? P { get; init; }
+        public int? K { get; init; }
+        public List<string>? StopSequences { get; init; }
+        public float? FrequencyPenalty { get; init; }
+        public float? PresencePenalty { get; init; }
+        public bool Stream { get; init; }
+    }
+
+    private sealed record CohereMessage
+    {
+        public required string Role { get; init; }
+        public required string Content { get; init; }
+    }
+
+    private sealed record CohereChatResponse
+    {
+        public required string Id { get; init; }
+        public CohereMessageContent? Message { get; init; }
+        public string? FinishReason { get; init; }
+        public CohereUsage? Usage { get; init; }
+    }
+
+    private sealed record CohereMessageContent
+    {
+        public List<CohereContentBlock>? Content { get; init; }
+    }
+
+    private sealed record CohereContentBlock
+    {
+        public string? Type { get; init; }
+        public string? Text { get; init; }
+    }
+
+    private sealed record CohereUsage
+    {
+        public CohereTokens? Tokens { get; init; }
+    }
+
+    private sealed record CohereTokens
+    {
+        public int? InputTokens { get; init; }
+        public int? OutputTokens { get; init; }
+    }
+
+    private sealed record CohereStreamEvent
+    {
+        public string? Type { get; init; }
+        public CohereDelta? Delta { get; init; }
+        public CohereStreamResponse? Response { get; init; }
+    }
+
+    private sealed record CohereDelta
+    {
+        public CohereMessageDelta? Message { get; init; }
+    }
+
+    private sealed record CohereMessageDelta
+    {
+        public CohereContentDelta? Content { get; init; }
+    }
+
+    private sealed record CohereContentDelta
+    {
+        public string? Text { get; init; }
+    }
+
+    private sealed record CohereStreamResponse
+    {
+        public string? Id { get; init; }
+        public string? FinishReason { get; init; }
+        public CohereMeta? Meta { get; init; }
+    }
+
+    private sealed record CohereMeta
+    {
+        public CohereTokens? Tokens { get; init; }
+    }
+
+    private sealed record CohereEmbedRequest
+    {
+        public required string Model { get; init; }
+        public required List<string> Texts { get; init; }
+        public required string InputType { get; init; }
+        public required string[] EmbeddingTypes { get; init; }
+    }
+
+    private sealed record CohereEmbedResponse
+    {
+        public CohereEmbeddingResult? Embeddings { get; init; }
+        public CohereEmbedMeta? Meta { get; init; }
+    }
+
+    private sealed record CohereEmbeddingResult
+    {
+        public float[][]? Float { get; init; }
+    }
+
+    private sealed record CohereEmbedMeta
+    {
+        public CohereBilledUnits? BilledUnits { get; init; }
+    }
+
+    private sealed record CohereBilledUnits
+    {
+        public int? InputTokens { get; init; }
+    }
+
+    #endregion
 }

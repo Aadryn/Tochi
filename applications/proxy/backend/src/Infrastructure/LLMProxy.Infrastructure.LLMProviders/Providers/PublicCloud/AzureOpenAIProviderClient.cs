@@ -5,7 +5,6 @@ using System.Text.Json.Serialization;
 using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.LLM;
 using LLMProxy.Infrastructure.LLMProviders.Configuration;
-using LLMProxy.Infrastructure.LLMProviders.Providers.PublicCloud.AzureOpenAI.Contracts;
 using Microsoft.Extensions.Logging;
 
 namespace LLMProxy.Infrastructure.LLMProviders.Providers.PublicCloud;
@@ -311,4 +310,89 @@ public sealed class AzureOpenAIProviderClient : LLMProviderClientBase
 
     #endregion
 
+    #region DTOs Azure
+
+    private sealed record AzureChatRequest
+    {
+        public required List<AzureMessage> Messages { get; init; }
+        public decimal? Temperature { get; init; }
+        public int? MaxTokens { get; init; }
+        public decimal? TopP { get; init; }
+        public int? N { get; init; }
+        public List<string>? Stop { get; init; }
+        public decimal? PresencePenalty { get; init; }
+        public decimal? FrequencyPenalty { get; init; }
+        public string? User { get; init; }
+        public int? Seed { get; init; }
+        public AzureResponseFormat? ResponseFormat { get; init; }
+        public bool Stream { get; init; }
+    }
+
+    private sealed record AzureMessage
+    {
+        public required string Role { get; init; }
+        public required string Content { get; init; }
+        public string? Name { get; init; }
+    }
+
+    private sealed record AzureResponseFormat
+    {
+        public required string Type { get; init; }
+    }
+
+    private sealed record AzureChatResponse
+    {
+        public required string Id { get; init; }
+        public long Created { get; init; }
+        public AzureChoice[]? Choices { get; init; }
+        public AzureUsage? Usage { get; init; }
+    }
+
+    private sealed record AzureChoice
+    {
+        public AzureMessage? Message { get; init; }
+        public string? FinishReason { get; init; }
+    }
+
+    private sealed record AzureUsage
+    {
+        public int PromptTokens { get; init; }
+        public int CompletionTokens { get; init; }
+    }
+
+    private sealed record AzureStreamChunk
+    {
+        public string? Id { get; init; }
+        public AzureStreamChoice[]? Choices { get; init; }
+    }
+
+    private sealed record AzureStreamChoice
+    {
+        public AzureDelta? Delta { get; init; }
+        public string? FinishReason { get; init; }
+    }
+
+    private sealed record AzureDelta
+    {
+        public string? Content { get; init; }
+    }
+
+    private sealed record AzureEmbeddingRequest
+    {
+        public required List<string> Input { get; init; }
+    }
+
+    private sealed record AzureEmbeddingResponse
+    {
+        public required List<AzureEmbeddingData> Data { get; init; }
+        public required AzureUsage Usage { get; init; }
+    }
+
+    private sealed record AzureEmbeddingData
+    {
+        public int Index { get; init; }
+        public required float[] Embedding { get; init; }
+    }
+
+    #endregion
 }

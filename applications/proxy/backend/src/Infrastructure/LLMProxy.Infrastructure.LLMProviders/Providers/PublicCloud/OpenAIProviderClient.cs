@@ -5,7 +5,6 @@ using System.Text.Json.Serialization;
 using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.LLM;
 using LLMProxy.Infrastructure.LLMProviders.Configuration;
-using LLMProxy.Infrastructure.LLMProviders.Providers.PublicCloud.OpenAI.Contracts;
 using Microsoft.Extensions.Logging;
 
 namespace LLMProxy.Infrastructure.LLMProviders.Providers.PublicCloud;
@@ -289,4 +288,109 @@ public class OpenAIProviderClient : LLMProviderClientBase
 
     #endregion
 
+    #region DTOs OpenAI
+
+    private sealed record OpenAIChatCompletionRequest
+    {
+        public required string Model { get; init; }
+        public required List<OpenAIMessage> Messages { get; init; }
+        public decimal? Temperature { get; init; }
+        public int? MaxTokens { get; init; }
+        public decimal? TopP { get; init; }
+        public int? N { get; init; }
+        public List<string>? Stop { get; init; }
+        public decimal? PresencePenalty { get; init; }
+        public decimal? FrequencyPenalty { get; init; }
+        public string? User { get; init; }
+        public int? Seed { get; init; }
+        public OpenAIResponseFormat? ResponseFormat { get; init; }
+        public bool Stream { get; init; }
+    }
+
+    private sealed record OpenAIMessage
+    {
+        public required string Role { get; init; }
+        public required string Content { get; init; }
+        public string? Name { get; init; }
+    }
+
+    private sealed record OpenAIResponseFormat
+    {
+        public required string Type { get; init; }
+    }
+
+    private sealed record OpenAIChatCompletionResponse
+    {
+        public required string Id { get; init; }
+        public required string Model { get; init; }
+        public long Created { get; init; }
+        public OpenAIChoice[]? Choices { get; init; }
+        public OpenAIUsage? Usage { get; init; }
+    }
+
+    private sealed record OpenAIChoice
+    {
+        public OpenAIMessage? Message { get; init; }
+        public string? FinishReason { get; init; }
+    }
+
+    private sealed record OpenAIUsage
+    {
+        public int PromptTokens { get; init; }
+        public int CompletionTokens { get; init; }
+        public int TotalTokens { get; init; }
+    }
+
+    private sealed record OpenAIStreamChunk
+    {
+        public string? Id { get; init; }
+        public string? Model { get; init; }
+        public OpenAIStreamChoice[]? Choices { get; init; }
+    }
+
+    private sealed record OpenAIStreamChoice
+    {
+        public OpenAIDelta? Delta { get; init; }
+        public string? FinishReason { get; init; }
+    }
+
+    private sealed record OpenAIDelta
+    {
+        public string? Content { get; init; }
+    }
+
+    private sealed record OpenAIModelsResponse
+    {
+        public List<OpenAIModelInfo>? Data { get; init; }
+    }
+
+    private sealed record OpenAIModelInfo
+    {
+        public required string Id { get; init; }
+        public string? OwnedBy { get; init; }
+        public long Created { get; init; }
+    }
+
+    private sealed record OpenAIEmbeddingRequest
+    {
+        public required string Model { get; init; }
+        public required List<string> Input { get; init; }
+        public string? EncodingFormat { get; init; }
+        public int? Dimensions { get; init; }
+    }
+
+    private sealed record OpenAIEmbeddingResponse
+    {
+        public required string Model { get; init; }
+        public required List<OpenAIEmbeddingData> Data { get; init; }
+        public required OpenAIUsage Usage { get; init; }
+    }
+
+    private sealed record OpenAIEmbeddingData
+    {
+        public int Index { get; init; }
+        public required float[] Embedding { get; init; }
+    }
+
+    #endregion
 }

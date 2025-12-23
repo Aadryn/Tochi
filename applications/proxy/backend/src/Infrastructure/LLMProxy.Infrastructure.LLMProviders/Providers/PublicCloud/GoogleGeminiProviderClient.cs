@@ -6,7 +6,6 @@ using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.LLM;
 using LLMProxy.Infrastructure.LLMProviders.Configuration;
 using Microsoft.Extensions.Logging;
-using LLMProxy.Infrastructure.LLMProviders.Providers.PublicCloud.GoogleGemini.Contracts;
 
 namespace LLMProxy.Infrastructure.LLMProviders.Providers.PublicCloud;
 
@@ -88,7 +87,7 @@ public sealed class GoogleGeminiProviderClient : LLMProviderClientBase
                                | ModelCapabilities.FunctionCalling
                                | ModelCapabilities.Vision,
                 IsAvailable = true,
-                ContextLength = 1000000
+                MaxContextLength = 1000000
             },
             new()
             {
@@ -100,7 +99,7 @@ public sealed class GoogleGeminiProviderClient : LLMProviderClientBase
                                | ModelCapabilities.FunctionCalling
                                | ModelCapabilities.Vision,
                 IsAvailable = true,
-                ContextLength = 2000000
+                MaxContextLength = 2000000
             },
             new()
             {
@@ -112,7 +111,7 @@ public sealed class GoogleGeminiProviderClient : LLMProviderClientBase
                                | ModelCapabilities.FunctionCalling
                                | ModelCapabilities.Vision,
                 IsAvailable = true,
-                ContextLength = 1000000
+                MaxContextLength = 1000000
             },
             new()
             {
@@ -365,4 +364,82 @@ public sealed class GoogleGeminiProviderClient : LLMProviderClientBase
 
     #endregion
 
+    #region DTOs Gemini
+
+    private sealed record GeminiRequest
+    {
+        public required List<GeminiContent> Contents { get; init; }
+        public GeminiContent? SystemInstruction { get; init; }
+        public GeminiGenerationConfig? GenerationConfig { get; init; }
+        public List<GeminiSafetySetting>? SafetySettings { get; init; }
+    }
+
+    private sealed record GeminiContent
+    {
+        public string? Role { get; init; }
+        public required List<GeminiPart> Parts { get; init; }
+    }
+
+    private sealed record GeminiPart
+    {
+        public string? Text { get; init; }
+    }
+
+    private sealed record GeminiGenerationConfig
+    {
+        public float? Temperature { get; init; }
+        public int? MaxOutputTokens { get; init; }
+        public float? TopP { get; init; }
+        public int? TopK { get; init; }
+        public List<string>? StopSequences { get; init; }
+        public string? ResponseMimeType { get; init; }
+    }
+
+    private sealed record GeminiSafetySetting
+    {
+        public required string Category { get; init; }
+        public required string Threshold { get; init; }
+    }
+
+    private sealed record GeminiResponse
+    {
+        public GeminiCandidate[]? Candidates { get; init; }
+        public GeminiUsageMetadata? UsageMetadata { get; init; }
+    }
+
+    private sealed record GeminiCandidate
+    {
+        public GeminiContent? Content { get; init; }
+        public string? FinishReason { get; init; }
+    }
+
+    private sealed record GeminiUsageMetadata
+    {
+        public int? PromptTokenCount { get; init; }
+        public int? CandidatesTokenCount { get; init; }
+        public int? TotalTokenCount { get; init; }
+    }
+
+    private sealed record GeminiBatchEmbeddingRequest
+    {
+        public required List<GeminiEmbedRequest> Requests { get; init; }
+    }
+
+    private sealed record GeminiEmbedRequest
+    {
+        public required string Model { get; init; }
+        public required GeminiContent Content { get; init; }
+    }
+
+    private sealed record GeminiBatchEmbeddingResponse
+    {
+        public required List<GeminiEmbedding> Embeddings { get; init; }
+    }
+
+    private sealed record GeminiEmbedding
+    {
+        public required float[] Values { get; init; }
+    }
+
+    #endregion
 }

@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using Authorization.Infrastructure.Idp.Keycloak.Contracts;
 using Authorization.Infrastructure.Idp.Models;
 using Microsoft.Extensions.Logging;
 
@@ -381,73 +381,4 @@ public sealed class KeycloakClient : IIdpClient, IDisposable
     {
         _tokenLock.Dispose();
     }
-
-    #region DTOs internes
-
-    private sealed record TokenResponse
-    {
-        [JsonPropertyName("access_token")]
-        public string AccessToken { get; init; } = string.Empty;
-
-        [JsonPropertyName("expires_in")]
-        public int ExpiresIn { get; init; }
-    }
-
-    private sealed record KeycloakUserDto
-    {
-        public string Id { get; init; } = string.Empty;
-        public string? Email { get; init; }
-        public string? Username { get; init; }
-        public string? FirstName { get; init; }
-        public string? LastName { get; init; }
-        public bool Enabled { get; init; }
-
-        public IdpUser? ToIdpUser()
-        {
-            if (!Guid.TryParse(Id, out var objectId))
-            {
-                return null;
-            }
-
-            var displayName = $"{FirstName} {LastName}".Trim();
-            if (string.IsNullOrEmpty(displayName))
-            {
-                displayName = Username ?? Email ?? Id;
-            }
-
-            return new IdpUser(
-                objectId,
-                Email ?? Username ?? Id,
-                displayName,
-                Username,
-                Enabled);
-        }
-    }
-
-    private sealed record KeycloakGroupDto
-    {
-        public string Id { get; init; } = string.Empty;
-        public string Name { get; init; } = string.Empty;
-        public string? Path { get; init; }
-
-        public IdpGroup? ToIdpGroup()
-        {
-            if (!Guid.TryParse(Id, out var objectId))
-            {
-                return null;
-            }
-
-            return new IdpGroup(objectId, Name, Path);
-        }
-    }
-
-    private sealed record KeycloakClientDto
-    {
-        public string Id { get; init; } = string.Empty;
-        public string ClientId { get; init; } = string.Empty;
-        public string? Name { get; init; }
-        public bool? ServiceAccountsEnabled { get; init; }
-    }
-
-    #endregion
 }

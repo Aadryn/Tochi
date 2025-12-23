@@ -80,7 +80,7 @@ public sealed class HuggingFaceProviderClient : LLMProviderClientBase
                 OwnedBy = "Meta",
                 Capabilities = ModelCapabilities.ChatCompletion | ModelCapabilities.Streaming,
                 IsAvailable = true,
-                ContextLength = 128000
+                MaxContextLength = 128000
             },
             new()
             {
@@ -89,7 +89,7 @@ public sealed class HuggingFaceProviderClient : LLMProviderClientBase
                 OwnedBy = "Mistral AI",
                 Capabilities = ModelCapabilities.ChatCompletion | ModelCapabilities.Streaming,
                 IsAvailable = true,
-                ContextLength = 32768
+                MaxContextLength = 32768
             },
             new()
             {
@@ -98,7 +98,7 @@ public sealed class HuggingFaceProviderClient : LLMProviderClientBase
                 OwnedBy = "Alibaba",
                 Capabilities = ModelCapabilities.ChatCompletion | ModelCapabilities.Streaming,
                 IsAvailable = true,
-                ContextLength = 128000
+                MaxContextLength = 128000
             },
             new()
             {
@@ -107,7 +107,7 @@ public sealed class HuggingFaceProviderClient : LLMProviderClientBase
                 OwnedBy = "Microsoft",
                 Capabilities = ModelCapabilities.ChatCompletion | ModelCapabilities.Streaming,
                 IsAvailable = true,
-                ContextLength = 128000
+                MaxContextLength = 128000
             },
             new()
             {
