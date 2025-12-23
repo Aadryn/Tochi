@@ -4,8 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LLMProxy.Infrastructure.PostgreSQL.Configurations;
 
+/// <summary>
+/// Configuration Entity Framework Core pour l'entité <see cref="LLMProvider"/>.
+/// </summary>
+/// <remarks>
+/// Définit le schéma de table, les conversions d'énumérations et les configurations JSON pour la table <c>llm_providers</c>.
+/// Configure les paramètres des fournisseurs LLM (OpenAI, Anthropic, Azure, etc.).
+/// </remarks>
 public class LLMProviderConfiguration : IEntityTypeConfiguration<LLMProvider>
 {
+    /// <summary>
+    /// Configure le mapping de l'entité <see cref="LLMProvider"/> vers la base de données PostgreSQL.
+    /// </summary>
+    /// <param name="builder">Constructeur de configuration pour définir les propriétés, conversions et stockage JSON.</param>
     public void Configure(EntityTypeBuilder<LLMProvider> builder)
     {
         builder.ToTable("llm_providers");

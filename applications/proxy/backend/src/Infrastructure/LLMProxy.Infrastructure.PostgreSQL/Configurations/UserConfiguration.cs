@@ -4,8 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LLMProxy.Infrastructure.PostgreSQL.Configurations;
 
+/// <summary>
+/// Configuration Entity Framework Core pour l'entité <see cref="User"/>.
+/// </summary>
+/// <remarks>
+/// Définit le schéma de table, les index uniques et les conversions pour la table <c>users</c>.
+/// Configure l'unicité de l'email par tenant et la conversion des rôles utilisateur.
+/// </remarks>
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
+    /// <summary>
+    /// Configure le mapping de l'entité <see cref="User"/> vers la base de données PostgreSQL.
+    /// </summary>
+    /// <param name="builder">Constructeur de configuration pour définir les propriétés, index composites et conversions de rôles.</param>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("users");

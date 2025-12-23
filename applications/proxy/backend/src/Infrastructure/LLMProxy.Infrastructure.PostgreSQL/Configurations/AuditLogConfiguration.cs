@@ -4,8 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LLMProxy.Infrastructure.PostgreSQL.Configurations;
 
+/// <summary>
+/// Configuration Entity Framework Core pour l'entité <see cref="AuditLog"/>.
+/// </summary>
+/// <remarks>
+/// Définit le schéma de table, les index et les conversions pour la table <c>audit_logs</c>.
+/// Configure le stockage des journaux d'audit pour la traçabilité des requêtes LLM.
+/// </remarks>
 public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 {
+    /// <summary>
+    /// Configure le mapping de l'entité <see cref="AuditLog"/> vers la base de données PostgreSQL.
+    /// </summary>
+    /// <param name="builder">Constructeur de configuration pour définir les propriétés, index et conversions JSON.</param>
     public void Configure(EntityTypeBuilder<AuditLog> builder)
     {
         builder.ToTable("audit_logs");

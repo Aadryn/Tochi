@@ -4,8 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LLMProxy.Infrastructure.PostgreSQL.Configurations;
 
+/// <summary>
+/// Configuration Entity Framework Core pour l'entité <see cref="TokenUsageMetric"/>.
+/// </summary>
+/// <remarks>
+/// Définit le schéma de table et les index pour la table <c>token_usage_metrics</c>.
+/// Configure le stockage des métriques d'utilisation des tokens par période et par fournisseur.
+/// </remarks>
 public class TokenUsageMetricConfiguration : IEntityTypeConfiguration<TokenUsageMetric>
 {
+    /// <summary>
+    /// Configure le mapping de l'entité <see cref="TokenUsageMetric"/> vers la base de données PostgreSQL.
+    /// </summary>
+    /// <param name="builder">Constructeur de configuration pour définir les propriétés, index composites et conversions.</param>
     public void Configure(EntityTypeBuilder<TokenUsageMetric> builder)
     {
         builder.ToTable("token_usage_metrics");

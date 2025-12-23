@@ -4,8 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LLMProxy.Infrastructure.PostgreSQL.Configurations;
 
+/// <summary>
+/// Configuration Entity Framework Core pour l'entité <see cref="QuotaLimit"/>.
+/// </summary>
+/// <remarks>
+/// Définit le schéma de table et les conversions d'énumérations pour la table <c>quota_limits</c>.
+/// Configure les limites de quota par utilisateur et par période (horaire, journalier, mensuel).
+/// </remarks>
 public class QuotaLimitConfiguration : IEntityTypeConfiguration<QuotaLimit>
 {
+    /// <summary>
+    /// Configure le mapping de l'entité <see cref="QuotaLimit"/> vers la base de données PostgreSQL.
+    /// </summary>
+    /// <param name="builder">Constructeur de configuration pour définir les propriétés et conversions d'énumérations.</param>
     public void Configure(EntityTypeBuilder<QuotaLimit> builder)
     {
         builder.ToTable("quota_limits");

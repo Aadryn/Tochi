@@ -4,8 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LLMProxy.Infrastructure.PostgreSQL.Configurations;
 
+/// <summary>
+/// Configuration Entity Framework Core pour l'entité <see cref="Tenant"/>.
+/// </summary>
+/// <remarks>
+/// Définit le schéma de table, les index uniques et les types possédés pour la table <c>tenants</c>.
+/// Configure l'isolation multi-tenant avec la table séparée <c>tenant_settings</c>.
+/// </remarks>
 public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
 {
+    /// <summary>
+    /// Configure le mapping de l'entité <see cref="Tenant"/> vers la base de données PostgreSQL.
+    /// </summary>
+    /// <param name="builder">Constructeur de configuration pour définir les propriétés, index et types possédés.</param>
     public void Configure(EntityTypeBuilder<Tenant> builder)
     {
         builder.ToTable("tenants");
