@@ -1,7 +1,7 @@
 ---
 description: XML documentation standards - French language, didactic tone, novice-friendly
 name: CSharp_Documentation_Standards
-applyTo: "**/backend/src/**/*.cs"
+applyTo: "**/*.cs"
 ---
 
 # Documentation C# - Standards XML

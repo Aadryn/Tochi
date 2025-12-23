@@ -2,91 +2,15 @@ using LLMProxy.Domain.Entities;
 using LLMProxy.Domain.LLM;
 using Microsoft.Extensions.Logging;
 
-namespace LLMProxy.Application.LLMProviders.Services;
+namespace LLMProxy.Application.LLMProviders.Services.Selection;
 
 /// <summary>
-/// Sélectionne le meilleur provider LLM selon des critères de sélection.
-/// Conforme à ADR-034 (Encapsulation des Bibliothèques Tierces).
+/// Implémentation du service de sélection de providers LLM.
 /// </summary>
-public interface IProviderSelector
-{
-    /// <summary>
-    /// Sélectionne les types de providers disponibles selon les critères.
-    /// Retourne une liste ordonnée par préférence.
-    /// </summary>
-    /// <param name="criteria">Critères de sélection optionnels.</param>
-    /// <returns>Liste ordonnée des types de providers.</returns>
-    IReadOnlyList<ProviderType> Select(SelectionCriteria? criteria = null);
-
-    /// <summary>
-    /// Sélectionne le meilleur provider pour une requête donnée.
-    /// </summary>
-    /// <param name="request">Requête LLM à traiter.</param>
-    /// <param name="availableProviders">Liste des providers disponibles.</param>
-    /// <param name="criteria">Critères de sélection optionnels.</param>
-    /// <returns>Le provider sélectionné ou null si aucun ne convient.</returns>
-    ILLMProviderClient? SelectBestProvider(
-        LLMRequest request,
-        IReadOnlyList<ILLMProviderClient> availableProviders,
-        SelectionCriteria? criteria = null);
-
-    /// <summary>
-    /// Sélectionne les providers par ordre de préférence pour le failover.
-    /// </summary>
-    /// <param name="request">Requête LLM à traiter.</param>
-    /// <param name="availableProviders">Liste des providers disponibles.</param>
-    /// <param name="criteria">Critères de sélection optionnels.</param>
-    /// <returns>Liste ordonnée des providers par préférence.</returns>
-    IReadOnlyList<ILLMProviderClient> SelectProvidersOrdered(
-        LLMRequest request,
-        IReadOnlyList<ILLMProviderClient> availableProviders,
-        SelectionCriteria? criteria = null);
-}
-
-/// <summary>
-/// Critères de sélection d'un provider.
-/// </summary>
-public sealed record SelectionCriteria
-{
-    /// <summary>
-    /// Types de providers préférés (dans l'ordre de préférence).
-    /// </summary>
-    public IReadOnlyList<ProviderType>? PreferredProviders { get; init; }
-
-    /// <summary>
-    /// Capacités requises du provider.
-    /// </summary>
-    public ModelCapabilities? RequiredCapabilities { get; init; }
-
-    /// <summary>
-    /// Modèle spécifique requis.
-    /// </summary>
-    public string? RequiredModel { get; init; }
-
-    /// <summary>
-    /// Priorité au provider le moins cher.
-    /// </summary>
-    public bool PreferCheapest { get; init; }
-
-    /// <summary>
-    /// Priorité au provider le plus rapide.
-    /// </summary>
-    public bool PreferFastest { get; init; }
-
-    /// <summary>
-    /// Exclure certains providers.
-    /// </summary>
-    public IReadOnlyList<ProviderType>? ExcludedProviders { get; init; }
-
-    /// <summary>
-    /// Nombre minimum de tokens de contexte requis.
-    /// </summary>
-    public int? MinContextLength { get; init; }
-}
-
-/// <summary>
-/// Implémentation du sélecteur de providers.
-/// </summary>
+/// <remarks>
+/// Cette classe implémente la logique de sélection et de scoring des providers en fonction
+/// de critères utilisateur et de métriques de performance (si disponibles).
+/// </remarks>
 public sealed class ProviderSelector : IProviderSelector
 {
     private readonly ILogger<ProviderSelector> _logger;
@@ -282,46 +206,4 @@ public sealed class ProviderSelector : IProviderSelector
     }
 
     private sealed record ScoredProvider(ILLMProviderClient Provider, double Score);
-}
-
-/// <summary>
-/// Service de métriques des providers (optionnel).
-/// </summary>
-public interface IProviderMetricsService
-{
-    /// <summary>
-    /// Récupère les métriques d'un provider.
-    /// </summary>
-    ProviderMetrics? GetProviderMetrics(ProviderType type);
-
-    /// <summary>
-    /// Enregistre une métrique.
-    /// </summary>
-    void RecordMetric(ProviderType type, TimeSpan latency, bool success);
-}
-
-/// <summary>
-/// Métriques d'un provider.
-/// </summary>
-public sealed record ProviderMetrics
-{
-    /// <summary>
-    /// Taux de succès (0.0 à 1.0).
-    /// </summary>
-    public required double SuccessRate { get; init; }
-
-    /// <summary>
-    /// Latence moyenne en millisecondes.
-    /// </summary>
-    public required double AverageLatencyMs { get; init; }
-
-    /// <summary>
-    /// Nombre d'appels effectués.
-    /// </summary>
-    public required int TotalCalls { get; init; }
-
-    /// <summary>
-    /// Dernière mise à jour des métriques.
-    /// </summary>
-    public required DateTimeOffset LastUpdated { get; init; }
 }

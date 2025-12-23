@@ -1,7 +1,7 @@
 ---
 description: C# Fundamentals - ADR compliance, solution structure, project organization, Clean Architecture
 name: CSharp_Fundamentals
-applyTo: "**/backend/**/*.cs,**/backend/**/*.csproj"
+applyTo: "**/backend/**/*.cs,**/*.csproj"
 ---
 
 # C# - Règles Fondamentales
