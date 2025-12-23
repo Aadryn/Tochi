@@ -3,7 +3,7 @@
 // </copyright>
 
 using System.Diagnostics;
-using Authorization.Application.Services;
+using Authorization.Application.Services.Authorization;
 using Authorization.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 

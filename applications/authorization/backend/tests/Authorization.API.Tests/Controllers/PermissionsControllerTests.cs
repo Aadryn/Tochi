@@ -1,7 +1,7 @@
 using Authorization.API.Contracts.Requests;
 using Authorization.API.Contracts.Responses;
 using Authorization.API.Controllers;
-using Authorization.Application.Services;
+using Authorization.Application.Services.Authorization;
 using Authorization.Domain.ValueObjects;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

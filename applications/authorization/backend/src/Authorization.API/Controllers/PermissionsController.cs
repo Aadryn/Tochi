@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Authorization.API.Contracts.Requests;
 using Authorization.API.Contracts.Responses;
 using Authorization.API.Extensions;
-using Authorization.Application.Services;
+using Authorization.Application.Services.Authorization;
 using Authorization.Domain.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

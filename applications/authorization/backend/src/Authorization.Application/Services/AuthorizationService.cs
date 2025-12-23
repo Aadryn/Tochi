@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Authorization.Application.Services.Authorization;
 using Authorization.Domain.ValueObjects;
 using Authorization.Infrastructure.OpenFGA.Services;
 using Authorization.Infrastructure.PostgreSQL.Entities;

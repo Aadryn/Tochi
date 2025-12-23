@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Authorization.Application.Services;
+using Authorization.Application.Services.Authorization;
 using Authorization.Domain.ValueObjects;
 using Authorization.Infrastructure.Idp.Sync;
 using Microsoft.AspNetCore.Builder;

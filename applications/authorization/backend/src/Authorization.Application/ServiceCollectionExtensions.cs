@@ -1,5 +1,6 @@
 using Authorization.Application.Jobs;
 using Authorization.Application.Services;
+using Authorization.Application.Services.Authorization;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;

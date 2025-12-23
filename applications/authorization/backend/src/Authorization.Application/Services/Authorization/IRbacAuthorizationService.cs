@@ -1,6 +1,6 @@
 using Authorization.Domain.ValueObjects;
 
-namespace Authorization.Application.Services;
+namespace Authorization.Application.Services.Authorization;
 
 /// <summary>
 /// Service principal d'autorisation.
@@ -147,26 +147,3 @@ public interface IRbacAuthorizationService
 
     #endregion
 }
-
-/// <summary>
-/// Informations sur une assignation de rôle.
-/// </summary>
-public record RoleAssignmentInfo(
-    RoleAssignmentId Id,
-    RoleId RoleId,
-    string RoleName,
-    Scope Scope,
-    DateTime AssignedAt,
-    PrincipalId? AssignedBy,
-    DateTime? ExpiresAt);
-
-/// <summary>
-/// Informations sur l'accès d'un principal.
-/// </summary>
-public record PrincipalAccessInfo(
-    PrincipalId PrincipalId,
-    PrincipalType PrincipalType,
-    string DisplayName,
-    RoleId RoleId,
-    string RoleName,
-    Scope Scope);
