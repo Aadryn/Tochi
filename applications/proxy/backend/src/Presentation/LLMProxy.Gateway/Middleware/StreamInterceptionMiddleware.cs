@@ -97,7 +97,7 @@ public class StreamInterceptionMiddleware
             responseBody.Seek(0, SeekOrigin.Begin);
 
             // Process the streaming response
-            await ProcessStreamingResponse(context, responseBody, originalBodyStream);
+            await ProcessStreamingResponse(context, responseBody, originalBodyStream, cancellationToken);
         }
         finally
         {
@@ -124,13 +124,17 @@ public class StreamInterceptionMiddleware
         return false;
     }
 
-    private async Task ProcessStreamingResponse(HttpContext context, Stream responseStream, Stream originalStream)
+    private async Task ProcessStreamingResponse(
+        HttpContext context,
+        Stream responseStream,
+        Stream originalStream,
+        CancellationToken cancellationToken)
     {
         using var reader = new StreamReader(responseStream);
         using var writer = new StreamWriter(originalStream, leaveOpen: true) { AutoFlush = true };
 
         var chunks = await ProcessAndForwardStreamLines(reader, writer);
-        var (inputTokens, outputTokens) = await EstimateTokenCounts(context, chunks);
+        var (inputTokens, outputTokens) = await EstimateTokenCounts(context, chunks, cancellationToken);
         
         LogStreamingCompletion(context, chunks, inputTokens, outputTokens);
         await SaveMetricsAsync(context, inputTokens, outputTokens, string.Join("", chunks));
@@ -200,7 +204,10 @@ public class StreamInterceptionMiddleware
         return null;
     }
 
-    private Task<(long inputTokens, long outputTokens)> EstimateTokenCounts(HttpContext context, List<string> chunks)
+    private async Task<(long inputTokens, long outputTokens)> EstimateTokenCounts(
+        HttpContext context,
+        List<string> chunks,
+        CancellationToken cancellationToken)
     {
         long inputTokens = 0;
         long outputTokens = 0;
@@ -209,11 +216,11 @@ public class StreamInterceptionMiddleware
         try
         {
             var fullResponse = string.Join("", chunks);
-            outputTokens = _tokenCounter.EstimateTokens(fullResponse, defaultModel);
+            outputTokens = await _tokenCounter.EstimateTokensAsync(fullResponse, defaultModel, cancellationToken);
             
             if (context.Items.TryGetValue("RequestBody", out var requestBodyObj) && requestBodyObj is string requestBody)
             {
-                inputTokens = _tokenCounter.EstimateTokens(requestBody, defaultModel);
+                inputTokens = await _tokenCounter.EstimateTokensAsync(requestBody, defaultModel, cancellationToken);
             }
         }
         catch (Exception ex)
@@ -221,7 +228,7 @@ public class StreamInterceptionMiddleware
             _logger.LogStreamingTokenCountError(ex);
         }
         
-        return Task.FromResult((inputTokens, outputTokens));
+        return (inputTokens, outputTokens);
     }
 
     private void LogStreamingCompletion(HttpContext context, List<string> chunks, long inputTokens, long outputTokens)

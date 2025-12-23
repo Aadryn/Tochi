@@ -41,7 +41,13 @@ internal class ApiKeyRepository : RepositoryBase<ApiKey>, IApiKeyRepository
         try
         {
             var apiKey = await DbSet.Include(k => k.User).FirstOrDefaultAsync(k => k.KeyHash == keyHash, cancellationToken);
-            if (apiKey is null) { Logger.LogWarning("ApiKey avec hash non trouvée"); return Error.ApiKey.InvalidHash; }
+            
+            if (apiKey is null)
+            {
+                Logger.LogWarning("ApiKey avec hash non trouvée");
+                return Error.ApiKey.InvalidHash;
+            }
+            
             return Result<ApiKey>.Success(apiKey);
         }
         catch (OperationCanceledException) { Logger.LogInformation("Opération GetByKeyHashAsync annulée"); throw; }
@@ -53,7 +59,13 @@ internal class ApiKeyRepository : RepositoryBase<ApiKey>, IApiKeyRepository
         try
         {
             var apiKey = await DbSet.Include(k => k.User).FirstOrDefaultAsync(k => k.KeyPrefix == keyPrefix, cancellationToken);
-            if (apiKey is null) { Logger.LogWarning("ApiKey avec préfixe '{Prefix}' non trouvée", keyPrefix); return Error.ApiKey.InvalidPrefix(keyPrefix); }
+            
+            if (apiKey is null)
+            {
+                Logger.LogWarning("ApiKey avec préfixe '{Prefix}' non trouvée", keyPrefix);
+                return Error.ApiKey.InvalidPrefix(keyPrefix);
+            }
+            
             return Result<ApiKey>.Success(apiKey);
         }
         catch (OperationCanceledException) { Logger.LogInformation("Opération GetByKeyPrefixAsync annulée"); throw; }

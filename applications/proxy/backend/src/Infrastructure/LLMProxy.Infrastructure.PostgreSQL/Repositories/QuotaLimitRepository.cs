@@ -32,15 +32,32 @@ internal class QuotaLimitRepository : RepositoryBase<QuotaLimit>, IQuotaLimitRep
     {
         try
         {
-            var quota = await DbSet.FirstOrDefaultAsync(q => q.UserId == userId && q.QuotaType == quotaType && q.Period == period, cancellationToken);
+            var quota = await DbSet.FirstOrDefaultAsync(q => MatchesQuotaCriteria(q, userId, quotaType, period), cancellationToken);
+            
             if (quota is null) 
             {
                 Logger.LogWarning("QuotaLimit non trouvé pour user {UserId}, type {Type}, période {Period}", userId, quotaType, period);
                 return Error.Database.EntityNotFound("QuotaLimit", Guid.Empty);
             }
+            
             return Result<QuotaLimit>.Success(quota);
         }
         catch (OperationCanceledException) { Logger.LogInformation("Opération GetByUserAndTypeAsync annulée"); throw; }
         catch (Exception ex) { Logger.LogError(ex, "Erreur lors de la récupération du QuotaLimit pour user {UserId}", userId); return Error.Database.AccessError("GetByUserAndTypeAsync", ex.Message); }
+    }
+
+    /// <summary>
+    /// Vérifie si un quota correspond aux critères de recherche spécifiés.
+    /// </summary>
+    /// <param name="quota">Quota à évaluer.</param>
+    /// <param name="userId">Identifiant de l'utilisateur.</param>
+    /// <param name="quotaType">Type de quota (requêtes ou tokens).</param>
+    /// <param name="period">Période du quota (horaire, quotidien, mensuel).</param>
+    /// <returns>True si le quota correspond à tous les critères.</returns>
+    private static bool MatchesQuotaCriteria(QuotaLimit quota, Guid userId, QuotaType quotaType, QuotaPeriod period)
+    {
+        return quota.UserId == userId
+            && quota.QuotaType == quotaType
+            && quota.Period == period;
     }
 }

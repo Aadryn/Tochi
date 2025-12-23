@@ -1,90 +1,90 @@
 ---
-description: XML documentation standards - French language, didactic tone, novice-friendly
+description: XML documentation standards - American English language, didactic tone, novice-friendly
 name: CSharp_Documentation_Standards
 applyTo: "**/*.cs"
 ---
 
-# Documentation C# - Standards XML
+# C# Documentation - XML Standards
 
-Guide pour documenter le code C# avec des commentaires XML précis, didactiques et compréhensibles.
+Guide for documenting C# code with precise, didactic, and understandable XML comments.
 
-## ⛔ À NE PAS FAIRE
+## ⛔ DO NOT
 
-- **N'écris jamais** de documentation en anglais (français OBLIGATOIRE)
-- **Ne laisse jamais** de membre public sans commentaire XML
-- **N'utilise jamais** de commentaires vides ou génériques ("Gets or sets the value")
-- **Ne copie jamais** le nom de la méthode comme description
-- **N'oublie jamais** les tags `<param>`, `<returns>`, `<exception>` quand applicables
-- **N'écris jamais** de documentation COMMENT (implémentation) mais QUOI/POURQUOI
-- **Ne documente jamais** l'évident - ajoute de la valeur
+- **NEVER write** documentation in French or any language other than American English (American English MANDATORY)
+- **NEVER leave** public members without XML comments
+- **NEVER use** empty or generic comments ("Gets or sets the value")
+- **NEVER copy** the method name as the description
+- **NEVER forget** `<param>`, `<returns>`, `<exception>` tags when applicable
+- **NEVER write** HOW documentation (implementation) but WHAT/WHY
+- **NEVER document** the obvious - add value
 
-## ✅ À FAIRE
+## ✅ DO
 
-- **Écris toujours** la documentation en français
-- **Documente toujours** tous les membres publics avec `<summary>`
-- **Utilise toujours** un ton didactique accessible aux débutants
-- **Ajoute toujours** `<remarks>` pour les détails d'implémentation complexes
-- **Documente toujours** les exceptions avec `<exception cref="...">Quand/Pourquoi</exception>`
-- **Inclus toujours** `<example>` pour les usages non triviaux
-- **Utilise toujours** `<see cref="..."/>` pour référencer d'autres types
+- **ALWAYS write** documentation in American English
+- **ALWAYS document** all public members with `<summary>`
+- **ALWAYS use** a didactic tone accessible to beginners
+- **ALWAYS add** `<remarks>` for complex implementation details
+- **ALWAYS document** exceptions with `<exception cref="...">When/Why</exception>`
+- **ALWAYS include** `<example>` for non-trivial usages
+- **ALWAYS use** `<see cref="..."/>` to reference other types
 
-## 🎯 Actions Obligatoires (Mandatory)
+## 🎯 Mandatory Actions
 
-**À TOUJOURS respecter lors de la documentation C# :**
+**ALWAYS respect when documenting C#:**
 
-1. ✅ **Langue française OBLIGATOIRE** : TOUTE documentation DOIT être en français
+1. ✅ **American English MANDATORY** : ALL documentation MUST be in American English
    ```csharp
-   / ✅ Bon
-   // <summary>
-   // Calcule le total des éléments dans la collection.
-   // </summary>
+   /// ✅ Good
+   /// <summary>
+   /// Calculates the total of items in the collection.
+   /// </summary>
    
-   / ❌ Mauvais
-   // <summary>
-   // Calculates the total of items in the collection.
-   // </summary>
+   /// ❌ Bad
+   /// <summary>
+   /// Calcule le total des éléments dans la collection.
+   /// </summary>
    ```
 
-2. ✅ **Documentation COMPLÈTE** : Classes, méthodes, propriétés, événements DOIVENT avoir des commentaires XML
+2. ✅ **COMPLETE Documentation** : Classes, methods, properties, events MUST have XML comments
    ```csharp
-   / ✅ Bon - Tous les membres publics documentés
-   // <summary>
-   // Représente un utilisateur du système.
-   // </summary>
+   /// ✅ Good - All public members documented
+   /// <summary>
+   /// Represents a system user.
+   /// </summary>
    public class User
    {
-       // <summary>
-       // Obtient ou définit l'identifiant unique de l'utilisateur.
-       // </summary>
+       /// <summary>
+       /// Gets or sets the unique identifier of the user.
+       /// </summary>
        public Guid Id { get; set; }
    }
    
-   / ❌ Mauvais - Pas de documentation
+   /// ❌ Bad - No documentation
    public class User
    {
        public Guid Id { get; set; }
    }
    ```
 
-3. ✅ **Tags XML STANDARDS** : Utiliser `<summary>`, `<param>`, `<returns>`, `<exception>`, `<remarks>`, `<example>`
+3. ✅ **STANDARD XML Tags** : Use `<summary>`, `<param>`, `<returns>`, `<exception>`, `<remarks>`, `<example>`
    ```csharp
-   / ✅ Bon - Tags appropriés
-   // <summary>
-   // Divise deux nombres décimaux.
-   // </summary>
-   // <param name="numerateur">Le nombre à diviser.</param>
-   // <param name="denominateur">Le nombre par lequel diviser.</param>
-   // <returns>Le résultat de la division.</returns>
-   // <exception cref="DivideByZeroException">
-   // Levée lorsque <paramref name="denominateur"/> est égal à zéro.
-   // </exception>
-   public decimal Diviser(decimal numerateur, decimal denominateur)
+   /// ✅ Good - Appropriate tags
+   /// <summary>
+   /// Divides two decimal numbers.
+   /// </summary>
+   /// <param name="numerator">The number to divide.</param>
+   /// <param name="denominator">The number by which to divide.</param>
+   /// <returns>The result of the division.</returns>
+   /// <exception cref="DivideByZeroException">
+   /// Thrown when <paramref name="denominator"/> equals zero.
+   /// </exception>
+   public decimal Divide(decimal numerator, decimal denominator)
    
-   / ❌ Mauvais - Pas de paramètres ni exceptions documentés
-   // <summary>
-   // Divise deux nombres.
-   // </summary>
-   public decimal Diviser(decimal numerateur, decimal denominateur)
+   /// ❌ Bad - No parameters or exceptions documented
+   /// <summary>
+   /// Divides two numbers.
+   /// </summary>
+   public decimal Divide(decimal numerator, decimal denominator)
    ```
 
 4. ✅ **Ton DIDACTIQUE** : Documentation compréhensible par développeurs novices
@@ -97,76 +97,85 @@ Guide pour documenter le code C# avec des commentaires XML précis, didactiques 
    // Cette méthode vérifie la présence d'un '@' et d'un domaine valide.
    // Elle ne vérifie pas si l'adresse existe réellement.
    // </remarks>
-   
-   / ❌ Mauvais - Trop technique ou vague
-   // <summary>
-   // Valide l'e-mail via regex RFC 5322.
-   // </summary>
-   ```
-
-5. ✅ **AUCUNE référence aux processus internes** : JAMAIS mentionner outils, workflows, IDs de tâches
+4. ✅ **DIDACTIC Tone** : Documentation understandable by novice developers
    ```csharp
-   / ✅ Bon - Se concentre sur la fonctionnalité
-   // <summary>
-   // Calcule le prix total incluant les taxes applicables.
-   // </summary>
+   /// ✅ Good - Clear and pedagogical
+   /// <summary>
+   /// Validates that the email address follows the standard format (e.g., user@domain.com).
+   /// </summary>
+   /// <remarks>
+   /// This method checks for the presence of an '@' and a valid domain.
+   /// It does not verify whether the address actually exists.
+   /// </remarks>
    
-   / ❌ Mauvais - Mentionne processus interne
-   // <summary>
-   // Calcule le prix total (implémenté dans la tâche JIRA-1234).
-   // </summary>
+   /// ❌ Bad - Too technical or vague
+   /// <summary>
+   /// Validates email via RFC 5322 regex.
+   /// </summary>
    ```
-
-6. ✅ **Forme IMPERSONNELLE** : JAMAIS utiliser "je", "nous", "notre"
+5. ✅ **NO internal process references** : NEVER mention tools, workflows, task IDs
    ```csharp
-   / ✅ Bon - Forme impersonnelle
-   // <summary>
-   // Enregistre l'utilisateur dans la base de données.
-   // </summary>
+   /// ✅ Good - Focuses on functionality
+   /// <summary>
+   /// Calculates the total price including applicable taxes.
+   /// </summary>
    
-   / ❌ Mauvais - Pronoms personnels
-   // <summary>
-   // Nous enregistrons l'utilisateur dans notre base de données.
-   // </summary>
+   /// ❌ Bad - Mentions internal process
+   /// <summary>
+   /// Calculates the total price (implemented in task JIRA-1234).
+   /// </summary>
    ```
 
-7. ✅ **PRÉCISION factuelle** : Documenter UNIQUEMENT ce qui est explicite dans le code
+6. ✅ **IMPERSONAL Form** : NEVER use "I", "we", "our"
    ```csharp
-   / ✅ Bon - Décrit exactement ce que fait le code
-   // <summary>
-   // Ajoute l'élément à la fin de la liste si elle contient moins de 100 éléments.
-   // </summary>
-   // <returns>
-   // <c>true</c> si l'élément a été ajouté ; <c>false</c> si la liste est pleine.
-   // </returns>
+   /// ✅ Good - Impersonal form
+   /// <summary>
+   /// Saves the user to the database.
+   /// </summary>
    
-   / ❌ Mauvais - Invente des comportements non présents
-   // <summary>
-   // Ajoute l'élément de manière optimisée avec cache LRU.
-   // </summary>
+   /// ❌ Bad - Personal pronouns
+   /// <summary>
+   /// We save the user to our database.
+   /// </summary>
    ```
 
-8. ✅ **Exemples d'UTILISATION** : Fournir `<example>` pour les APIs complexes
+7. ✅ **Factual PRECISION** : Document ONLY what is explicit in the code
    ```csharp
-   // <summary>
-   // Filtre une collection selon un prédicat et retourne les résultats paginés.
-   // </summary>
-   // <example>
-   // <code>
-   // var utilisateurs = new List&lt;User&gt; { /* ... */ };
-   // var resultats = utilisateurs.Filtrer(u => u.Actif, page: 1, taille: 10);
-   // </code>
-   // </example>
+   /// ✅ Good - Describes exactly what the code does
+   /// <summary>
+   /// Adds the item to the end of the list if it contains fewer than 100 elements.
+   /// </summary>
+   /// <returns>
+   /// <c>true</c> if the item was added; <c>false</c> if the list is full.
+   /// </returns>
+   
+   /// ❌ Bad - Invents behaviors not present
+   /// <summary>
+   /// Adds the item in an optimized manner with LRU cache.
+   /// </summary>
    ```
 
-## Structure de Documentation par Type
+8. ✅ **USAGE Examples** : Provide `<example>` for complex APIs
+   ```csharp
+   /// <summary>
+   /// Filters a collection based on a predicate and returns paginated results.
+   /// </summary>
+   /// <example>
+   /// <code>
+   /// var users = new List&lt;User&gt; { /* ... */ };
+   /// var results = users.Filter(u => u.Active, page: 1, size: 10);
+   /// </code>
+   /// </example>
+   ```
 
-### Classes et Interfaces
+## Documentation Structure by Type
 
-**TOUJOURS documenter :**
-- `<summary>` : Rôle et responsabilité de la classe/interface
-- `<remarks>` : Cas d'usage, contraintes, précisions importantes
-- `<example>` : Exemple d'instanciation et utilisation (si pertinent)
+### Classes and Interfaces
+
+**ALWAYS document:**
+- `<summary>` : Role and responsibility of the class/interface
+- `<remarks>` : Use cases, constraints, important details
+- `<example>` : Example of instantiation and usage (if relevant)
 
 ```csharp
 // <summary>
@@ -188,9 +197,9 @@ public class EmailNotificationService : INotificationService
 }
 ```
 
-### Méthodes et Fonctions
+### Methods and Functions
 
-**TOUJOURS documenter :**
+**ALWAYS document:**
 - `<summary>` : Action effectuée (verbe d'action à l'infinitif ou 3ᵉ personne)
 - `<param>` : Description de CHAQUE paramètre
 - `<returns>` : Description précise de la valeur retournée
@@ -221,9 +230,9 @@ public async Task<User?> RechercherParEmailAsync(
 }
 ```
 
-### Propriétés
+### Properties
 
-**TOUJOURS documenter :**
+**ALWAYS document:**
 - `<summary>` : Ce que représente la propriété (pas "obtient ou définit")
 - `<value>` : Type de valeur et contraintes éventuelles
 - `<remarks>` : Comportements spéciaux (lecture seule, calcul, validation)
@@ -254,9 +263,9 @@ public int? Age => DateNaissance.HasValue
     : null;
 ```
 
-### Événements
+### Events
 
-**TOUJOURS documenter :**
+**ALWAYS document:**
 - `<summary>` : Quand l'événement est déclenché
 - `<remarks>` : Informations sur les gestionnaires et le contexte
 
@@ -273,7 +282,7 @@ public event EventHandler<ValueChangedEventArgs>? ValueChanged;
 
 ### Enums
 
-**TOUJOURS documenter :**
+**ALWAYS document:**
 - `<summary>` sur l'enum : Ce que représente l'énumération
 - `<summary>` sur CHAQUE membre : Signification précise de la valeur
 
@@ -307,29 +316,29 @@ public enum TaskPriority
 
 ## Tags XML Standards
 
-### Tags Obligatoires
+### Mandatory Tags
 
 | Tag | Contexte | Usage |
 |-----|----------|-------|
 | `<summary>` | TOUS les membres publics | Description brève et claire (1-3 phrases) |
 | `<param>` | Méthodes avec paramètres | Description de CHAQUE paramètre |
 | `<returns>` | Méthodes non-void | Description précise de la valeur retournée |
-| `<exception>` | Méthodes levant des exceptions | Documentation de TOUTES les exceptions possibles |
+| `<exception>` | Methods throwing exceptions | Documentation of ALL possible exceptions |
 
-### Tags Recommandés
+### Recommended Tags
 
 | Tag | Contexte | Usage |
 |-----|----------|-------|
 | `<remarks>` | Classes, méthodes complexes | Détails supplémentaires, cas d'usage, contraintes |
 | `<example>` | APIs complexes ou publiques | Code d'exemple d'utilisation |
-| `<value>` | Propriétés | Description du type de valeur et contraintes |
+| `<value>` | Properties | Description of value type and constraints |
 | `<see cref="">` | Références à d'autres types | Lien vers classe, méthode ou propriété liée |
 | `<seealso cref="">` | Références complémentaires | Lien vers documentation connexe |
 | `<paramref name="">` | Dans les descriptions | Référence à un paramètre dans le texte |
 | `<c>` | Code inline | Mot-clé ou valeur dans le texte (ex: `<c>null</c>`) |
 | `<code>` | Bloc de code | Exemple de code multi-lignes |
 
-### Exemples de Tags Avancés
+### Advanced Tags Examples
 
 ```csharp
 // <summary>
@@ -361,9 +370,9 @@ public T DeserializeJson<T>(string json) where T : new()
 }
 ```
 
-## Bonnes Pratiques
+## Best Practices
 
-### Descriptions Claires et Concises
+### Clear and Concise Descriptions
 
 ✅ **À FAIRE :**
 - Commencer par un verbe d'action (Calcule, Valide, Enregistre, Recherche)
@@ -437,7 +446,7 @@ public T DeserializeJson<T>(string json) where T : new()
 // En cas d'annulation via <paramref name="cancellationToken"/>,
 // une <see cref="OperationCanceledException"/> est levée.
 // </remarks>
-public async Task<Guid> EnregistrerAsync(
+public async Task<Guid> SaveAsync(
     User user, 
     CancellationToken cancellationToken = default)
 ```
@@ -475,9 +484,9 @@ public interface INotificationService
 ### 1. Documentation Redondante avec le Code
 
 ```csharp
-/ ❌ MAUVAIS - Répète le code sans apporter de valeur
+/ ❌ WRONG - Repeats the code without adding value
 // <summary>
-// Obtient ou définit le nom.
+// Gets or sets the name.
 // </summary>
 public string Name { get; set; }
 
@@ -544,9 +553,9 @@ public IEnumerable<User> GetActiveUsers(bool includeInactive)
 // </summary>
 // <returns>Résultat de l'opération.</returns>
 
-/ ✅ BON - Précis et descriptif
+/ ✅ GOOD - Precise and descriptive
 // <summary>
-// Valide et enregistre les modifications apportées à l'entité dans la base de données.
+// Validates and saves the changes made to the entity in the database.
 // </summary>
 // <returns>
 // <c>true</c> si l'enregistrement a réussi ; 
@@ -696,10 +705,10 @@ public class Repository<TEntity, TKey>
 public class EmailValidator
 {
     // <summary>
-    // Valide une adresse e-mail et retourne une version normalisée.
+    // Validates an email address and returns a normalized version.
     // </summary>
     // <param name="email">
-    // L'adresse e-mail à valider. Peut être <c>null</c> ou vide.
+    // The email address to validate. Can be <c>null</c> or empty.
     // </param>
     // <param name="normalized">
     // Sortie : L'adresse e-mail normalisée (minuscules, espaces supprimés) si valide,
@@ -782,7 +791,7 @@ public readonly struct Duration
 // <exception cref="ArgumentNullException">
 // Levée si <paramref name="product"/> est <c>null</c>.
 // </exception>
-public decimal CalculerFraisExpedition(Product product)
+public decimal CalculateShippingCost(Product product)
 {
     ArgumentNullException.ThrowIfNull(product);
     
@@ -1219,6 +1228,585 @@ public async Task<User?> GetUserByIdAsync(int id)
     / ...
 }
 ```
+
+## Thread Safety and Concurrency
+
+### Documenting Thread-Safe Members
+
+```csharp
+/// <summary>
+/// Thread-safe cache for storing frequently accessed configuration values.
+/// </summary>
+/// <remarks>
+/// 🔒 THREAD SAFETY:
+/// <list type="bullet">
+/// <item>All public methods are thread-safe and can be called concurrently</item>
+/// <item>Uses <see cref="ConcurrentDictionary{TKey,TValue}"/> internally</item>
+/// <item>Read operations are lock-free</item>
+/// <item>Write operations use atomic Compare-And-Swap (CAS)</item>
+/// </list>
+/// 
+/// ⚠️ IMPORTANT: While individual operations are atomic, composite operations
+/// (e.g., check-then-update) require external synchronization.
+/// </remarks>
+public class ThreadSafeConfigCache
+{
+    /// <summary>
+    /// Gets or adds a configuration value atomically.
+    /// </summary>
+    /// <param name="key">The configuration key.</param>
+    /// <param name="valueFactory">
+    /// Factory function to create the value if it doesn't exist.
+    /// May be called multiple times if concurrent adds occur.
+    /// </param>
+    /// <returns>
+    /// The existing value if present, or the newly created value.
+    /// </returns>
+    /// <remarks>
+    /// This method is atomic. If multiple threads call it simultaneously
+    /// with the same key, only one value will be stored, but the factory
+    /// may execute multiple times.
+    /// </remarks>
+    public string GetOrAdd(string key, Func<string, string> valueFactory)
+    {
+        // ...
+    }
+}
+```
+
+### Documenting Non-Thread-Safe Code
+
+```csharp
+/// <summary>
+/// Manages a collection of active user sessions.
+/// </summary>
+/// <remarks>
+/// ⚠️ NOT THREAD-SAFE: This class is designed for single-threaded access only.
+/// 
+/// <para>
+/// If concurrent access is required, external synchronization is mandatory.
+/// Use <see cref="lock"/> statement or consider using <see cref="ThreadSafeSessionManager"/> instead.
+/// </para>
+/// </remarks>
+/// <example>
+/// <code>
+/// // ✅ Correct - external synchronization
+/// private readonly object _lock = new object();
+/// private readonly SessionManager _manager = new SessionManager();
+/// 
+/// lock (_lock)
+/// {
+///     _manager.AddSession(session);
+/// }
+/// </code>
+/// </example>
+public class SessionManager
+{
+    // ...
+}
+```
+
+## Resource Management and IDisposable
+
+### Documenting Disposable Resources
+
+```csharp
+/// <summary>
+/// Provides a connection to the database with automatic resource cleanup.
+/// </summary>
+/// <remarks>
+/// 🔄 RESOURCE MANAGEMENT:
+/// <list type="bullet">
+/// <item>Implements <see cref="IDisposable"/> for proper resource cleanup</item>
+/// <item>MUST be disposed after use to release database connection</item>
+/// <item>Use within <c>using</c> statement or <c>using</c> declaration</item>
+/// <item>Connection is automatically closed and returned to pool on dispose</item>
+/// </list>
+/// 
+/// Calling methods after disposal will throw <see cref="ObjectDisposedException"/>.
+/// </remarks>
+/// <example>
+/// <code>
+/// // ✅ Recommended - using statement
+/// using (var connection = new DatabaseConnection(connectionString))
+/// {
+///     var data = await connection.QueryAsync("SELECT * FROM Users");
+/// }
+/// 
+/// // ✅ Also valid - using declaration (C# 8+)
+/// using var connection = new DatabaseConnection(connectionString);
+/// var data = await connection.QueryAsync("SELECT * FROM Users");
+/// </code>
+/// </example>
+public class DatabaseConnection : IDisposable
+{
+    /// <summary>
+    /// Releases all resources used by the database connection.
+    /// </summary>
+    /// <remarks>
+    /// This method is idempotent - calling it multiple times has no adverse effects.
+    /// After disposal, the connection cannot be reused.
+    /// </remarks>
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Releases the unmanaged resources and optionally releases the managed resources.
+    /// </summary>
+    /// <param name="disposing">
+    /// <c>true</c> to release both managed and unmanaged resources;
+    /// <c>false</c> to release only unmanaged resources.
+    /// </param>
+    protected virtual void Dispose(bool disposing)
+    {
+        // ...
+    }
+}
+```
+
+### IAsyncDisposable Pattern
+
+```csharp
+/// <summary>
+/// Provides asynchronous access to a remote API with proper resource cleanup.
+/// </summary>
+/// <remarks>
+/// Implements <see cref="IAsyncDisposable"/> for asynchronous resource disposal.
+/// Prefer <see cref="DisposeAsync"/> over <see cref="IDisposable.Dispose"/>
+/// to allow graceful shutdown of active requests.
+/// </remarks>
+public class ApiClient : IAsyncDisposable
+{
+    /// <summary>
+    /// Asynchronously releases all resources used by the API client.
+    /// </summary>
+    /// <returns>
+    /// A task representing the asynchronous dispose operation.
+    /// </returns>
+    /// <remarks>
+    /// This method:
+    /// <list type="bullet">
+    /// <item>Cancels all pending requests</item>
+    /// <item>Waits for active requests to complete (up to 30 seconds)</item>
+    /// <item>Closes the HTTP connection</item>
+    /// <item>Releases internal buffers</item>
+    /// </list>
+    /// </remarks>
+    public async ValueTask DisposeAsync()
+    {
+        // ...
+    }
+}
+```
+
+## Tuples and Multiple Return Values
+
+### Documenting Tuple Returns
+
+```csharp
+/// <summary>
+/// Validates user credentials and retrieves user information.
+/// </summary>
+/// <param name="username">The username to authenticate.</param>
+/// <param name="password">The password in plain text.</param>
+/// <returns>
+/// A tuple containing:
+/// <list type="bullet">
+/// <item><c>IsValid</c>: <c>true</c> if credentials are correct; otherwise <c>false</c></item>
+/// <item><c>User</c>: The authenticated user object if valid; otherwise <c>null</c></item>
+/// <item><c>ErrorMessage</c>: Error description if authentication failed; otherwise <c>null</c></item>
+/// </list>
+/// </returns>
+/// <example>
+/// <code>
+/// var (isValid, user, error) = await ValidateCredentialsAsync(username, password);
+/// 
+/// if (isValid)
+/// {
+///     Console.WriteLine($"Welcome {user.Name}!");
+/// }
+/// else
+/// {
+///     Console.WriteLine($"Authentication failed: {error}");
+/// }
+/// </code>
+/// </example>
+public async Task<(bool IsValid, User? User, string? ErrorMessage)> ValidateCredentialsAsync(
+    string username, 
+    string password)
+{
+    // ...
+}
+```
+
+### Named Tuples vs Classes
+
+```csharp
+/// <summary>
+/// Retrieves pagination metadata for a query result.
+/// </summary>
+/// <returns>
+/// A <see cref="PaginationInfo"/> containing:
+/// <list type="table">
+/// <item>
+/// <term>CurrentPage</term>
+/// <description>The current page number (1-based)</description>
+/// </item>
+/// <item>
+/// <term>TotalPages</term>
+/// <description>The total number of pages available</description>
+/// </item>
+/// <item>
+/// <term>PageSize</term>
+/// <description>The number of items per page</description>
+/// </item>
+/// <item>
+/// <term>TotalItems</term>
+/// <description>The total number of items across all pages</description>
+/// </item>
+/// </list>
+/// </returns>
+/// <remarks>
+/// Uses a named tuple for lightweight return value.
+/// For complex pagination logic, consider using <see cref="PagedResult{T}"/> class instead.
+/// </remarks>
+public (int CurrentPage, int TotalPages, int PageSize, long TotalItems) GetPaginationInfo()
+{
+    // ...
+}
+```
+
+## Custom Attributes
+
+### Documenting Custom Attributes
+
+```csharp
+/// <summary>
+/// Marks a property as required for data validation.
+/// </summary>
+/// <remarks>
+/// This attribute is processed by the <see cref="DataValidator"/> class
+/// during entity validation. Properties marked with this attribute cannot
+/// be <c>null</c> or empty (for strings).
+/// </remarks>
+/// <example>
+/// <code>
+/// public class User
+/// {
+///     [RequiredField]
+///     public string Email { get; set; }
+///     
+///     [RequiredField]
+///     public string Name { get; set; }
+/// }
+/// </code>
+/// </example>
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+public class RequiredFieldAttribute : ValidationAttribute
+{
+    /// <summary>
+    /// Gets or sets the custom error message displayed when validation fails.
+    /// </summary>
+    /// <value>
+    /// The error message template. Can include {0} placeholder for the property name.
+    /// Default: "The {0} field is required."
+    /// </value>
+    public string ErrorMessage { get; set; } = "The {0} field is required.";
+
+    /// <summary>
+    /// Validates that the specified value is not null or empty.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="validationContext">The context information about the validation operation.</param>
+    /// <returns>
+    /// <see cref="ValidationResult.Success"/> if validation passes;
+    /// otherwise, a <see cref="ValidationResult"/> with an error message.
+    /// </returns>
+    protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
+    {
+        // ...
+    }
+}
+```
+
+## Unit Test Documentation
+
+### Test Method Documentation
+
+```csharp
+/// <summary>
+/// Tests that the calculator correctly handles division by zero.
+/// </summary>
+/// <remarks>
+/// Verifies that <see cref="Calculator.Divide"/> throws
+/// <see cref="DivideByZeroException"/> when denominator is zero.
+/// </remarks>
+[Fact]
+public void Divide_WithZeroDenominator_ThrowsDivideByZeroException()
+{
+    // Arrange
+    var calculator = new Calculator();
+    
+    // Act & Assert
+    Assert.Throws<DivideByZeroException>(() => calculator.Divide(10, 0));
+}
+
+/// <summary>
+/// Tests user authentication with valid credentials.
+/// </summary>
+/// <remarks>
+/// <para><strong>Test Scenario:</strong></para>
+/// <list type="number">
+/// <item>Create a user with known credentials</item>
+/// <item>Attempt authentication with correct password</item>
+/// <item>Verify successful authentication and JWT token generation</item>
+/// </list>
+/// </remarks>
+[Theory]
+[InlineData("user@example.com", "SecurePassword123!")]
+[InlineData("admin@example.com", "AdminPass456!")]
+public async Task Authenticate_WithValidCredentials_ReturnsJwtToken(
+    string email, 
+    string password)
+{
+    // ...
+}
+```
+
+### Test Class Documentation
+
+```csharp
+/// <summary>
+/// Contains unit tests for the <see cref="UserService"/> class.
+/// </summary>
+/// <remarks>
+/// Tests cover the following scenarios:
+/// <list type="bullet">
+/// <item>User creation with valid/invalid data</item>
+/// <item>User retrieval by ID and email</item>
+/// <item>User update and deletion</item>
+/// <item>Authentication and authorization</item>
+/// <item>Edge cases (null values, duplicates, concurrency)</item>
+/// </list>
+/// 
+/// <para><strong>Test Dependencies:</strong></para>
+/// <list type="bullet">
+/// <item>Uses in-memory database for isolation</item>
+/// <item>Mocks <see cref="IEmailService"/> to avoid external calls</item>
+/// <item>Utilizes Bogus for test data generation</item>
+/// </list>
+/// </remarks>
+public class UserServiceTests : IDisposable
+{
+    private readonly TestContext _context;
+    
+    public UserServiceTests()
+    {
+        _context = new TestContext();
+    }
+    
+    public void Dispose()
+    {
+        _context.Dispose();
+    }
+}
+```
+
+## Builder Pattern and Fluent APIs
+
+### Documenting Fluent Interfaces
+
+```csharp
+/// <summary>
+/// Provides a fluent interface for constructing complex queries.
+/// </summary>
+/// <remarks>
+/// All methods return <c>this</c> to enable method chaining.
+/// Call <see cref="Build"/> to finalize and execute the query.
+/// </remarks>
+/// <example>
+/// <code>
+/// var results = new QueryBuilder&lt;User&gt;()
+///     .Where(u => u.IsActive)
+///     .OrderBy(u => u.LastName)
+///     .ThenBy(u => u.FirstName)
+///     .Skip(10)
+///     .Take(20)
+///     .Build();
+/// </code>
+/// </example>
+public class QueryBuilder<T> where T : class
+{
+    /// <summary>
+    /// Adds a filter condition to the query.
+    /// </summary>
+    /// <param name="predicate">The filter expression to apply.</param>
+    /// <returns>
+    /// The current <see cref="QueryBuilder{T}"/> instance for method chaining.
+    /// </returns>
+    /// <remarks>
+    /// Multiple <c>Where</c> calls are combined with AND logic.
+    /// Use <see cref="Or"/> for alternative conditions.
+    /// </remarks>
+    public QueryBuilder<T> Where(Expression<Func<T, bool>> predicate)
+    {
+        // ...
+        return this;
+    }
+
+    /// <summary>
+    /// Specifies the primary sort order for results.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the sort key.</typeparam>
+    /// <param name="keySelector">Expression selecting the property to sort by.</param>
+    /// <returns>
+    /// The current <see cref="QueryBuilder{T}"/> instance for method chaining.
+    /// </returns>
+    /// <remarks>
+    /// Default sort order is ascending. Use <see cref="OrderByDescending"/> for descending.
+    /// </remarks>
+    public QueryBuilder<T> OrderBy<TKey>(Expression<Func<T, TKey>> keySelector)
+    {
+        // ...
+        return this;
+    }
+
+    /// <summary>
+    /// Finalizes the query and returns the filtered results.
+    /// </summary>
+    /// <returns>
+    /// A list of entities matching all specified criteria.
+    /// </returns>
+    /// <remarks>
+    /// This method executes the query against the database.
+    /// Subsequent modifications to the builder will not affect the returned results.
+    /// </remarks>
+    public List<T> Build()
+    {
+        // ...
+    }
+}
+```
+
+## Localization and Internationalization
+
+### Documenting Localized Resources
+
+```csharp
+/// <summary>
+/// Provides access to localized string resources for the application.
+/// </summary>
+/// <remarks>
+/// Resource strings are loaded from:
+/// <list type="bullet">
+/// <item><c>Resources/Messages.resx</c> (default/fallback - English)</item>
+/// <item><c>Resources/Messages.fr.resx</c> (French)</item>
+/// <item><c>Resources/Messages.es.resx</c> (Spanish)</item>
+/// </list>
+/// 
+/// The appropriate resource file is selected based on the current
+/// <see cref="CultureInfo.CurrentUICulture"/>.
+/// </remarks>
+/// <example>
+/// <code>
+/// // Get localized message
+/// var welcomeMessage = Resources.WelcomeMessage;
+/// 
+/// // Format with parameters
+/// var greeting = string.Format(Resources.GreetingFormat, userName);
+/// </code>
+/// </example>
+public class Resources
+{
+    /// <summary>
+    /// Gets the localized welcome message.
+    /// </summary>
+    /// <value>
+    /// English: "Welcome to our application!"
+    /// French: "Bienvenue dans notre application!"
+    /// Spanish: "¡Bienvenido a nuestra aplicación!"
+    /// </value>
+    public static string WelcomeMessage => ResourceManager.GetString("WelcomeMessage");
+}
+```
+
+### Culture-Specific Behavior
+
+```csharp
+/// <summary>
+/// Formats a monetary amount according to the current culture.
+/// </summary>
+/// <param name="amount">The amount to format.</param>
+/// <param name="currencyCode">
+/// ISO 4217 currency code (e.g., "USD", "EUR", "JPY").
+/// If <c>null</c>, uses the currency of the current culture.
+/// </param>
+/// <returns>
+/// A formatted string representing the monetary amount.
+/// </returns>
+/// <remarks>
+/// Formatting respects culture-specific rules:
+/// <list type="bullet">
+/// <item>en-US: $1,234.56</item>
+/// <item>fr-FR: 1 234,56 €</item>
+/// <item>de-DE: 1.234,56 €</item>
+/// <item>ja-JP: ¥1,235 (rounded to nearest yen)</item>
+/// </list>
+/// </remarks>
+/// <example>
+/// <code>
+/// CultureInfo.CurrentCulture = new CultureInfo("en-US");
+/// var formatted = FormatCurrency(1234.56m, "USD"); // "$1,234.56"
+/// 
+/// CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
+/// var formatted = FormatCurrency(1234.56m, "EUR"); // "1 234,56 €"
+/// </code>
+/// </example>
+public string FormatCurrency(decimal amount, string? currencyCode = null)
+{
+    // ...
+}
+```
+
+## Best Practices Summary
+
+### Documentation Hygiene Checklist
+
+Before committing code, verify:
+
+#### Completeness
+- [ ] All public types have `<summary>`
+- [ ] All public members have `<summary>`
+- [ ] All parameters documented with `<param>`
+- [ ] All return values documented with `<returns>` (non-void methods)
+- [ ] All exceptions documented with `<exception>`
+- [ ] Complex APIs have `<example>` with working code
+
+#### Accuracy
+- [ ] Documentation matches actual code behavior
+- [ ] Null handling explicitly documented
+- [ ] Thread safety explicitly stated
+- [ ] Performance characteristics mentioned when relevant
+- [ ] Security considerations documented
+
+#### Quality
+- [ ] Written in clear, grammatically correct American English
+- [ ] Uses didactic tone accessible to beginners
+- [ ] Avoids personal pronouns (I, we, our)
+- [ ] Contains no internal references (task IDs, tool names)
+- [ ] Factual descriptions only (no speculation)
+- [ ] Includes concrete examples for non-obvious usage
+
+#### Format
+- [ ] Valid XML structure
+- [ ] Correct `<see cref="">` references
+- [ ] Compilable code in `<example>` blocks
+- [ ] Consistent indentation
+- [ ] Proper use of `<c>` for inline code
+- [ ] Appropriate use of `<list>` for enumerations
 
 ## Ressources et Références
 

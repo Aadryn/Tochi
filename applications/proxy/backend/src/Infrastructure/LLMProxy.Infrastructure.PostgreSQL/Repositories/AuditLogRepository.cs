@@ -21,8 +21,8 @@ internal class AuditLogRepository : RepositoryBase<AuditLog>, IAuditLogRepositor
         try
         {
             var query = DbSet.Where(a => a.TenantId == tenantId);
-            if (from.HasValue) query = query.Where(a => a.CreatedAt >= from.Value);
-            if (to.HasValue) query = query.Where(a => a.CreatedAt <= to.Value);
+            query = ApplyDateRangeFilter(query, from, to);
+            
             var logs = await query.OrderByDescending(a => a.CreatedAt).ToListAsync(cancellationToken);
             Logger.LogDebug("Récupéré {Count} AuditLogs pour tenant {TenantId}", logs.Count, tenantId);
             return Result<IReadOnlyList<AuditLog>>.Success(logs.AsReadOnly());
@@ -36,8 +36,8 @@ internal class AuditLogRepository : RepositoryBase<AuditLog>, IAuditLogRepositor
         try
         {
             var query = DbSet.Where(a => a.UserId == userId);
-            if (from.HasValue) query = query.Where(a => a.CreatedAt >= from.Value);
-            if (to.HasValue) query = query.Where(a => a.CreatedAt <= to.Value);
+            query = ApplyDateRangeFilter(query, from, to);
+            
             var logs = await query.OrderByDescending(a => a.CreatedAt).ToListAsync(cancellationToken);
             Logger.LogDebug("Récupéré {Count} AuditLogs pour user {UserId}", logs.Count, userId);
             return Result<IReadOnlyList<AuditLog>>.Success(logs.AsReadOnly());
@@ -58,5 +58,23 @@ internal class AuditLogRepository : RepositoryBase<AuditLog>, IAuditLogRepositor
         }
         catch (OperationCanceledException) { Logger.LogInformation("Opération DeleteOlderThanAsync annulée"); throw; }
         catch (Exception ex) { Logger.LogError(ex, "Erreur lors de la suppression des AuditLogs antérieurs à {Threshold}", threshold); return Error.Database.AccessError("DeleteOlderThanAsync", ex.Message); }
+    }
+
+    /// <summary>
+    /// Applique un filtre de plage de dates optionnel à une requête d'audit logs.
+    /// </summary>
+    /// <param name="query">Requête de base à filtrer.</param>
+    /// <param name="from">Date de début optionnelle (inclusive).</param>
+    /// <param name="to">Date de fin optionnelle (inclusive).</param>
+    /// <returns>Requête filtrée par les dates spécifiées.</returns>
+    private static IQueryable<AuditLog> ApplyDateRangeFilter(IQueryable<AuditLog> query, DateTime? from, DateTime? to)
+    {
+        if (from.HasValue)
+            query = query.Where(a => a.CreatedAt >= from.Value);
+        
+        if (to.HasValue)
+            query = query.Where(a => a.CreatedAt <= to.Value);
+        
+        return query;
     }
 }

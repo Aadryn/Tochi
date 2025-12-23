@@ -15,24 +15,25 @@ public partial class TokenCounterService : ITokenCounterService
     private readonly SemaphoreSlim _cacheLock = new(1, 1);
 
     /// <summary>
-    /// Estime le nombre de tokens dans un texte pour un modèle donné.
+    /// Estime le nombre de tokens dans un texte pour un modèle donné de manière asynchrone.
     /// </summary>
     /// <param name="text">Texte à analyser.</param>
     /// <param name="model">Nom du modèle pour déterminer l'encodage.</param>
+    /// <param name="cancellationToken">Token d'annulation.</param>
     /// <returns>Nombre estimé de tokens.</returns>
-    public int EstimateTokens(string text, string model)
+    public async Task<int> EstimateTokensAsync(string text, string model, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(text))
         {
             return 0;
         }
 
-        var encoding = GetEncodingForModel(model);
+        var encoding = await GetEncodingForModelAsync(model, cancellationToken);
         return encoding.Encode(text).Count;
     }
 
     /// <summary>
-    /// Estime le nombre de tokens dans une requête sérialisée.
+    /// Estime le nombre de tokens dans une requête sérialisée de manière asynchrone.
     /// </summary>
     /// <param name="request">Objet de requête à sérialiser.</param>
     /// <param name="modelName">Nom du modèle pour déterminer l'encodage.</param>
@@ -252,15 +253,23 @@ public partial class TokenCounterService : ITokenCounterService
         return "cl100k_base";
     }
 
-    private GptEncoding GetEncodingForModel(string modelName)
-    {
-        var encodingName = GetEncodingNameForModel(modelName);
+/// <summary>
+/// Obtient l'encodage GPT pour un modèle spécifique de manière asynchrone.
+/// </summary>
+/// <param name="modelName">Nom du modèle LLM.</param>
+/// <param name="cancellationToken">Token d'annulation.</param>
+/// <returns>Encodage GPT correspondant au modèle.</returns>
+/// <remarks>
+/// Utilise un cache thread-safe avec SemaphoreSlim.WaitAsync() pour éviter deadlocks.
+/// Conforme à ADR-044 (Async/Await Best Practices).
+/// </remarks>
+private async Task<GptEncoding> GetEncodingForModelAsync(
+    string modelName,
+    CancellationToken cancellationToken = default)
+{
+    var encodingName = GetEncodingNameForModel(modelName);
 
-        _cacheLock.Wait();
-        try
-        {
-            if (!_encodingCache.TryGetValue(encodingName, out var encoding))
-            {
+    await _cacheLock.WaitAsync(cancellationToken);
                 encoding = GptEncoding.GetEncoding(encodingName);
                 _encodingCache[encodingName] = encoding;
             }
