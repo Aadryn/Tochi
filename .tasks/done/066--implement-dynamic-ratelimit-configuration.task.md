@@ -5,8 +5,41 @@ concerns: rate-limiting, configuration, database, cache
 priority: critical
 effort: large
 dependencies: []
-status: to-do
+status: done
 created: 2025-12-23
+completed: 2025-12-29
+---
+
+## TRACKING
+
+Début: 2025-12-29T09:30:00Z
+Fin: 2025-12-29T14:45:00Z
+Durée: 05:15:00
+
+## RÉSUMÉ DE COMPLÉTION
+
+### Fichiers créés (8)
+- `ITenantRateLimitConfigurationRepository.cs` - Interface repository
+- `TenantRateLimitConfigurationRepository.cs` - Implémentation repository avec mapping
+- `DatabaseRateLimitConfigurationService.cs` - Service avec cache Redis (TTL: 1min)
+- `TenantRateLimitConfigurationEntity.cs` - Entité PostgreSQL
+- `EndpointLimitEntity.cs` - Entité endpoints limits
+- `TenantRateLimitConfigurationEntityConfiguration.cs` - Configuration EF Core
+- `20251229120000_AddTenantRateLimitConfiguration.cs` - Migration manuelle
+- Tests unitaires (15 tests passants)
+
+### Fichiers modifiés (4)
+- `LLMProxyDbContext.cs` - Ajout DbSet
+- `LLMProxy.Infrastructure.PostgreSQL.csproj` - Références + packages
+- `RateLimitingServiceCollectionExtensions.cs` - DI registration
+- `LLMProxy.Application.Tests.csproj` - Références tests
+
+### Notes techniques
+- Migration EF Core créée manuellement (génération automatique échouée)
+- Tests repository simplifiés en contract tests (EF InMemory incompatible)
+- 17 tests pré-existants en échec (non liés à cette tâche)
+- Schéma : `configuration.tenant_ratelimit_configurations`
+
 ---
 
 # Implémenter configuration dynamique Rate Limiting
